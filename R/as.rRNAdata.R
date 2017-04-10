@@ -19,12 +19,13 @@
 #'   to an OTU with one column giving OTU identifiers (must be named the same as
 #'   the column in \code{e_data}) and other columns giving meta information
 #'   (e.g. mappings of OTU identification to taxonomy).
-#' @param tree_path an optional quoted file path to either a NEXUS or Newick
-#'   formatted phylogenetic tree file. The OTU labels in the tree file should
-#'   match the OTU identifiers in the preceeding data fields.
-#' @param fasta_path an optional quoted file path to a fasta formatted
-#'   representation of biological sequences. Each OTU in the fasta maps to at
-#'   least one sequence in the preceeding data fields.
+#' @param e_tree an optional NEXUS or Newick formatted phylogenetic tree file,
+#'   imported using ape::read.tree(tree_path). The OTU labels in the tree file
+#'   should match the OTU identifiers in the preceeding data fields.
+#' @param e_seq an optional fasta formatted representation of biological
+#'   sequences imported using Biostrings::readDNAStringSet(fasta_path, ...).
+#'   Each OTU in the fasta maps to at least one sequence in the preceeding data
+#'   fields.
 #' @param edata_cname character string specifying the name of the column
 #'   containing the identifiers in \code{e_data} and \code{e_meta} (if
 #'   applicable).
@@ -34,8 +35,7 @@
 #'   as NULL.
 #' @param fdata_cname character string specifying the name of the column
 #'   containing the sample identifiers in \code{f_data}.
-#' @param ... further arguments some of which can be passed to \code{read.tree()}
-#'   and \code{readDNAStringSet}
+#' @param ... further arguments
 #'
 #' @details Objects of class 'rRNAdata' contain some attributes that are
 #'   referenced by downstream functions. These attributes can be changed from
@@ -93,34 +93,28 @@ as.rRNAdata <- function(e_data, f_data, e_meta=NULL, tree_path = NULL, fasta_pat
   # initial checks #
 
   # check that e_data and f_data are data.frames #
-  if(class(e_data) != "data.frame") stop("e_data must be of the class 'data.frame'")
-  if(class(f_data) != "data.frame") stop("f_data must be of the class 'data.frame'")
+  if (class(e_data) != "data.frame") stop("e_data must be of the class 'data.frame'")
+  if (class(f_data) != "data.frame") stop("f_data must be of the class 'data.frame'")
 
   # check to see if e_meta is NULL, if not check that it is a data.frame #
-  if(!is.null(e_meta)){ if(class(e_meta) != "data.frame") stop("e_meta must be of the class 'data.frame'")}
+  if (!is.null(e_meta)) {if (class(e_meta) != "data.frame") stop("e_meta must be of the class 'data.frame'")}
 
   # check to see if tree_path is NULL, if not check that it is a character #
-  browser()
-  if(!is.null(tree_path)){
-    if(class(tree_path) != "character") stop("tree_path must be of the class 'character'")
-    e_tree <- ape::read.tree(tree_path)
-    }
+  if (!is.null(e_tree)) {if (!(inherits(e_tree, "phylo"))) stop("e_tree must be of the class 'phylo'")}
 
-  # check to see if fasta_path is NULL, if not check that it is a character #
-  if(!is.null(fasta_path)){
-    if(class(fasta_path) != "character") stop("fasta_path must be of the class 'character'")
-    e_fasta <- Biostrings::readDNAStringSet(fasta_path, ...)
-    }
+
+  # check to see if e_seq is NULL, if not check that it has been imported correctly #
+  if (!is.null(e_seq)) { if (!(inherits(e_seq, "DNAStringSet"))) stop("fasta_path must be of the class 'character'")}
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #
-  if(!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.rRNAdata for specifying column names.", sep = ""))
+  if (!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.rRNAdata for specifying column names.", sep = ""))
 
-  if(!is.null(e_meta)){
-    if(!(edata_cname %in% names(e_meta))) stop(paste("OTU column ", edata_cname," not found in e_meta. Column names for OTUs must match for e_data and e_meta. See details of as.rRNAdata for specifying column names.", sep = ""))
+  if (!is.null(e_meta)) {
+    if (!(edata_cname %in% names(e_meta))) stop(paste("OTU column ", edata_cname," not found in e_meta. Column names for OTUs must match for e_data and e_meta. See details of as.rRNAdata for specifying column names.", sep = ""))
   }
 
   # if e_meta is NULL set emeta_cname to NULL #
-  if(is.null(e_meta)) emeta_cname = NULL
+  if (is.null(e_meta)) emeta_cname = NULL
 
   # if e_meta is not NULL check that the taxonomy column is found #
   if(!is.null(e_meta)){

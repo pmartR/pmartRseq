@@ -1,4 +1,4 @@
-#' Convert Data to Appropriate mintR Class
+#' Convert Data to Appropriate pmartRseq Class
 #'
 #' Converts a list object or several data.frames of rRNA-level data (16s) to an
 #' object of the class 'rRNAdata'. Objects of the class 'rRNAdata' are lists
@@ -80,12 +80,12 @@
 #'
 #' @export
 
-as.rRNAdata <- function(e_data, f_data, e_meta=NULL, tree_path = NULL, fasta_path = NULL, edata_cname, fdata_cname, emeta_cname=NULL, ...){
-  .as.rRNAdata(e_data, f_data, e_meta, tree_path, fasta_path, edata_cname, fdata_cname, emeta_cname, ...)
+as.rRNAdata <- function(e_data, f_data, e_meta=NULL, e_tree = NULL, e_seq = NULL, edata_cname, fdata_cname, emeta_cname=NULL, ...){
+  .as.rRNAdata(e_data, f_data, e_meta, e_tree, e_seq, edata_cname, fdata_cname, emeta_cname, ...)
 }
 
 ## rRNA data ##
-.as.rRNAdata <- function(e_data, f_data, e_meta=NULL, tree_path, fasta_path,
+.as.rRNAdata <- function(e_data, f_data, e_meta=NULL, e_tree, e_seq,
                          edata_cname, fdata_cname, emeta_cname,
                          data_scale="count", data_norm=FALSE, norm_method=NULL,
                          location_param=NULL, scale_param=NULL,
@@ -117,14 +117,14 @@ as.rRNAdata <- function(e_data, f_data, e_meta=NULL, tree_path = NULL, fasta_pat
   if (is.null(e_meta)) emeta_cname = NULL
 
   # if e_meta is not NULL check that the taxonomy column is found #
-  if(!is.null(e_meta)){
-    if(!is.null(emeta_cname)){
-      if(!(emeta_cname %in% names(e_meta))) stop(paste("Taxonomy column ", emeta_cname, " not found in e_meta. See details of as.rRNAdata for specifying column names.", sep = "") )
+  if (!is.null(e_meta)){
+    if (!is.null(emeta_cname)){
+      if (!(emeta_cname %in% names(e_meta))) stop(paste("Taxonomy column ", emeta_cname, " not found in e_meta. See details of as.rRNAdata for specifying column names.", sep = "") )
     }
   }
 
   # check that the Sample column name is in f_data column names #
-  if(!(fdata_cname %in% names(f_data))) stop(paste("Sample column ", fdata_cname, " not found in f_data. See details of as.rRNAdata for specifying column names.", sep = ""))
+  if (!(fdata_cname %in% names(f_data))) stop(paste("Sample column ", fdata_cname, " not found in f_data. See details of as.rRNAdata for specifying column names.", sep = ""))
 
   # check that all samples in e_data are present in f_data #
   edat_sampid = which(names(e_data) == edata_cname)
@@ -160,7 +160,7 @@ as.rRNAdata <- function(e_data, f_data, e_meta=NULL, tree_path = NULL, fasta_pat
   }
 
   # store results #
-  rRNAobj = list(e_data = e_data, f_data = f_data, e_meta = e_meta, e_tree = e_tree, e_fasta = e_fasta)
+  rRNAobj = list(e_data = e_data, f_data = f_data, e_meta = e_meta, e_tree = e_tree, e_seq = e_seq)
 
   # set column name attributes #
   attr(rRNAobj, "cnames") = list(edata_cname = edata_cname, emeta_cname = emeta_cname, fdata_cname = fdata_cname)

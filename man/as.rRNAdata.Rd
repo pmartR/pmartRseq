@@ -2,7 +2,7 @@
 % Please edit documentation in R/as.rRNAdata.R
 \name{as.rRNAdata}
 \alias{as.rRNAdata}
-\title{Convert Data to Appropriate mintR Class}
+\title{Convert Data to Appropriate pmartRseq Class}
 \usage{
 as.rRNAdata(e_data, f_data, e_meta = NULL, tree_path = NULL,
   fasta_path = NULL, edata_cname, fdata_cname, emeta_cname = NULL, ...)
@@ -24,14 +24,6 @@ to an OTU with one column giving OTU identifiers (must be named the same as
 the column in \code{e_data}) and other columns giving meta information
 (e.g. mappings of OTU identification to taxonomy).}
 
-\item{tree_path}{an optional quoted file path to either a NEXUS or Newick
-formatted phylogenetic tree file. The OTU labels in the tree file should
-match the OTU identifiers in the preceeding data fields.}
-
-\item{fasta_path}{an optional quoted file path to a fasta formatted
-representation of biological sequences. Each OTU in the fasta maps to at
-least one sequence in the preceeding data fields.}
-
 \item{edata_cname}{character string specifying the name of the column
 containing the identifiers in \code{e_data} and \code{e_meta} (if
 applicable).}
@@ -44,8 +36,16 @@ containing the mapped identifiers in \code{e_meta} (if applicable).
 Defaults to NULL. If \code{e_meta} is NULL, then specify \code{emeta_cname}
 as NULL.}
 
-\item{...}{further arguments some of which can be passed to \code{read.tree()}
-and \code{readDNAStringSet}}
+\item{...}{further arguments}
+
+\item{e_tree}{an optional NEXUS or Newick formatted phylogenetic tree file,
+imported using ape::read.tree(tree_path). The OTU labels in the tree file
+should match the OTU identifiers in the preceeding data fields.}
+
+\item{e_seq}{an optional fasta formatted representation of biological
+sequences imported using Biostrings::readDNAStringSet(fasta_path, ...).
+Each OTU in the fasta maps to at least one sequence in the preceeding data
+fields.}
 }
 \description{
 Converts a list object or several data.frames of rRNA-level data (16s) to an

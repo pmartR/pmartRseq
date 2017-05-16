@@ -668,14 +668,15 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
 #'@param breaks Required, a number specifying the number of breaks to have in the cumulative graph. Default is 100.
 #'@param max_count Optional, a number specifying the maximum count number to show on the graph. Default is NULL.
 #'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL.
+#'@param min_samp Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL, ...) {
-  .plot.countFilter(results_object, breaks, max_count, min_num, plot_title, x_lab, y_lab, ...)
+plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, min_samp=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL, ...) {
+  .plot.countFilter(results_object, breaks, max_count, min_num, min_samp, plot_title, x_lab, y_lab, ...)
 }
 
-.plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL) {
+.plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, min_samp=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL) {
 
   library(ggplot2)
 
@@ -684,6 +685,14 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     # check that min_num is numeric >= 0 #
     if(!(class(min_num) %in% c("numeric","integer")) || min_num < 0){
       stop("min_num must be an integer >= 0")
+    }
+  }
+  
+  # Check if min_samp is provided if fn="ka"
+  if(is.null(min_samp)){
+    if(attr(results_object, "function") == "ka"){
+      warning("No minimum sample size specified, defaulting to 2")
+      min_samp = 2
     }
   }
 
@@ -709,6 +718,12 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
 
   fn <- attr(results_object, "function")
 
+  # format k/a data
+  if(fn == "ka"){
+    results_object <- results_object[,c(1,grep(paste("NumSamples_",min_samp,sep=""), colnames(results_object)))]
+    colnames(results_object)[2] <- "kaOTUs"
+  }
+  
   # limit data, no need to look at all of it #
   if(!is.null(max_count)){
     if(fn == "percent"){
@@ -716,7 +731,11 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     }
     results_object <- results_object[which(results_object[,paste(fn,"OTUs",sep="")] < max_count),]
   }else{
-    results_object <- results_object[which(results_object[,paste(fn,"OTUs",sep="")] < attr(results_object, "threshold")),]
+    if(fn != "ka"){
+      results_object <- results_object[which(results_object[,paste(fn,"OTUs",sep="")] < attr(results_object, "threshold")),]
+    }else{
+      results_object <- results_object[which(results_object[,paste(fn,"OTUs",sep="")] < quantile(results_object[,2],0.95)),]
+    }
   }
 
   # get abundance counts #
@@ -730,11 +749,18 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
   all_counts <- do.call(rbind, all_counts)
 
   fn_lab <- paste(toupper(substring(fn, 1, 1)),substring(fn, 2), sep="", collapse=" ")
+  
   # make labels #
-  xlabel <- ifelse(is.null(x_lab), paste(fn_lab," Count of Biomolecule Across All Samples", sep=""), x_lab)
-  ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
-  plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Biomolecules in Samples",sep=""), plot_title)
-
+  if(fn == "ka"){
+    xlabel <- ifelse(is.null(x_lab), paste("Max Count of Biomolecule in each of ", min_samp, " Samples", sep=""), x_lab)
+    ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
+    plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of OTUs seen in ", min_samp, " Samples", sep=""), plot_title)
+  }else{
+    xlabel <- ifelse(is.null(x_lab), paste(fn_lab," Count of Biomolecule Across All Samples", sep=""), x_lab)
+    ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
+    plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Biomolecules in Samples",sep=""), plot_title)
+  }
+  
   p <- ggplot(all_counts) +
     geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
                   ymin=0, ymax=sumcount), fill="royalblue1", col="black") +

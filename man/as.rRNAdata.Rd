@@ -4,8 +4,8 @@
 \alias{as.rRNAdata}
 \title{Convert Data to Appropriate pmartRseq Class}
 \usage{
-as.rRNAdata(e_data, f_data, e_meta = NULL, tree_path = NULL,
-  fasta_path = NULL, edata_cname, fdata_cname, emeta_cname = NULL, ...)
+as.rRNAdata(e_data, f_data, e_meta = NULL, edata_cname, fdata_cname,
+  emeta_cname = NULL, ...)
 }
 \arguments{
 \item{e_data}{a \eqn{p \times n + 1} data.frame of expression data, where

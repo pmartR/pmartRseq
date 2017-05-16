@@ -80,7 +80,7 @@
 #'
 #' @export
 
-as.rRNAdata <- function(e_data, f_data, e_meta=NULL, e_tree = NULL, e_seq = NULL, edata_cname, fdata_cname, emeta_cname=NULL, ...){
+as.rRNAdata <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, emeta_cname=NULL, ...){
   .as.rRNAdata(e_data, f_data, e_meta, e_tree, e_seq, edata_cname, fdata_cname, emeta_cname, ...)
 }
 
@@ -90,21 +90,41 @@ as.rRNAdata <- function(e_data, f_data, e_meta=NULL, e_tree = NULL, e_seq = NULL
                          data_scale="count", data_norm=FALSE, norm_method=NULL,
                          location_param=NULL, scale_param=NULL,
                          data_types=NULL, db=NULL, db_version=NULL, ...){
+  # check class structures for paths and attempt read #
+  if (inherits(e_data, "character")) {
+    mess <- try({
+      biom_read <- biomformat::read_biom(biom_file = e_data)
+      otu_table <- as.matrix(biomformat::biom_data(biom_read))
+
+      # create e_data with OTU identifier
+      e_data = data.frame(OTU = rownames(otu_table), otu_table, stringsAsFactors = FALSE)
+      edata_cname <- "OTU"
+
+      # create e_meta with OTU identifier
+      otu_meta = biomformat::observation_metadata(biom_read)
+      e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE)
+      emeta_cname <- "OTU"
+      })
+    if (inherits(mess, "try-error")) {
+      stop("Biom import failed. Incorrect file path or unsupported biom format.")
+    }
+  }
+
+  if (inherits(f_data, "character")) {
+    mess <- try({
+      f = readLines(f_data)
+      skipLines = which.max(grepl("#", x = f[1:length(f)])) #find the last commented line and assume header info
+      f_data <- data.table::fread(input=paste0(f, collapse = "\n"), sep = "\t", header = TRUE, skip = skipLines - 1, data.table = FALSE)
+      fdata_cname = colnames(f_data)[1] # choose the sample identifier column (first for now)
+      }, silent = TRUE)
+
+    if (inherits(mess, "try-error")) {
+      stop("Sample metadata import failed. Incorrect file path or unsupported file format.")
+    }
+  }
+
   # initial checks #
 
-  # check that e_data and f_data are data.frames #
-  if (class(e_data) != "data.frame") stop("e_data must be of the class 'data.frame'")
-  if (class(f_data) != "data.frame") stop("f_data must be of the class 'data.frame'")
-
-  # check to see if e_meta is NULL, if not check that it is a data.frame #
-  if (!is.null(e_meta)) {if (class(e_meta) != "data.frame") stop("e_meta must be of the class 'data.frame'")}
-
-  # check to see if tree_path is NULL, if not check that it is a character #
-  if (!is.null(e_tree)) {if (!(inherits(e_tree, "phylo"))) stop("e_tree must be of the class 'phylo'")}
-
-
-  # check to see if e_seq is NULL, if not check that it has been imported correctly #
-  if (!is.null(e_seq)) { if (!(inherits(e_seq, "DNAStringSet"))) stop("fasta_path must be of the class 'character'")}
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #
   if (!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.rRNAdata for specifying column names.", sep = ""))
@@ -160,7 +180,7 @@ as.rRNAdata <- function(e_data, f_data, e_meta=NULL, e_tree = NULL, e_seq = NULL
   }
 
   # store results #
-  rRNAobj = list(e_data = e_data, f_data = f_data, e_meta = e_meta, e_tree = e_tree, e_seq = e_seq)
+  rRNAobj = list(e_data = e_data, f_data = f_data, e_meta = e_meta)
 
   # set column name attributes #
   attr(rRNAobj, "cnames") = list(edata_cname = edata_cname, emeta_cname = emeta_cname, fdata_cname = fdata_cname)

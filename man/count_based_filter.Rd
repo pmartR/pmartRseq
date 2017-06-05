@@ -12,8 +12,9 @@ count_based_filter(omicsData, fn = "sum")
 
 \item{fn}{Specify "mean" to use the mean count of each OTU, "percent" to use
 mean counts lower than a certain percent, "max" to use the max count across
-all samples, "sum" to use the total count of each OTU, or "nonmiss" to use
-presence/absence counts.}
+all samples, "sum" to use the total count of each OTU, "nonmiss" to use
+presence/absence counts, or "ka" to use k over a filtering (need at least
+k counts of OTUs seen in at least a samples).}
 }
 \value{
 An object of class countFilter (also a data.frame) that contains the
@@ -61,6 +62,11 @@ head(nonmiss_lim)
 summary(nonmiss_lim)
 plot(nonmiss_lim)
 
+#Find order of samples for k/a filtering
+ka_lim <- count_based_filter(omicsData, fn="ka")
+head(ka_lim)
+summary(ka_lim)
+plot(ka_lim)
 
 }
 \references{

@@ -4,11 +4,15 @@
 \alias{applyFilt}
 \alias{applyFilt}
 \alias{applyFilt.countFilter}
+\alias{applyFilt}
+\alias{applyFilt.sampleFilter}
 \title{Apply a filter to a mintR S3 object}
 \usage{
 applyFilt(filter_object, omicsData, ...)
 
 \method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2)
+
+\method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2)
 }
 \arguments{
 \item{filter_object}{an object of the class "countFilter", created by \code{count_based_filter}.}
@@ -16,6 +20,8 @@ applyFilt(filter_object, omicsData, ...)
 \item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
 
 \item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.}
+
+\item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
 An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.

@@ -29,53 +29,54 @@
 \alias{plot.indspRes}
 \title{Produce a plot of a mintR S3 Object}
 \usage{
-\method{plot}{countSTAT_results}(results_object, type = "pvals",
-  test = NULL, x_lab = NULL, y_lab = NULL, plot_title = NULL,
-  leglab = NULL, FCThresh = log2(1.5), comparison = NULL, ...)
+plot.countSTAT_results(results_object, type = "pvals", test = NULL,
+  x_lab = NULL, y_lab = NULL, plot_title = NULL, leglab = NULL,
+  FCThresh = log2(1.5), comparison = NULL, ...)
 
-\method{plot}{alphaRes}(results_object, x_axis = "Group", color = "Group",
+plot.alphaRes(results_object, x_axis = "Group", color = "Group",
   shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-\method{plot}{evenRes}(results_object, x_axis = "Group", color = "Group",
+plot.evenRes(results_object, x_axis = "Group", color = "Group",
   shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-\method{plot}{jaccardRes}(results_object, variable = "Median",
-  x_axis = "Group", color = "Group", shape = NULL, plot_title = NULL,
-  x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-\method{plot}{countFilter}(results_object, breaks = 100, max_count = NULL,
-  min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
-
-\method{plot}{sampleFilter}(results_object, breaks = 100, max_count = NULL,
-  min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
-
-\method{plot}{rRNAdata}(results_object, x_axis = "Group", class = "Phylum",
-  grp_fn = "median", subset_by = NULL, subset_val = NULL,
-  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-\method{plot}{cDNAdata}(results_object, x_axis = "Group", class = "ECNum",
-  grp_fn = "median", subset_by = NULL, subset_val = NULL,
-  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-\method{plot}{gDNAdata}(results_object, x_axis = "Group", class = "ECNum",
-  grp_fn = "median", subset_by = NULL, subset_val = NULL,
-  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-\method{plot}{richRes}(results_object, abun = NULL, x_axis = "Group",
-  color = "Group", scales = "free_y", shape = NULL, plot_title = NULL,
-  x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-\method{plot}{abunRes}(results_object, rich = NULL, x_axis = "Group",
+plot.jaccardRes(results_object, variable = "Median", x_axis = "Group",
   color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-\method{plot}{effspRes}(results_object, x_axis = "Group", color = "Group",
+plot.countFilter(results_object, breaks = 100, max_count = NULL,
+  min_num = NULL, min_samp = NULL, plot_title = NULL, x_lab = NULL,
+  y_lab = NULL, ...)
+
+plot.sampleFilter(results_object, breaks = 100, max_count = NULL,
+  min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
+
+plot.rRNAdata(results_object, x_axis = "Group", class = "Phylum",
+  grp_fn = "median", subset_by = NULL, subset_val = NULL,
+  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
+
+plot.cDNAdata(results_object, x_axis = "Group", class = "ECNum",
+  grp_fn = "median", subset_by = NULL, subset_val = NULL,
+  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
+
+plot.gDNAdata(results_object, x_axis = "Group", class = "ECNum",
+  grp_fn = "median", subset_by = NULL, subset_val = NULL,
+  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
+
+plot.richRes(results_object, abun = NULL, x_axis = "Group",
+  color = "Group", scales = "free_y", shape = NULL, plot_title = NULL,
+  x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
+
+plot.abunRes(results_object, rich = NULL, x_axis = "Group",
+  color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
+  y_lab = NULL, leglab = NULL, ...)
+
+plot.effspRes(results_object, x_axis = "Group", color = "Group",
   shape = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL,
   leglab = NULL, ...)
 
-\method{plot}{indspRes}(results_object, type = "pvals", ...)
+plot.indspRes(results_object, type = "pvals", ...)
 }
 \arguments{
 \item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), rRNAdata (\code{\link{as.rRNAdata}}), cDNAdata (\code{\link{as.cDNAdata}}), gDNAdata (\code{\link{as.gDNAdata}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).}
@@ -109,6 +110,8 @@
 \item{max_count}{Optional, a number specifying the maximum count number to show on the graph. Default is NULL.}
 
 \item{min_num}{Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL.}
+
+\item{min_samp}{Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.}
 
 \item{class}{Required, a character vector specifying which variable to group data by (e.g. "Phylum") and to color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Phylum".}
 

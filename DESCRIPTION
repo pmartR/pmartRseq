@@ -7,4 +7,11 @@ Depends: R (>= 3.3.2)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Depends:
+    data.table,
+    plyr,
+    dplyr,
+    rrcov,
+    e1071,
+    reshape2
 RoxygenNote: 6.0.1.9000

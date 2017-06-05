@@ -124,15 +124,15 @@ count_based_filter <- function(omicsData, fn="sum"){
     ka_edata <- ka_edata[,-which(colnames(ka_edata) == edata_cname)]
     ka_edata <- as.matrix(ka_edata)
     ka_edata[which(is.na(ka_edata))] <- 0
-    
+
     ka_OTUs <- lapply(c(1:nrow(ka_edata)), function(x) as.vector(ka_edata[x,])[order(as.vector(ka_edata[x,]),decreasing=TRUE)])
     ka_OTUs <- lapply(ka_OTUs, unname)
     ka_OTUs <- do.call(rbind, ka_OTUs)
     colnames(ka_OTUs) <- sapply(c(1:ncol(ka_edata)), function(x) paste("NumSamples_",x,sep=""))
-    
+
     infrequent_OTUs <- data.frame(omicsData$e_data[, edata_cname], ka_OTUs)
     colnames(infrequent_OTUs)[1] <- edata_cname
-    
+
   }
 
   class(infrequent_OTUs) <- c("countFilter",class(infrequent_OTUs))
@@ -141,7 +141,7 @@ count_based_filter <- function(omicsData, fn="sum"){
   attr(infrequent_OTUs, "group_DF") <- attr(omicsData, "group_DF")
   attr(infrequent_OTUs, "function") <- fn
 
-  threshold <- quantile(melt(infrequent_OTUs)$value, 0.95)
+  threshold <- quantile(reshape2::melt(infrequent_OTUs)$value, 0.95)
   attr(infrequent_OTUs, "threshold") <- threshold
 
   return(infrequent_OTUs)

@@ -82,7 +82,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2){
   filter_object_new = list(edata_filt = filter.edata, emeta_filt = NULL, samples_filt = NULL)
 
   # call the function that does the filter application
-  results_pieces <- mintR:::applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
+  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
 
   # return filtered data object #
   results <- omicsData
@@ -137,6 +137,90 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2){
   return(results)
 }
 
+
+# function for countFilter
+#' @export
+#' @name applyFilt
+#' @rdname applyFilt
+#' @param  upper_lim Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.
+applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2){
+
+  # check that upper_lim is numeric and >=1 #
+  if(!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
+  # check that upper_lim is of length 1 #
+  if(length(upper_lim) != 1) stop("upper_lim must be of length 1")
+
+  fdata_cname <- attr(omicsData, "cnames")$fdata_cname
+  fn <- attr(filter_object, "function")
+
+  num_obs <- filter_object[,paste(fn,"Samps",sep="")]
+
+  # get indices for which ones don't meet the min requirement #
+  inds <- which(num_obs <= upper_lim)
+
+  if(length(inds) < 1){
+    filter.samples <- NULL
+  }else{
+    filter.samples <- omicsData$f_data[, which(names(omicsData$f_data) == fdata_cname)][inds]
+  }
+
+  filter_object_new = list(edata_filt = NULL, emeta_filt = NULL, samples_filt = filter.samples)
+
+  # call the function that does the filter application
+  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
+
+  # return filtered data object #
+  results <- omicsData
+  results$e_data <- results_pieces$temp.pep2
+  results$f_data <- results_pieces$temp.samp2
+  results$e_meta <- results_pieces$temp.meta1
+
+  # if group attribute is present, re-run group_designation in case filtering any items impacted the group structure
+  if(!is.null(attr(results, "group_DF"))){
+    results <- group_designation(omicsData = results, main_effects = attr(attr(omicsData, "group_DF"), "main_effects"), covariates = attr(attr(omicsData, "group_DF"), "covariates"), time_course = attr(attr(omicsData, "group_DF"), "time_course"))
+    # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
+    attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
+    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
+
+    if(!is.null(results$e_meta)){
+      # number of unique proteins that map to a peptide in e_data #
+      if(!is.null(emeta_cname)){
+        num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
+      }else{num_emeta = NULL}
+    }else{
+      num_emeta = NULL
+    }
+    attr(results, "data_info")$num_emeta = num_emeta
+    ## end of update attributes (7/11/2016 by KS)
+  }else{
+    # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
+    attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
+    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
+
+    if(!is.null(results$e_meta)){
+      # number of unique proteins that map to a peptide in e_data #
+      if(!is.null(emeta_cname)){
+        num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
+      }else{num_emeta = NULL}
+    }else{
+      num_emeta = NULL
+    }
+    attr(results, "data_info")$num_emeta = num_emeta
+    ## end of update attributes (7/11/2016 by KS)
+  }
+
+  # set attributes for which filters were run
+  attr(results, "filters")$sampleFilter <- list(report_text = "", threshold = c(), filtered = c())
+  attr(results, "filters")$sampleFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing samples that have a ", fn," count less than ", upper_lim, ". A total of ", length(filter.samples)," samples were filtered out of the dataset by this filter.", sep="")
+  attr(results, "filters")$sampleFilter$threshold <- upper_lim
+  attr(results, "filters")$sampleFilter$filtered <- filter.samples
+
+  return(results)
+}
 
 
 #' Remove items that need to be filtered out

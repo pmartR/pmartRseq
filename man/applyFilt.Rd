@@ -10,7 +10,8 @@
 \usage{
 applyFilt(filter_object, omicsData, ...)
 
-\method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2)
+\method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2,
+  num_samps = NULL)
 
 \method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2)
 }
@@ -20,6 +21,8 @@ applyFilt(filter_object, omicsData, ...)
 \item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
 
 \item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.}
+
+\item{num_samps}{for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features}
 
 \item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }

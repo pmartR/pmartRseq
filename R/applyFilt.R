@@ -53,8 +53,25 @@ applyFilt <- function(filter_object, omicsData, ...){
 #' @export
 #' @name applyFilt
 #' @rdname applyFilt
+#' @param num_samps for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features
 #' @param  upper_lim OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.
-applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2){
+applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL){
+
+  # Check if k/a fn
+  if(attr(filter_object, "function") == "ka"){
+    if(is.null(num_samps)){
+      num_samps = 2
+      warning("Minimum number of samples wasn't given, defaulting to 2.")
+    }
+    if(!(class(num_samps) %in% c("numeric","integer")) | num_samps <= 0 | num_samps > length(attr(filter_object, "sample_names"))){
+      stop("num_samps must be an integer greater than 0 and less than or equal to the total number of samples in the dataset")
+    }
+    if(length(num_samps) != 1) stop("num_samps must be of length 1")
+  }else{
+    if(!is.null(num_samps)){
+      warning("num_samps provided but not used for this filter function")
+    }
+  }
 
   # check that upper_lim is numeric and >=1 #
   if(!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
@@ -68,7 +85,11 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2){
     upper_lim = upper_lim / 100
   }
 
-  num_obs <- filter_object[,paste(fn,"OTUs",sep="")]
+  if(fn == "ka"){
+    num_obs <- filter_object[,paste("NumSamples",num_samps,sep="_")]
+  }else{
+    num_obs <- filter_object[,paste(fn,"OTUs",sep="")]
+  }
 
   # get indices for which ones don't meet the min requirement #
   inds <- which(num_obs <= upper_lim)
@@ -136,6 +157,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2){
 
   return(results)
 }
+
 
 
 # function for countFilter

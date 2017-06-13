@@ -43,7 +43,7 @@ alphaDiv_calc <- function(omicsData, index=c("shannon","simpson","invsimpson")){
   ## end initial checks ##
 
   # change 0 to NA, makes for easier calculation
-  omicsData <- mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+  omicsData$e_data[omicsData$e_data == 0] <- NA #mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
   rownames(omicsData$e_data) <- omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData,"cnames")$edata_cname)]
   omicsData$e_data <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData,"cnames")$edata_cname)]
 

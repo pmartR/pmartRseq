@@ -172,18 +172,20 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2) {
   # check that upper_lim is of length 1 #
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
 
-  fdata_cname <- attr(omicsData, "cnames")$fdata_cname
+  edata_cname <- attr(omicsData, "cnames")$edata_cname
   fn <- attr(filter_object, "function")
 
   num_obs <- filter_object[,paste(fn,"Samps",sep="")]
 
   # get indices for which ones don't meet the min requirement #
-  inds <- which(num_obs <= upper_lim)
+  inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
 
   if (length(inds) < 1) {
     filter.samples <- NULL
   }else{
-    filter.samples <- omicsData$f_data[, which(names(omicsData$f_data) == fdata_cname)][inds]
+    filter.samples <- inds
+    #filter.samples <- omicsData$e_data[,c(which(colnames(omicsData$e_data) == edata_cname), which(colnames(omicsData$e_data) %in% as.character(inds)))]
+    #filter.samples <- omicsData$e_data[, which(names(omicsData$f_data) == fdata_cname)][inds]
   }
 
   filter_object_new = list(edata_filt = NULL, emeta_filt = NULL, samples_filt = filter.samples)

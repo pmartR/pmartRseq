@@ -16,7 +16,7 @@ applyFilt(filter_object, omicsData, ...)
 \method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2)
 }
 \arguments{
-\item{filter_object}{an object of the class "countFilter", created by \code{count_based_filter}.}
+\item{filter_object}{an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.}
 
 \item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
 
@@ -30,7 +30,7 @@ applyFilt(filter_object, omicsData, ...)
 An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.
 }
 \description{
-This function takes a filter object of class "countFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
+This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
 }
 \examples{
 library(mintJansson)
@@ -46,7 +46,7 @@ print(str(attributes(rRNAdata3)$filters))
 
 }
 \seealso{
-\code{\link{count_based_filter}}
+\code{\link{count_based_filter}} \code{\link{sample_based_filter}}
 }
 \author{
 Allison Thompson

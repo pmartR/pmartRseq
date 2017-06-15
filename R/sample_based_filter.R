@@ -17,18 +17,18 @@
 #' @examples
 #'
 #' @export
-sample_based_filter <- function(omicsData, fn="sum"){
+sample_based_filter <- function(omicsData, fn="sum") {
 
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if(!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if (!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
 
-  if(attr(omicsData, "data_info")$data_scale!='count'){
+  if (attr(omicsData, "data_info")$data_scale!='count') {
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
   }
 
-  if(!(tolower(fn) %in% c("sum"))){
+  if (!(tolower(fn) %in% c("sum"))) {
     stop("fn must only be 'sum'.")
   }
 
@@ -37,7 +37,7 @@ sample_based_filter <- function(omicsData, fn="sum"){
   edata <- omicsData$e_data
   edata_cname <- attr(omicsData,"cnames")$edata_cname
 
- if(fn == "sum"){
+ if (fn == "sum") {
     # Total number of  OTUs per sample
     sum_Samps <- colSums(edata[, -which(colnames(edata) == edata_cname)], na.rm=TRUE)
     infrequent_OTUs <- data.frame(names(omicsData$e_data)[-which(names(omicsData$e_data) == edata_cname)], sum_Samps)

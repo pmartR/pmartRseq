@@ -12,7 +12,7 @@
 #' @return An object of class sampleFilter (also a data.frame) that contains the
 #'   sample identifier and the sum count across all OTUs.
 #'
-#' @author Sarah Reehl
+#' @author Allison Thompson and Sarah Reehl
 #'
 #' @examples
 #'
@@ -28,8 +28,8 @@ sample_based_filter <- function(omicsData, fn="sum") {
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
   }
 
-  if (!(tolower(fn) %in% c("sum"))) {
-    stop("fn must only be 'sum'.")
+  if (!(tolower(fn) %in% c("sum", "criteria"))) {
+    stop("fn must be either 'sum' or 'criteria'.")
   }
 
   ## end initial checks ##
@@ -43,6 +43,14 @@ sample_based_filter <- function(omicsData, fn="sum") {
     infrequent_OTUs <- data.frame(names(omicsData$e_data)[-which(names(omicsData$e_data) == edata_cname)], sum_Samps)
     colnames(infrequent_OTUs) <- c("Sample", "sumSamps")
 
+ }
+  
+  if (fn == "criteria") {
+    # Total number of  OTUs per sample
+    sum_Samps <- colSums(edata[, -which(colnames(edata) == edata_cname)], na.rm=TRUE)
+    infrequent_OTUs <- data.frame(names(omicsData$e_data)[-which(names(omicsData$e_data) == edata_cname)], FALSE)
+    colnames(infrequent_OTUs) <- c("Sample", "criteriaSamps")
+    
   }
 
   class(infrequent_OTUs) <- c("sampleFilter",class(infrequent_OTUs))

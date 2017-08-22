@@ -165,20 +165,29 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 #' @name applyFilt
 #' @rdname applyFilt
 #' @param  upper_lim Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.
-applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2) {
+#' @param samps_to_remove Sample names selected to remove based on sample metadata criteria
+applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_to_remove = NULL) {
 
   # check that upper_lim is numeric and >=1 #
   if (!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
   # check that upper_lim is of length 1 #
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
-
+  # if sample names are given, make sure they exist in the data
+  if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
+  
   edata_cname <- attr(omicsData, "cnames")$edata_cname
   fn <- attr(filter_object, "function")
-
-  num_obs <- filter_object[,paste(fn,"Samps",sep="")]
-
-  # get indices for which ones don't meet the min requirement #
-  inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
+  
+  if( fn == "criteria" ){
+    to_remove <- which(samps_to_remove %in% filter_object[, "Sample"])
+    filter_object[to_remove, paste(fn,"Samps",sep="")] <- TRUE
+    inds <- filter_object[to_remove, "Sample"]
+  } else {
+    num_obs <- filter_object[,paste(fn,"Samps",sep="")]
+    
+    # get indices for which ones don't meet the min requirement #
+    inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
+  }
 
   if (length(inds) < 1) {
     filter.samples <- NULL

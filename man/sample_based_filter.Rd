@@ -25,5 +25,5 @@ limit
 
 }
 \author{
-Sarah Reehl
+Allison Thompson and Sarah Reehl
 }

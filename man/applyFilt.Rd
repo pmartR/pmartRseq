@@ -13,7 +13,8 @@ applyFilt(filter_object, omicsData, ...)
 \method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2,
   num_samps = NULL)
 
-\method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2)
+\method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2,
+  samps_to_remove = NULL)
 }
 \arguments{
 \item{filter_object}{an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.}
@@ -23,6 +24,8 @@ applyFilt(filter_object, omicsData, ...)
 \item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.}
 
 \item{num_samps}{for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features}
+
+\item{samps_to_remove}{Sample names selected to remove based on sample metadata criteria}
 
 \item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }

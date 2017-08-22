@@ -29,21 +29,21 @@ pmartRseq_NMDS <- function(res,grp){
   library(ggplot2)
 
   # Extract component scores
-  NMDS1 <- data.frame(scores(XX))$NMDS1
-  NMDS2 <- data.frame(scores(XX))$NMDS2
+  NMDS1 <- data.frame(scores(res))$NMDS1
+  NMDS2 <- data.frame(scores(res))$NMDS2
 
-  testZZ <- table(ZZ)
-  if(any(testZZ < 3)){
-    names <- names(which(testZZ < 3))
-    ids <- which(ZZ %in% names)
-    ZZ <- ZZ[-ids]
-    ZZ <- droplevels(ZZ)
+  testgrp <- table(grp)
+  if(any(testgrp < 3)){
+    names <- names(which(testgrp < 3))
+    ids <- which(grp %in% names)
+    grp <- grp[-ids]
+    grp <- droplevels(grp)
     NMDS1 <- NMDS1[-ids]
     NMDS2 <- NMDS2[-ids]
   }
 
   # Format treatment, "group"
-  Treatment <- ZZ
+  Treatment <- grp
   if(any(levels(Treatment) == "")){
     Treatment <- as.character(Treatment)
     Treatment <- as.factor(Treatment)
@@ -85,9 +85,9 @@ pmartRseq_NMDS <- function(res,grp){
   X1
 }
 
-# mead_PCA <- function(XX, ZZ){
+# mead_PCA <- function(res, grp){
 #
-#   plotdata <- data.frame(SampleID = rownames(scores(XX)), PC1 = data.frame(scores(XX))$NMDS1, PC2 = data.frame(scores(XX))$NMDS2, Group = ZZ)
+#   plotdata <- data.frame(SampleID = rownames(scores(res)), PC1 = data.frame(scores(res))$NMDS1, PC2 = data.frame(scores(res))$NMDS2, Group = grp)
 #
 #   ggplot(plotdata, aes(x=PC1, y=PC2)) +
 #     geom_point(aes(colour=Group), size=2.5, alpha=0.75)+

@@ -12,7 +12,7 @@ applyFilt_worker(filter_object, omicsData)
 \item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, \code{\link{as.rRNAdata}}, respectively.}
 }
 \value{
-list similar to as.mintRData object
+list similar to as.omicsData object
 }
 \description{
 This function removes filtered objects

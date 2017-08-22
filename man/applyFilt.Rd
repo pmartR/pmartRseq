@@ -6,7 +6,7 @@
 \alias{applyFilt.countFilter}
 \alias{applyFilt}
 \alias{applyFilt.sampleFilter}
-\title{Apply a filter to a mintR S3 object}
+\title{Apply a filter to an omicsData object}
 \usage{
 applyFilt(filter_object, omicsData, ...)
 

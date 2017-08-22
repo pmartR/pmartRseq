@@ -14,12 +14,14 @@
 #' @return An object of class alphaRes (also a data.frame) containing the diversity value(s) for every sample in the data object.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_diversity <- alphaDiv_calc(omicsData = rRNA_data)
 #' rRNA_diversity
 #' summary(rRNA_diversity)
 #' plot(rRNA_diversity)
+#'}
 #'
 #' @author Allison Thompson
 #'

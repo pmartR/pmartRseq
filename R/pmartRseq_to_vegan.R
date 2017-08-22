@@ -12,6 +12,7 @@
 #'   Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2016). vegan: Community Ecology Package. R package version 2.4-1. https://CRAN.R-project.org/package=vegan
 #'
 #' @examples
+#' \dontrun{
 #'
 #' library(vegan)
 #' library(mintJansson)
@@ -20,6 +21,7 @@
 #' data <- pmartRseq_to_vegan(rRNA_data)
 #' ord <- metaMDS(data)
 #' plot(ord, display="sites", type="points")
+#' }
 #'
 #' @export
 pmartRseq_to_vegan <- function(omicsData){

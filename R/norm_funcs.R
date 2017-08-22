@@ -14,10 +14,12 @@
 #' @references Paulson, Joseph N, O Colin Stine, Hector Corrada Bravo, and Mihai Pop. "Differential abundance analysis for microbial marker-gene surveys." Nature Methods. 10.12 (2013)
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_CSS <- CSS_Norm(e_data = rRNA_data$e_data, edata_id = attr(rRNA_data, "cnames")$edata_cname)
 #' norm_factors <- attr(rRNA_CSS,"data_info")$scale_param
+#' }
 #'
 #' @author Allison Thompson, Lisa Bramer
 #'

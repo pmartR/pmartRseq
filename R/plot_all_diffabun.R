@@ -15,8 +15,11 @@
 #' @return A plot showing log2 fold change and p-values for all comparisons and all features
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
+#' library(mintR)
 #' data("rRNAdata")
+#'
 #'
 #' rRNAdata <- group_designation(omicsData=rRNA_data, main_effects="Treatment")
 #' norm_factors <- normalize_data(omicsData=rRNAdata, subset_fn="none", norm_fn="percentile", normalize=FALSE)
@@ -24,6 +27,7 @@
 #' diffexp <- countSTAT(omicsData=rRNAdata, norm_factors=norm_factors, comparisons="all", test="dw", pval_adjust="none", pval_thresh=0.05)
 #'
 #' plot_all_diffabun(countSTAT_results=diffexp, omicsData=norm_data, x_axis="Phylum", facet="~Comparison", scales="fixed")
+#'}
 #'
 #' @author Allison Thompson
 #'

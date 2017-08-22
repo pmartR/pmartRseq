@@ -14,11 +14,15 @@
 #' @return DESeqREsults object, which is a simple subclass of DataFrame. Columns include baseMean, log2FoldChange, lfcSE (standard error of log2FoldChange), stat (Wald statistic), pvalue, and padj (BH adjusted p-values). Use mcols(res)$description.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(cDNA_hiseq_data)
 #' mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 #' mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
 #' mycdnadata_DESeq2 <- pmartRseq_DESeq2(omicsData = mycdnadata_norm, test="wald", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+
+#' mycdnadata_DESeq2 <- mint_DESeq2(omicsData = mycdnadata_norm, test="wald", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+#' }
 #'
 #' @author Allison Thompson
 #'

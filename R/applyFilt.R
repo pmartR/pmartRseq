@@ -8,6 +8,7 @@
 #' @return An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #'
@@ -18,7 +19,7 @@
 #' to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
 #' rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
 #' print(str(attributes(rRNAdata3)$filters))
-#'
+#' }
 #' @seealso \code{\link{count_based_filter}} \code{\link{sample_based_filter}}
 #'
 #' @author Allison Thompson

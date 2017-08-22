@@ -25,7 +25,7 @@
 #' https://bioinformatics.oxfordjournals.org/content/early/2013/07/15/bioinformatics.btt350.full
 #'
 #' @examples
-#'
+#'\dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' omicsData <- rRNA_data
@@ -65,6 +65,7 @@
 #' head(ka_lim)
 #' summary(ka_lim)
 #' plot(ka_lim)
+#' }
 #'
 #' @export
 count_based_filter <- function(omicsData, fn="sum"){

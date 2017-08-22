@@ -25,12 +25,14 @@ Shannon or Shannon–Weaver (or Shannon–Wiener) index is defined as H = -sum(p
 Both variants of Simpson's index are based on D = sum(p_i^2). Choice simpson returns 1-D and invsimpson returns 1/D.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_diversity <- alphaDiv_calc(omicsData = rRNA_data)
 rRNA_diversity
 summary(rRNA_diversity)
 plot(rRNA_diversity)
+}
 
 }
 \author{

@@ -26,10 +26,12 @@ The method assigns each sample to a group, for future analyses, based on the var
 Groups are formed based on the levels of the main effect variables. One or two main effect variables are allowed. In the case of two main effect variables, groups are formed based on unique combinations of the levels of the two main effect variables. Any samples with level "NA" for a main effect variable will be removed from the data and not included in the final group designation results. Any groups with less than 2 samples will be designated to group "NA" and the affected sample(s) will be removed from the data.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_data2 <- group_designation(omicsData = rRNA_data, main_effects = "treatment")
 attr(rRNA_data2, "group_DF")
+}
 
 }
 \author{

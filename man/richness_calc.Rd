@@ -21,12 +21,14 @@ This function calculates the unique number of features seen in each sample.
 Calculates richness of count data
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_richness <- richness_calc(omicsData = rRNA_data)
 rRNA_richness
 summary(rRNA_richness)
 plot(rRNA_richness)
+}
 
 }
 \references{

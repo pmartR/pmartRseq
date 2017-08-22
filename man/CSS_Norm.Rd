@@ -25,10 +25,12 @@ The method normalizes count data by cumulative sum scaling, using a specified qu
 Count data is normalized by a given quantile, dividing by the sum of all values up to and including the given quantile of the sample and multiplying by the given scaling value (either 1000 or the median scaling value across all samples).
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_CSS <- CSS_Norm(e_data = rRNA_data$e_data, edata_id = attr(rRNA_data, "cnames")$edata_cname)
 norm_factors <- attr(rRNA_CSS,"data_info")$scale_param
+}
 
 }
 \references{

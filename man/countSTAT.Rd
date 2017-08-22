@@ -32,12 +32,14 @@ Differential expression tests for count data
 Perform pairwise differential abundance analysis of omicsData using DESeq2 and/or edgeR.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(cDNA_hiseq_data)
 mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
 mycdnadata_dw_results <- countSTAT(omicsData = mycdnadata_norm, comparisons = list(c("Neg","Plus")), control = NULL, test = "dw", pval_adjust = "none", pval_thresh = 0.05)
 mycdnadata_all_results <- countSTAT(omicsData = mycdnadata_norm, comparisons = "all", control = NULL, test = c("dw","eq","el","ef"), pval_adjust = "BH", pval_thresh = 0.05)
+}
 
 }
 \author{

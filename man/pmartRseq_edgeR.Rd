@@ -30,11 +30,14 @@ Differential abundance analysis of count data using edgeR
 Perform pairwise differential abundance analysis of count data using edgeR. For test parameter: "qcml" refers to quantile-adjusted conditional maximum likelihood method, which is the most reliable in terms of bias on a wide range of conditions and specifically performs best in the situation of many small samples with a common dispersion. "lrt" refers to generalized linear model likelihood ratio test, best used for cases where there a multiple treatment groups and provides inferences with GLMs. "qlftest" refers to the QL F-test, preferred as it reflects the uncertainty in estimating the dispersion for each gene and provides a more robust and reliable error rate control when the number of replicates is small. "paired" refers to a paired test and performs the generalized liner model likelihood ratio test for paired data (this should also be used for experiments with a block or batch effect). In the "paired" test, 'group1' should be the main effect of interest and 'group2' should be the covariate/block/batch. Currently, this can be used only if there are 2 main effects of interest.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(cDNA_hiseq_data)
 mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
 mycdnadata_edgeR <- pmartRseq_edgeR(omicsData = mycdnadata_norm, test="qcml", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+mycdnadata_edgeR <- mint_edgeR(omicsData = mycdnadata_norm, test="qcml", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+}
 
 }
 \references{

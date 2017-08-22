@@ -36,6 +36,7 @@ An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, wit
 This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 
@@ -46,7 +47,7 @@ print(str(attributes(rRNAdata2)$filters))
 to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
 rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
 print(str(attributes(rRNAdata3)$filters))
-
+}
 }
 \seealso{
 \code{\link{count_based_filter}} \code{\link{sample_based_filter}}

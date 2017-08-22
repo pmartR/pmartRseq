@@ -16,6 +16,7 @@ A data object for use with the package 'vegan'
 This function takes an omicsData object and transforms it into a data object suitable for use in the vegan package
 }
 \examples{
+\dontrun{
 
 library(vegan)
 library(mintJansson)
@@ -24,6 +25,7 @@ data(rRNA_data)
 data <- pmartRseq_to_vegan(rRNA_data)
 ord <- metaMDS(data)
 plot(ord, display="sites", type="points")
+}
 
 }
 \references{

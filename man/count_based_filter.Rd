@@ -27,7 +27,7 @@ calculations needed to filter the data based off a specified function and
 limit
 }
 \examples{
-
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 omicsData <- rRNA_data
@@ -67,6 +67,7 @@ ka_lim <- count_based_filter(omicsData, fn="ka")
 head(ka_lim)
 summary(ka_lim)
 plot(ka_lim)
+}
 
 }
 \references{

@@ -8,6 +8,7 @@
 #' @return An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #'
@@ -18,6 +19,7 @@
 #' to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
 #' rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
 #' print(str(attributes(rRNAdata3)$filters))
+#' }
 #'
 #' @seealso \code{\link{count_based_filter}} \code{\link{sample_based_filter}}
 #'
@@ -174,17 +176,17 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
   # if sample names are given, make sure they exist in the data
   if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
-  
+
   edata_cname <- attr(omicsData, "cnames")$edata_cname
   fn <- attr(filter_object, "function")
-  
+
   if( fn == "criteria" ){
     to_remove <- which(samps_to_remove %in% filter_object[, "Sample"])
     filter_object[to_remove, paste(fn,"Samps",sep="")] <- TRUE
     inds <- filter_object[to_remove, "Sample"]
   } else {
     num_obs <- filter_object[,paste(fn,"Samps",sep="")]
-    
+
     # get indices for which ones don't meet the min requirement #
     inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
   }

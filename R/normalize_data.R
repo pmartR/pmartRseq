@@ -36,6 +36,7 @@
 #'  Robinson, Mark D and Alicia Oshlack. A scaling normalization method for differential expression analysis of RNA-seq data. Genome Biology 11:R25 (2010).
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #'
 #' #Count data are passed to a quantile normalization by default
@@ -51,6 +52,7 @@
 #'
 #' #One could also rarefy the data - though this is highly NOT recommended
 #' normalized_rRNAdata <- normalize_data(rRNA_data, norm_fn = "rarefy")
+#' }
 #'
 #' @export
 normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){

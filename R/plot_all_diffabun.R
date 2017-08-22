@@ -15,8 +15,10 @@
 #' @return A plot showing log2 fold change and p-values for all comparisons and all features
 #'
 #' @examples
+#' \dontrun{
 #' library(mintR)
 #' data("rRNAdata")
+#' }
 #'
 #' rRNAdata <- group_designation(omicsData=rRNA_data, main_effects="Treatment")
 #' norm_factors <- normalize_data(omicsData=rRNAdata, subset_fn="none", norm_fn="percentile", normalize=FALSE)

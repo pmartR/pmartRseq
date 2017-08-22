@@ -12,10 +12,12 @@
 #' @return An object of the same class as the input \code{omicsData} object - the provided object with the samples filtered out, if any NAs were produced in designating groups. An attribute 'group_DF', a data.frame with columns for sample id and group, is added to the object. If two main effects are provided the original main effect levels for each sample are returned as the third and fourth columns of the data.frame. If time_course is included, a column for 'TimeCourse' will be output as well. Additionally, the covariates provided will be listed as attributes of this data.frame.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_data2 <- group_designation(omicsData = rRNA_data, main_effects = "treatment")
 #' attr(rRNA_data2, "group_DF")
+#' }
 #'
 #' @author Allison Thompson, Kelly Stratton, Lisa Bramer
 #'

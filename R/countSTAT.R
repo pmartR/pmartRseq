@@ -19,12 +19,14 @@
 #' @return A results object containing the log2 fold change (logFC), log-average concentration/abundance (logCPM), likelihood ratio (LR), exact p-value for differential expression using the negative binomial model (PValue), and the p-value adjusted for multiple testing (FDR) for every pairwise comparison and every feature.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(cDNA_hiseq_data)
 #' mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 #' mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
 #' mycdnadata_dw_results <- countSTAT(omicsData = mycdnadata_norm, comparisons = list(c("Neg","Plus")), control = NULL, test = "dw", pval_adjust = "none", pval_thresh = 0.05)
 #' mycdnadata_all_results <- countSTAT(omicsData = mycdnadata_norm, comparisons = "all", control = NULL, test = c("dw","eq","el","ef"), pval_adjust = "BH", pval_thresh = 0.05)
+#' }
 #'
 #' @author Allison Thompson
 #'

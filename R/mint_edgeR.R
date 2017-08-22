@@ -14,11 +14,13 @@
 #' @return A matrix containing the log2 fold change (logFC), log-average concentration/abundance (logCPM), likelihood ratio (LR), exact p-value for differential expression using the negative binomial model (PValue), and the p-value adjusted for multiple testing (FDR) for every pairwise comparison and every feature.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(cDNA_hiseq_data)
 #' mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 #' mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
 #' mycdnadata_edgeR <- mint_edgeR(omicsData = mycdnadata_norm, test="qcml", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+#' }
 #'
 #' @author Allison Thompson
 #'

@@ -11,12 +11,14 @@
 #' @references Chao, Anne. Species Richness Estimation.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_richness <- richness_calc(omicsData = rRNA_data)
 #' rRNA_richness
 #' summary(rRNA_richness)
 #' plot(rRNA_richness)
+#' }
 #'
 #' @author Allison Thompson
 #'

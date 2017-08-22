@@ -1,6 +1,6 @@
 # Wrapper for count data statistical tests
 
-# Inputs - mintRdata, comparisons, test (DESeq2/Wald, DESeq2/LRT, DESeq2/Paired, edgeR/QCML, edgeR/LRT, edgeR/ANOVA, edgeR/Paired), control (if comparing against control), p-value threshold, pvalue adjustment method,
+# Inputs - omicsData, comparisons, test (DESeq2/Wald, DESeq2/LRT, DESeq2/Paired, edgeR/QCML, edgeR/LRT, edgeR/ANOVA, edgeR/Paired), control (if comparing against control), p-value threshold, pvalue adjustment method,
 
 #' Statistical tests for count data
 #'
@@ -14,7 +14,7 @@
 #' @param pval_adjust Name of which multiple comparisons adjustment to use. Options are "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "FDR", and "none". See ?p.adjust for more information. The default is "BH".
 #' @param pval_thresh P-value threshold for significance. The default is 0.05.
 #'
-#' @details Perform pairwise differential abundance analysis of mintR count data using DESeq2 and/or edgeR.
+#' @details Perform pairwise differential abundance analysis of omicsData using DESeq2 and/or edgeR.
 #'
 #' @return A results object containing the log2 fold change (logFC), log-average concentration/abundance (logCPM), likelihood ratio (LR), exact p-value for differential expression using the negative binomial model (PValue), and the p-value adjusted for multiple testing (FDR) for every pairwise comparison and every feature.
 #'
@@ -65,7 +65,7 @@ countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL,
 
   if("dw" %in% tolower(test)){
     # Run DESeq2 function, using the Wald test
-    res[["dw"]] <- mint_DESeq2(omicsData=omicsData, norm_factors=norm_factors, test="wald", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["dw"]] <- pmartRseq_DESeq2(omicsData=omicsData, norm_factors=norm_factors, test="wald", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["dw"]]) <- gsub("log2FoldChange","logFC",names(res[["dw"]]))
     names(res[["dw"]]) <- gsub("pvalue","PValue",names(res[["dw"]]))
     #names(res[["dw"]]) <- unlist(lapply(names(res[["dw"]]), function(x) paste("dw_", x, sep="")))
@@ -75,7 +75,7 @@ countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL,
 #   if("dl" %in% tolower(test)){
 #     # Run DESeq2 function, using the LRT test
 #     # DOESN'T WORK, PROBLEM WITH REDUCED MODEL
-#     res[["dl"]] <- mint_DESeq2(omicsData=omicsData, test="lrt", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+#     res[["dl"]] <- pmartRseq_DESeq2(omicsData=omicsData, test="lrt", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
 #     names(res[["dl"]]) <- gsub("log2FoldChange","logFC",names(res[["dl"]]))
 #     #names(res[["dl"]]) <- unlist(lapply(names(res[["dl"]]), function(x) paste("dl_", x, sep="")))
 #     res[["dl"]] <- as.data.frame(res[["dl"]])
@@ -83,7 +83,7 @@ countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL,
 #   }
   if("dp" %in% tolower(test)){
     # Run DESeq2 function, performing paired test
-    res[["dp"]] <- mint_DESeq2(omicsData=omicsData, norm_factors=norm_factors, test="paired", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["dp"]] <- pmartRseq_DESeq2(omicsData=omicsData, norm_factors=norm_factors, test="paired", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["dp"]]) <- gsub("log2FoldChange","logFC",names(res[["dp"]]))
     names(res[["dp"]]) <- gsub("pvalue","PValue",names(res[["dp"]]))
     #names(res[["dp"]]) <- unlist(lapply(names(res[["dp"]]), function(x) paste("dp_", x, sep="")))
@@ -92,28 +92,28 @@ countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL,
   }
   if("eq" %in% tolower(test)){
     # Run edgeR function, using QCML test
-    res[["eq"]] <- mint_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="qcml", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["eq"]] <- pmartRseq_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="qcml", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["eq"]]) <- gsub("FDR","padj",names(res[["eq"]]))
     #names(res[["eq"]]) <- unlist(lapply(names(res[["eq"]]), function(x) paste("eq_", x, sep="")))
     test_text <- c(test_text,", edgeR using the quantile-adjusted conditional maximum likelihood test")
   }
   if("el" %in% tolower(test)){
     # Run edgeR function, using LRT test
-    res[["el"]] <- mint_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="lrt", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["el"]] <- pmartRseq_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="lrt", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["el"]]) <- gsub("FDR","padj",names(res[["el"]]))
     #names(res[["el"]]) <- unlist(lapply(names(res[["el"]]), function(x) paste("el_", x, sep="")))
     test_text <- c(test_text,", edgeR using the likelihood ratio test")
   }
   if("ef" %in% tolower(test)){
     # Run edgeR function, using ANOVA test
-    res[["ef"]] <- mint_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="qlftest", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["ef"]] <- pmartRseq_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="qlftest", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["ef"]]) <- gsub("FDR","padj",names(res[["ef"]]))
     #names(res[["ef"]]) <- unlist(lapply(names(res[["ef"]]), function(x) paste("ef_", x, sep="")))
     test_text <- c(test_text,", edgeR using the quasi-likelihood F-test")
   }
   if("ep" %in% tolower(test)){
     # Run edgeR function, performing paired test
-    res[["ep"]] <- mint_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="paired", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
+    res[["ep"]] <- pmartRseq_edgeR(omicsData=omicsData, norm_factors=norm_factors, test="paired", pairs=pairs, adj=pval_adjust, thresh=pval_thresh)
     names(res[["ep"]]) <- gsub("FDR","padj",names(res[["ep"]]))
     #names(res[["ep"]]) <- unlist(lapply(names(res[["ep"]]), function(x) paste("ep_", x, sep="")))
     test_text <- c(test_text,", edgeR using the paired test")

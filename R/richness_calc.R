@@ -44,7 +44,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   ## end initial checks ##
 
   # change 0 to NA, makes for easier calculation
-  omicsData$e_data[omicsData$e_data == 0] <- NA #mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+  omicsData$e_data[omicsData$e_data == 0] <- NA
 
   edata_cname <- attr(omicsData, "cnames")$edata_cname
 
@@ -91,7 +91,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   if("ace" %in% tolower(index)){
     # Change NA to 0 and extract e_data - change edata_cname column to rownames and remove from data
     temp <- omicsData$e_data
-    temp[temp == 0] <- NA #mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+    temp[temp == 0] <- NA
     e_data <- temp[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
     rownames(e_data) <- omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
 

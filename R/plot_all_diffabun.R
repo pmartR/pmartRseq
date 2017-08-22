@@ -1,6 +1,6 @@
 #' Plot all differential abundance results
 #'
-#' This function takes the differential expression results of a mintR data object and creates a plot showing all the log2 fold changes of all features and the corresponding p-values. This looks at the entire dataset to help determine shifts in the whole community.
+#' This function takes the differential abundance results of an omicsData object and creates a plot showing all the log2 fold changes of all features and the corresponding p-values. This looks at the entire dataset to help determine shifts in the whole community.
 #'
 #' @param countSTAT_results Required, an object of the class \code{countSTAT} created by \code{\link{countSTAT}}.
 #' @param omicsData Required, omicsData ,an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.
@@ -15,7 +15,7 @@
 #' @return A plot showing log2 fold change and p-values for all comparisons and all features
 #'
 #' @examples
-#' library(mintR)
+#' library(mintJansson)
 #' data("rRNAdata")
 #'
 #' rRNAdata <- group_designation(omicsData=rRNA_data, main_effects="Treatment")

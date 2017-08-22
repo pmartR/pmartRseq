@@ -1,4 +1,4 @@
-#' edgeR analysis of mintR objects
+#' edgeR analysis of omicsData objects
 #'
 #' Differential abundance analysis of count data using edgeR
 #'
@@ -18,7 +18,7 @@
 #' data(cDNA_hiseq_data)
 #' mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 #' mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
-#' mycdnadata_edgeR <- mint_edgeR(omicsData = mycdnadata_norm, test="qcml", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+#' mycdnadata_edgeR <- pmartRseq_edgeR(omicsData = mycdnadata_norm, test="qcml", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
 #'
 #' @author Allison Thompson
 #'
@@ -29,7 +29,7 @@
 #' Zhou X, Lindsay H and Robinson MD (2014). Robustly detecting differential expression in RNA sequencing data using observation weights. Nucleic Acids Research, 42, pp. e91.
 #'
 
-mint_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, adj, thresh){
+pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, adj, thresh){
   library(edgeR)
   library(dplyr)
 

@@ -56,7 +56,7 @@ CSS_Norm <- function(e_data, edata_id, q=0.75, qg="median"){
 #' this procedure are also called DEseq size scores (Anders et al. 2010).  The same normalization technique is used in DESeq2 as well (Love et al. 2014).
 #'
 #' @param e_data a \eqn{p \times n} data.frame of count data, where \eqn{p} is the number of features and \eqn{n} is the number of samples. Each row corresponds to data for a feature, with the first column giving the feature name.
-#' @param edata_id character string indicating the name of the peptide, lipid, or metabolite identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
+#' @param edata_id character string indicating the name of the feature identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
 #'
 #' @details Count data is normalized by the median scaled score
 #'
@@ -101,7 +101,7 @@ med_scounts_norm <- function(e_data, edata_id){
 #' the quantity that is returned is given by equation 2.4 of Li and Tibshirani (2013).
 #'
 #' @param e_data a \eqn{p \times n} data.frame of count data, where \eqn{p} is the number of features and \eqn{n} is the number of samples. Each row corresponds to data for a feature, with the first column giving the feature name.
-#' @param edata_id character string indicating the name of the peptide, lipid, or metabolite identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
+#' @param edata_id character string indicating the name of the feature identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
 #'
 #' @details Count data resampled from the Poisson distribution
 #'

@@ -1,4 +1,4 @@
-#' Apply a filter to a mintR S3 object
+#' Apply a filter to an omicsData object
 #'
 #' This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
 #'
@@ -27,7 +27,7 @@
 
 applyFilt <- function(filter_object, omicsData, ...) {
 
-  # check that omicsData is of mintR S3 class#
+  # check that omicsData is of pmartRseq S3 class#
   if (!(class(omicsData) %in% c("cDNAdata", "gDNAdata", "rRNAdata"))) stop("omicsData must be of class 'cDNAdata', 'gDNAdata', or 'rRNAdata'")
 
   # pull column names from omicR_data attributes #
@@ -107,7 +107,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 
   # return filtered data object #
   results <- omicsData
-  results$e_data <- results_pieces$temp.pep2
+  results$e_data <- results_pieces$temp.dat2
   results$f_data <- results_pieces$temp.samp2
   results$e_meta <- results_pieces$temp.meta1
 
@@ -121,7 +121,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
-      # number of unique proteins that map to a peptide in e_data #
+      # number of unique e_meta that map to an identifier in e_data #
       if (!is.null(emeta_cname)) {
         num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
       }else{num_emeta = NULL}
@@ -138,7 +138,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
-      # number of unique proteins that map to a peptide in e_data #
+      # number of unique emeta that map to an identifier in e_data #
       if (!is.null(emeta_cname)) {
         num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
       }else{num_emeta = NULL}
@@ -174,17 +174,17 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
   # if sample names are given, make sure they exist in the data
   if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
-  
+
   edata_cname <- attr(omicsData, "cnames")$edata_cname
   fn <- attr(filter_object, "function")
-  
+
   if( fn == "criteria" ){
     to_remove <- which(samps_to_remove %in% filter_object[, "Sample"])
     filter_object[to_remove, paste(fn,"Samps",sep="")] <- TRUE
     inds <- filter_object[to_remove, "Sample"]
   } else {
     num_obs <- filter_object[,paste(fn,"Samps",sep="")]
-    
+
     # get indices for which ones don't meet the min requirement #
     inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
   }
@@ -204,7 +204,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 
   # return filtered data object #
   results <- omicsData
-  results$e_data <- results_pieces$temp.pep2
+  results$e_data <- results_pieces$temp.dat2
   results$f_data <- results_pieces$temp.samp2
   results$e_meta <- results_pieces$temp.meta1
 
@@ -218,7 +218,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
-      # number of unique proteins that map to a peptide in e_data #
+      # number of unique emeta that map to an identifier in e_data #
       if (!is.null(emeta_cname)) {
         num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
       }else{num_emeta = NULL}
@@ -235,7 +235,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
-      # number of unique proteins that map to a peptide in e_data #
+      # number of unique emeta that map to an identifier in e_data #
       if (!is.null(emeta_cname)) {
         num_emeta = length(unique(results$e_meta[which(as.character(results$e_meta[, edata_cname]) %in% as.character(results$e_data[, edata_cname])), emeta_cname]))
       }else{num_emeta = NULL}
@@ -262,7 +262,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 #'
 #' @param omicsData an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, \code{\link{as.rRNAdata}}, respectively.
 #' @param filter_object a list created by the functions above
-#' @return list similar to as.mintRData object
+#' @return list similar to as.omicsData object
 #' @author Kelly Stratton, Lisa Bramer, Allison Thompson
 #'
 applyFilt_worker <- function(filter_object, omicsData) {
@@ -284,18 +284,18 @@ applyFilt_worker <- function(filter_object, omicsData) {
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      temp.pep = omicsData$e_data
+      temp.dat = omicsData$e_data
 
       # have to check that at least one of the items is present in the data #
-      edat_ids = which(temp.pep[,edata_cname] %in% filter_object$edata_filt)
+      edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
 
       if (length(edat_ids) > 0) {
-        # identify which peptides in e_data match filter list and remove #
-        temp.pep1 = temp.pep[-which(temp.pep[,edata_cname] %in% filter_object$edata_filt),]
-      }else{temp.pep1 = temp.pep}
+        # identify which features in e_data match filter list and remove #
+        temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
+      }else{temp.dat1 = temp.dat}
 
     }else{ # no entries in edata need to be removed
-      temp.pep1 = omicsData$e_data
+      temp.dat1 = omicsData$e_data
     }
 
     ## remove samples ##
@@ -305,7 +305,7 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
       # check that at least one sample is in f_data and e_data #
       fdat_ids = which(temp.samp[,fdata_cname] %in% filter_object$samples_filt)
-      edat_ids2 = which(names(temp.pep1) %in% filter_object$samples_filt)
+      edat_ids2 = which(names(temp.dat1) %in% filter_object$samples_filt)
 
       if (length(fdat_ids) > 0) {
         temp.samp2 = temp.samp[-which(temp.samp[,fdata_cname] %in% filter_object$samples_filt),]
@@ -313,12 +313,12 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
       # identify which samples in e_data match filter list and remove #
       if (length(edat_ids2) > 0) {
-        temp.pep2 = temp.pep1[, -which(names(temp.pep1) %in% filter_object$samples_filt)]
-      }else{temp.pep2 = temp.pep1}
+        temp.dat2 = temp.dat1[, -which(names(temp.dat1) %in% filter_object$samples_filt)]
+      }else{temp.dat2 = temp.dat1}
 
     }else{ # no entries in f_data need to be removed
       temp.samp2 = omicsData$f_data
-      temp.pep2 = temp.pep1
+      temp.dat2 = temp.dat1
     }
 
     temp.meta2 = NULL
@@ -330,19 +330,19 @@ applyFilt_worker <- function(filter_object, omicsData) {
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      temp.pep = omicsData$e_data
+      temp.dat = omicsData$e_data
 
       # have to check that at least one of the items is present in the data #
-      edat_ids = which(temp.pep[,edata_cname] %in% filter_object$edata_filt)
+      edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
 
       if (length(edat_ids) > 0) {
-        # identify which peptides in e_data and e_meta match filter list and remove#
-        temp.pep1 = temp.pep[-which(temp.pep[,edata_cname] %in% filter_object$edata_filt),]
-      }else{temp.pep1 = temp.pep}
+        # identify which features in e_data and e_meta match filter list and remove#
+        temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
+      }else{temp.dat1 = temp.dat}
 
       temp.meta = omicsData$e_meta
 
-      # check that at least one of the peptides is present in e_meta #
+      # check that at least one of the features is present in e_meta #
       emeta_ids = which(temp.meta[,edata_cname] %in% filter_object$edata_filt)
 
       if (length(emeta_ids) > 0) {
@@ -350,7 +350,7 @@ applyFilt_worker <- function(filter_object, omicsData) {
       }else{temp.meta1 = temp.meta}
 
     }else{
-      temp.pep1 = omicsData$e_data
+      temp.dat1 = omicsData$e_data
       temp.meta1 = omicsData$e_meta
     }
 
@@ -361,7 +361,7 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
       # check that at least one sample is in f_data and e_data #
       fdat_ids = which(temp.samp[,fdata_cname] %in% filter_object$samples_filt)
-      edat_ids2 = which(names(temp.pep1) %in% filter_object$samples_filt)
+      edat_ids2 = which(names(temp.dat1) %in% filter_object$samples_filt)
 
       if (length(fdat_ids) > 0) {
         temp.samp2 = temp.samp[-which(temp.samp[,fdata_cname] %in% filter_object$samples_filt),]
@@ -369,20 +369,20 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
       # identify which samples in e_data match filter list and remove #
       if (length(edat_ids2) > 0) {
-        temp.pep2 = temp.pep1[, -which(names(temp.pep1) %in% filter_object$samples_filt)]
-      }else{temp.pep2 = temp.pep1}
+        temp.dat2 = temp.dat1[, -which(names(temp.dat1) %in% filter_object$samples_filt)]
+      }else{temp.dat2 = temp.dat1}
 
     }else{
       temp.samp2 = omicsData$f_data
-      temp.pep2 = temp.pep1
+      temp.dat2 = temp.dat1
     }
 
     ## remove entries in emeta ##
     if (!is.null(filter_object$emeta_filt) & !is.null(emeta_cname)) {
-      # identify which proteins in data match filter list and remove from e_meta #
+      # identify which features in data match filter list and remove from e_meta #
       temp.meta = temp.meta1
 
-      # check that at least one of the proteins is in e_meta #
+      # check that at least one of the features is in e_meta #
       emeta_ids2 = which(temp.meta[,emeta_cname] %in% filter_object$emeta_filt)
 
       if (length(emeta_ids2) > 0) {
@@ -394,18 +394,18 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
 
     # check for rogue entries in edata #
-    edat_ids2 = which(!(temp.pep2[,edata_cname] %in% temp.meta1[,edata_cname]))
+    edat_ids2 = which(!(temp.dat2[,edata_cname] %in% temp.meta1[,edata_cname]))
 
     # filter out edata entries which no longer have mappings to emeta entries #
     if (length(edat_ids2) > 0) {
-      temp.pep2 = temp.pep2[-which(!(temp.pep2[,edata_cname] %in% temp.meta1[,edata_cname])),]
+      temp.dat2 = temp.dat2[-which(!(temp.dat2[,edata_cname] %in% temp.meta1[,edata_cname])),]
     }
 
 
 
   }
 
-  output <- list(temp.pep2 = temp.pep2, temp.samp2 = temp.samp2, temp.meta1 = temp.meta2, edata_cname = edata_cname, emeta_cname = emeta_cname, fdata_cname = fdata_cname)
+  output <- list(temp.dat2 = temp.dat2, temp.samp2 = temp.samp2, temp.meta1 = temp.meta2, edata_cname = edata_cname, emeta_cname = emeta_cname, fdata_cname = fdata_cname)
 
   # return the pieces needed to assemble a cDNAdata/gDNAdata/rRNAdata object
   return(output)

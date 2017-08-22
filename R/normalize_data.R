@@ -78,7 +78,7 @@ normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){
 
   ## Normalize ##
   edata <-  omicsData$e_data
-  mintR_groupDF <- attr(omicsData, "group_DF")
+  #omicsData_groupDF <- attr(omicsData, "group_DF")
 
   norm_fn <- try(match.arg(tolower(norm_fn),c("percentile","tss","rarefy","poisson","deseq","tmm","css")),silent=TRUE)
 

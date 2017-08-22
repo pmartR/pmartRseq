@@ -1,13 +1,13 @@
-#' Produce a plot of a mintR S3 Object
+#' Produce a plot of an omicsData Object
 #'
-#' This function will proivde a plot for a \code{omicsData} or \code{mintR_results} object.
+#' This function will proivde a plot for a \code{omicsData} or \code{omicsData_results} object.
 #'
 #' @param results_object is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), rRNAdata (\code{\link{as.rRNAdata}}), cDNAdata (\code{\link{as.cDNAdata}}), gDNAdata (\code{\link{as.gDNAdata}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).
 
 
 #' @export
-#' @rdname plot_mintR
-#' @name plot_mintR
+#' @rdname plot_pmartRseq
+#' @name plot_pmartRseq
 #' @param type Character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds, "flag" for a bar plot showing the number of significantly expressed biomolecules at the previously specified threshold, "logfc" for a heatmap showing the log2 fold changes of the significantly expressed biomolecules, and/or "volcano" for a volcano plot showing the log2 fold changes versus -log10(pvalue). The default is "pvals".
 #' @param test Optional, a character vector specifying which differential expression test to plot. The default is NULL, which will create plots for all tests.
 #' @param plot_title Optional, a character vector to use as the plot title
@@ -319,8 +319,8 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
@@ -432,8 +432,8 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
@@ -544,8 +544,8 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param variable Required, character vector specifying Which Jaccard variable to plot - options are "Median", "InterQuartileRange", "Average", and "StdDev". Default is "Median".
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
@@ -663,8 +663,8 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param breaks Required, a number specifying the number of breaks to have in the cumulative graph. Default is 100.
 #'@param max_count Optional, a number specifying the maximum count number to show on the graph. Default is NULL.
 #'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL.
@@ -687,7 +687,7 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
       stop("min_num must be an integer >= 0")
     }
   }
-  
+
   # Check if min_samp is provided if fn="ka"
   if(is.null(min_samp)){
     if(attr(results_object, "function") == "ka"){
@@ -723,7 +723,7 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     results_object <- results_object[,c(1,grep(paste("NumSamples_",min_samp,sep=""), colnames(results_object)))]
     colnames(results_object)[2] <- "kaOTUs"
   }
-  
+
   # limit data, no need to look at all of it #
   if(!is.null(max_count)){
     if(fn == "percent"){
@@ -749,7 +749,7 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
   all_counts <- do.call(rbind, all_counts)
 
   fn_lab <- paste(toupper(substring(fn, 1, 1)),substring(fn, 2), sep="", collapse=" ")
-  
+
   # make labels #
   if(fn == "ka"){
     xlabel <- ifelse(is.null(x_lab), paste("Max Count of Biomolecule in each of ", min_samp, " Samples", sep=""), x_lab)
@@ -760,7 +760,7 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
     plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Biomolecules in Samples",sep=""), plot_title)
   }
-  
+
   p <- ggplot(all_counts) +
     geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
                   ymin=0, ymax=sumcount), fill="royalblue1", col="black") +
@@ -791,8 +791,8 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
 }
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param breaks Required, a number specifying the number of breaks to have in
 #'  the cumulative graph. Default is 100.
 #'@param max_count Optional, a number specifying the maximum count number to
@@ -895,8 +895,8 @@ plot.sampleFilter <- function(results_object, breaks=100, max_count=NULL, min_nu
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".
 #'@param class Required, a character vector specifying which variable to group data by (e.g. "Phylum") and to color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Phylum".
 #'@param grp_fn Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".
@@ -1057,8 +1057,8 @@ plot.rRNAdata <- function(results_object, x_axis="Group", class="Phylum", grp_fn
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".
 #'@param class Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".
 #'@param grp_fn Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".
@@ -1218,8 +1218,8 @@ plot.cDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn=
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".
 #'@param class Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".
 #'@param grp_fn Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".
@@ -1379,8 +1379,8 @@ plot.gDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn=
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param abun Optional, an object of class 'abundance', used for plotting richness vs abundance
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
@@ -1533,8 +1533,8 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param rich Optional, an object of class 'richness', used for plotting richness vs abundance
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
@@ -1680,8 +1680,8 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
 
 
 #'@export
-#'@rdname plot_mintR
-#'@name plot_mintR
+#'@rdname plot_pmartRseq
+#'@name plot_pmartRseq
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
@@ -1784,8 +1784,8 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
 
 
 #' @export
-#' @rdname plot_mintR
-#' @name plot_mintR
+#' @rdname plot_pmartRseq
+#' @name plot_pmartRseq
 #' @param type Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of indicated species in each group, at the previously specified threshold. The default is "pvals".
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label

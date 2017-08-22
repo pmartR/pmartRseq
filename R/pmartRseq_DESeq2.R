@@ -1,4 +1,4 @@
-#' DESeq2 analysis of mintR objects
+#' DESeq2 analysis of omicsData objects
 #'
 #' Differential abundance analysis of count data using DESeq2
 #'
@@ -18,14 +18,14 @@
 #' data(cDNA_hiseq_data)
 #' mycdnadata <- group_designation(omicsData = cDNA_hiseq_data, main_effects = c("treatment"), time_course=NULL)
 #' mycdnadata_norm <- normalize_data(omicsData = mycdnadata, norm_fn = "percentile")
-#' mycdnadata_DESeq2 <- mint_DESeq2(omicsData = mycdnadata_norm, test="wald", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
+#' mycdnadata_DESeq2 <- pmartRseq_DESeq2(omicsData = mycdnadata_norm, test="wald", pairs = cbind(list("Neg","Plus")), adj = "BH", thresh = 0.05)
 #'
 #' @author Allison Thompson
 #'
 #' @references Love MI, Huber W and Anders S (2014). Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biology, 15, pp. 550.
 #'
 
-mint_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, adj, thresh){
+pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, adj, thresh){
 
   library(DESeq2)
 

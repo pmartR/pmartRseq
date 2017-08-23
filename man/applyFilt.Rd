@@ -30,7 +30,7 @@ applyFilt(filter_object, omicsData, ...)
 \item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
-An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.
+An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
 }
 \description{
 This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.

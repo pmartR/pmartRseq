@@ -8,7 +8,7 @@ pmartRseq_DESeq2(omicsData, norm_factors = NULL, test = "wald", pairs, adj,
   thresh)
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{norm_factors}{Named vector of normalization parameters to put into DESeq2. If NULL, will use DESeq2's inbuilt normalization. Default is NULL.}
 

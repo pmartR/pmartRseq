@@ -8,7 +8,7 @@ countSTAT(omicsData, norm_factors = NULL, comparisons, control = NULL, test,
   pval_adjust = "BH", pval_thresh = 0.05)
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{norm_factors}{Named vector of normalization parameters to put into DESeq2 or edgeR. If NULL, will use DESeq2's or edgeR's inbuilt normalization. Default is NULL.}
 

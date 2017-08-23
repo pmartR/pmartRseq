@@ -7,7 +7,7 @@
 normalize_data(omicsData, norm_fn, normalize = FALSE, ...)
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{norm_fn}{character vector indicating the normalization function to use for normalization. See details for valid options.}
 

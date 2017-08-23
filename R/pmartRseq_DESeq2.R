@@ -2,7 +2,7 @@
 #'
 #' Differential abundance analysis of count data using DESeq2
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param norm_factors Named vector of normalization parameters to put into DESeq2. If NULL, will use DESeq2's inbuilt normalization. Default is NULL.
 #' @param pairs a matrix dictating which pairwise comparisons to make
 #' @param test name of which differential expression test to use, options are "wald" or "paired". Default is "wald". See details for further explanation.
@@ -33,8 +33,8 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
 
   library(DESeq2)
 
-  if(!(class(omicsData) %in% c("gDNAdata","cDNAdata","rRNAdata"))){
-    stop("Data must be of class gDNAdata, cDNAdata, or rRNAdata")
+  if(!(class(omicsData) %in% c("seqData"))){
+    stop("Data must be of class 'seqData'")
   }
 
   # Make features be rownames and remove that column from the data, so the data is all numeric

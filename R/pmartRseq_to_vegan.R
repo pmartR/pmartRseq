@@ -2,7 +2,7 @@
 #'
 #' This function takes an omicsData object and transforms it into a data object suitable for use in the vegan package
 #'
-#' @param omicsData an object of one of the classes "cDNAdata", "rRNAdata", or "gDNAdata"
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}
 #'
 #' @return A data object for use with the package 'vegan'
 #'

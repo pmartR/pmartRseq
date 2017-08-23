@@ -2,7 +2,7 @@
 #'
 #' This function calculates the unique number of features seen in each sample.
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param index a character vector stating which of the calculations to perform - "observed" for the observed richness, "chao1" the bias-corrected chao1 richness estimator, and/or "ace" for the abundance-based coverage richness estimator. Default is to perform all 3 calculations.
 #'
 #' @details Calculates richness of count data
@@ -29,7 +29,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if(!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if(!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
   if(attr(omicsData, "data_info")$data_scale!='count'){
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")

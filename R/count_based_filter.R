@@ -4,8 +4,7 @@
 #' calculations needed to filter the data based off a specified function and
 #' limit
 #'
-#' @param omicsData An object of one of the classes "cDNAdata", "rRNAdata", or
-#'   "gDNAdata"
+#' @param omicsData An object of one of the classes "seqData"
 #'
 #' @param fn Specify "mean" to use the mean count of each OTU, "percent" to use
 #'   mean counts lower than a certain percent, "max" to use the max count across
@@ -73,7 +72,7 @@ count_based_filter <- function(omicsData, fn="sum"){
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if(!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if(!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
   if(attr(omicsData, "data_info")$data_scale!='count'){
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")

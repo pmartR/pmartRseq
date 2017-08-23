@@ -7,7 +7,7 @@
 pmartRseq_to_vegan(omicsData)
 }
 \arguments{
-\item{omicsData}{an object of one of the classes "cDNAdata", "rRNAdata", or "gDNAdata"}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}}
 }
 \value{
 A data object for use with the package 'vegan'

@@ -21,7 +21,7 @@
 #'  \tab \cr
 #'  }
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param norm_fn character vector indicating the normalization function to use for normalization. See details for valid options.
 #' @param normalize For count data, this function will only return the scale and location parameters - will not return normalized data unless this parameter is set to TRUE. This is due to later statistics requiring raw data for count data analyses. Default is FALSE.
 #' @param ... additional arguments passed to the chosen normalization function.
@@ -62,7 +62,7 @@ normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){
   dat_class <- class(omicsData)
 
   # check that omicsData is of the appropriate class
-  if(!(dat_class%in% c("cDNAdata", "gDNAdata","rRNAdata"))) stop("omicsData is not an object of appropriate class")
+  if(!(dat_class%in% c("seqData"))) stop("omicsData is not an object of appropriate class")
 
   edata_id <- attr(omicsData, "cnames")$edata_cname
   samp_id <- attr(omicsData, "cnames")$fdata_cname

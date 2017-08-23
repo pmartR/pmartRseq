@@ -14,7 +14,7 @@
 \alias{plot_pmartRseq}
 \alias{plot.sampleFilter}
 \alias{plot_pmartRseq}
-\alias{plot.rRNAdata}
+\alias{plot.seqData}
 \alias{plot_pmartRseq}
 \alias{plot.cDNAdata}
 \alias{plot_pmartRseq}
@@ -52,7 +52,7 @@ plot.countFilter(results_object, breaks = 100, max_count = NULL,
 plot.sampleFilter(results_object, breaks = 100, max_count = NULL,
   min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
 
-plot.rRNAdata(results_object, x_axis = "Group", class = "Phylum",
+plot.seqData(results_object, x_axis = "Group", class = "Phylum",
   grp_fn = "median", subset_by = NULL, subset_val = NULL,
   plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
@@ -79,7 +79,7 @@ plot.effspRes(results_object, x_axis = "Group", color = "Group",
 plot.indspRes(results_object, type = "pvals", ...)
 }
 \arguments{
-\item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), rRNAdata (\code{\link{as.rRNAdata}}), cDNAdata (\code{\link{as.cDNAdata}}), gDNAdata (\code{\link{as.gDNAdata}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).}
+\item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), seqData (\code{\link{as.seqData}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).}
 
 \item{type}{Character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds, "flag" for a bar plot showing the number of significantly expressed biomolecules at the previously specified threshold, "logfc" for a heatmap showing the log2 fold changes of the significantly expressed biomolecules, and/or "volcano" for a volcano plot showing the log2 fold changes versus -log10(pvalue). The default is "pvals".}
 

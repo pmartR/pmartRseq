@@ -7,8 +7,7 @@
 count_based_filter(omicsData, fn = "sum")
 }
 \arguments{
-\item{omicsData}{An object of one of the classes "cDNAdata", "rRNAdata", or
-"gDNAdata"}
+\item{omicsData}{An object of one of the classes "seqData"}
 
 \item{fn}{Specify "mean" to use the mean count of each OTU, "percent" to use
 mean counts lower than a certain percent, "max" to use the max count across

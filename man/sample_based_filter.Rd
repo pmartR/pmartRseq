@@ -7,8 +7,7 @@
 sample_based_filter(omicsData, fn = "sum")
 }
 \arguments{
-\item{omicsData}{An object of one of the classes "cDNAdata", "rRNAdata", or
-"gDNAdata"}
+\item{omicsData}{An object of the classes "seqData"}
 
 \item{fn}{Specify "sum" to use the total OTU count of each sample}
 }

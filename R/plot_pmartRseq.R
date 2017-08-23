@@ -2,7 +2,7 @@
 #'
 #' This function will proivde a plot for a \code{omicsData} or \code{omicsData_results} object.
 #'
-#' @param results_object is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), rRNAdata (\code{\link{as.rRNAdata}}), cDNAdata (\code{\link{as.cDNAdata}}), gDNAdata (\code{\link{as.gDNAdata}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).
+#' @param results_object is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), seqData (\code{\link{as.seqData}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).
 
 
 #' @export
@@ -906,12 +906,12 @@ plot.sampleFilter <- function(results_object, breaks=100, max_count=NULL, min_nu
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.rRNAdata <- function(results_object, x_axis="Group", class="Phylum", grp_fn="median", subset_by=NULL, subset_val=NULL,
+plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn="median", subset_by=NULL, subset_val=NULL,
                           plot_title=NULL, x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.rRNAdata(results_object, x_axis, class, grp_fn, subset_by, subset_val, plot_title, x_lab, y_lab, leglab, ...)
+  .plot.seqData(results_object, x_axis, class, grp_fn, subset_by, subset_val, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.rRNAdata <- function(results_object, x_axis="Group", class="Phylum", grp_fn="median", subset_by=NULL, subset_val=NULL, plot_title=NULL,
+.plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn="median", subset_by=NULL, subset_val=NULL, plot_title=NULL,
                            x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   # normalized or not-normalized counts???

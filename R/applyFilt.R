@@ -1,11 +1,11 @@
 #' Apply a filter to an omicsData object
 #'
-#' This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
+#' This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class 'seqData'.
 #'
-#' @param omicsData an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class \code{seqData} created by \code{\link{as.seqData}}.
 #' @param filter_object an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.
 #'
-#' @return An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
+#' @return An object of the class \code{seqData}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
 #'
 #' @examples
 #' \dontrun{
@@ -29,7 +29,7 @@
 applyFilt <- function(filter_object, omicsData, ...) {
 
   # check that omicsData is of pmartRseq S3 class#
-  if (!(class(omicsData) %in% c("cDNAdata", "gDNAdata", "rRNAdata"))) stop("omicsData must be of class 'cDNAdata', 'gDNAdata', or 'rRNAdata'")
+  if (!(class(omicsData) %in% c("seqData"))) stop("omicsData must be of class 'seqData'")
 
   # pull column names from omicR_data attributes #
   col_nms = attr(omicsData, "cnames")
@@ -307,7 +307,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 #'
 #' This function removes filtered objects
 #'
-#' @param omicsData an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param filter_object a list created by the functions above
 #' @return list similar to as.omicsData object
 #' @author Kelly Stratton, Lisa Bramer, Allison Thompson

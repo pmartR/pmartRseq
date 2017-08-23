@@ -8,7 +8,7 @@ group_designation(omicsData, main_effects, covariates = NULL,
   time_course = NULL)
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{main_effects}{a character vector with no more than two variable names that should be used as main effects to determine group membership of samples. The variable name must match a column name from \code{f_data}.}
 

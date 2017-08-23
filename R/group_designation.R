@@ -2,7 +2,7 @@
 #'
 #' The method assigns each sample to a group, for future analyses, based on the variable(s) specified as main effects.
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param main_effects a character vector with no more than two variable names that should be used as main effects to determine group membership of samples. The variable name must match a column name from \code{f_data}.
 #' @param covariates a character vector of no more than two variable names that should be used as covariates in downstream analyses. Covariates are typically variables that a user wants to account for in the analysis but quantifying/examining the effect of the variable is not of interest.
 #' @param time_course an optional character string specifying the variable name of a time course variable, if applicable to the experimental data.
@@ -28,7 +28,7 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
   ### perform some intial checks that data is in an acceptable format ###
 
   # check that omicsData is of appropriate class #
-  if(!(class(omicsData) %in% c("gDNAdata","cDNAdata","rRNAdata"))) stop("omicsData is not an object of appropriate class")
+  if(!(class(omicsData) %in% c("seqData"))) stop("omicsData is not an object of appropriate class")
 
   # Check that main_effects are character vector #
   if( !is.character(main_effects) ) stop("main_effects must be a character vector.")

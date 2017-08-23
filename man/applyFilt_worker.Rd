@@ -9,7 +9,7 @@ applyFilt_worker(filter_object, omicsData)
 \arguments{
 \item{filter_object}{a list created by the functions above}
 
-\item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 }
 \value{
 list similar to as.omicsData object

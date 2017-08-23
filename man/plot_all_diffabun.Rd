@@ -11,7 +11,7 @@ plot_all_diffabun(countSTAT_results, omicsData, x_axis = "Phylum",
 \arguments{
 \item{countSTAT_results}{Required, an object of the class \code{countSTAT} created by \code{\link{countSTAT}}.}
 
-\item{omicsData}{Required, omicsData ,an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{Required, omicsData ,an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{x_axis}{Required, a character vector stating which variable to group data by and put on the x-axis, must be one of "Comparison" or one of the column names in omicsData$e_meta. Default is "Phylum".}
 

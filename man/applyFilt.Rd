@@ -19,7 +19,7 @@ applyFilt(filter_object, omicsData, ...)
 \arguments{
 \item{filter_object}{an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.}
 
-\item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class \code{seqData} created by \code{\link{as.seqData}}.}
 
 \item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.}
 
@@ -30,10 +30,10 @@ applyFilt(filter_object, omicsData, ...)
 \item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
-An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
+An object of the class \code{seqData}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
 }
 \description{
-This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
+This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class 'seqData'.
 }
 \examples{
 \dontrun{

@@ -6,7 +6,7 @@
 #'
 #' Differential expression tests for count data
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param norm_factors Named vector of normalization parameters to put into DESeq2 or edgeR. If NULL, will use DESeq2's or edgeR's inbuilt normalization. Default is NULL.
 #' @param comparisons dictates which pairwise comparisons to make. 'all' will give the results for all pairwise comparisons, 'control' will give the results for all comparisons against a specified control group, or a list of specific comparisons to be made or terms for a paired test can be given.
 #' @param control only necessary when performing comparisons against control, name of the control group. default is NULL.
@@ -35,8 +35,8 @@ countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL,
 
   library(reshape2)
 
-  if(!(class(omicsData) %in% c("gDNAdata","cDNAdata","rRNAdata"))){
-    stop("Data must be of class gDNAdata, cDNAdata, or rRNAdata")
+  if(!(class(omicsData) %in% c("seqData"))){
+    stop("Data must be of class 'seqData'")
   }
 
   if(!(any((tolower(test)) %in% c("dw","dl","dp","eq","el","ef","ep")))){

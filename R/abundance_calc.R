@@ -37,9 +37,6 @@ abundance_calc <- function(omicsData){
 
   ## end initial checks ##
 
-  # change 0 to NA, makes for easier calculation
-  omicsData <- helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
-
   edata_cname <- attr(omicsData, "cnames")$edata_cname
 
   # calculate abundance

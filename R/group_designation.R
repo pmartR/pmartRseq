@@ -175,7 +175,9 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
 
   # Update attributes (7/7/2016 by KS)
   edata_cname = attributes(omicsData)$cnames$edata_cname
-  emeta_cname = attributes(omicsData)$cnames$emeta_cname
+  taxa_cname = attributes(omicsData)$cnames$taxa_cname
+  ec_cname = attributes(omicsData)$cnames$ec_cname
+  gene_cname = attributes(omicsData)$cnames$gene_cname
   attributes(omicsData)$data_info$num_edata = length(unique(omicsData$e_data[, edata_cname]))
   attributes(omicsData)$data_info$num_miss_obs = sum(is.na(omicsData$e_data[,-which(names(omicsData$e_data)==edata_cname)]))
   attributes(omicsData)$data_info$num_prop_missing = mean(is.na(omicsData$e_data[,-which(names(omicsData$e_data)==edata_cname)]))
@@ -183,13 +185,23 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
 
   if(!is.null(omicsData$e_meta)){
     # number of unique e_meta that map to a feature in e_data #
-    if(!is.null(emeta_cname)){
-      num_emeta = length(unique(omicsData$e_meta[which(as.character(omicsData$e_meta[, edata_cname]) %in% as.character(omicsData$e_data[, edata_cname])), emeta_cname]))
-    }else{num_emeta = NULL}
+    if(!is.null(taxa_cname)){
+      num_taxa = length(unique(omicsData$e_meta[which(as.character(omicsData$e_meta[, taxa_cname]) %in% as.character(omicsData$e_data[, edata_cname])), taxa_cname]))
+    }else{num_taxa = NULL}
+    if(!is.null(ec_cname)){
+      num_ec = length(unique(omicsData$e_meta[which(as.character(omicsData$e_meta[, ec_cname]) %in% as.character(omicsData$e_data[, edata_cname])), ec_cname]))
+    }else{num_ec = NULL}
+    if(!is.null(gene_cname)){
+      num_gene = length(unique(omicsData$e_meta[which(as.character(omicsData$e_meta[, gene_cname]) %in% as.character(omicsData$e_data[, edata_cname])), gene_cname]))
+    }else{num_gene = NULL}
   }else{
-    num_emeta = NULL
+    num_taxa = NULL
+    num_ec = NULL
+    num_gene = NULL
   }
-  attr(omicsData, "data_info")$num_emeta = num_emeta
+  attr(omicsData, "data_info")$num_taxa = num_taxa
+  attr(omicsData, "data_info")$num_ec = num_ec
+  attr(omicsData, "data_info")$num_gene = num_gene
   ## end of update attributes (7/7/2016 by KS)
 
   return(omicsData)

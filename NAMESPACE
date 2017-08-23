@@ -2,6 +2,7 @@
 
 S3method(applyFilt,countFilter)
 S3method(applyFilt,sampleFilter)
+export(abundance_calc)
 export(alphaDiv_calc)
 export(applyFilt)
 export(as.seqData)

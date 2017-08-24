@@ -4,12 +4,21 @@
 \alias{pmartRseq_NMDS}
 \title{NMDS plot for beta diversity}
 \usage{
-pmartRseq_NMDS(res, grp, ellipses)
+pmartRseq_NMDS(res, omicsData, grp, k, x_axis = "NMDS1", y_axis = "NMDS2",
+  ellipses = TRUE)
 }
 \arguments{
 \item{res}{an object created by vegan::metaMDS}
 
-\item{grp}{vector of grouping variables}
+\item{omicsData}{a seqData object}
+
+\item{grp}{name of column to use for grouping variables}
+
+\item{k}{number of dimensions}
+
+\item{x_axis}{which dimension to put on the x-axis}
+
+\item{y_axis}{which dimension to put on the y-axis}
 
 \item{ellipses}{logical indicating whether or not to show ellipses on the plot}
 }

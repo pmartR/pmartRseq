@@ -3,7 +3,11 @@
 #' This function creates an NMDS plot for a beta diversity object from vegan.
 #'
 #' @param res an object created by vegan::metaMDS
-#' @param grp vector of grouping variables
+#' @param omicsData a seqData object
+#' @param grp name of column to use for grouping variables
+#' @param k number of dimensions
+#' @param x_axis which dimension to put on the x-axis
+#' @param y_axis which dimension to put on the y-axis
 #' @param ellipses logical indicating whether or not to show ellipses on the plot
 #'
 #' @details After beta diversity is calculated, this function will create a plot of the results, along with ellipses, to show the different groupings.
@@ -25,34 +29,26 @@
 #' @author Allison Thompson
 #'
 #' @export
-pmartRseq_NMDS <- function(res,grp,ellipses){
+pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2", ellipses=TRUE){
 
   library(ggplot2)
 
-  # Extract component scores
-  NMDS1 <- data.frame(scores(res))$NMDS1
-  NMDS2 <- data.frame(scores(res))$NMDS2
+  NMDS <- data.frame(SampleID=rownames(scores(res)),scores(res))
+  colnames(NMDS)[1] <- attr(omicsData, "cnames")$fdata_cname
+  NMDS <- merge(NMDS, attr(omicsData, "group_DF"), by=attr(omicsData, "cnames")$fdata_cname)
 
-  testgrp <- table(grp)
+  testgrp <- table(NMDS[,grp])
   if(any(testgrp < 3)){
     names <- names(which(testgrp < 3))
-    ids <- which(grp %in% names)
-    grp <- grp[-ids]
-    grp <- droplevels(grp)
-    NMDS1 <- NMDS1[-ids]
-    NMDS2 <- NMDS2[-ids]
+    NMDS <- NMDS[-which(NMDS[,grp] %in% names),]
+    NMDS[,grp] <- droplevels(NMDS[,grp])
   }
 
   # Format treatment, "group"
-  Treatment <- grp
-  if(any(levels(Treatment) == "")){
-    Treatment <- as.character(Treatment)
-    Treatment <- as.factor(Treatment)
+  if(any(levels(NMDS[,grp]) == "")){
+    NMDS[,grp] <- as.character(NMDS[,grp])
+    NMDS[,grp] <- as.factor(NMDS[,grp])
   }
-
-  # Aggregate data using mean
-  NMDS <- data.frame(NMDS1, NMDS2, Treatment)
-  NMDS.mean = aggregate(NMDS[,1:2], list(group=Treatment), mean)
 
   if(ellipses){
     # Function for drawing ellipses
@@ -62,19 +58,24 @@ pmartRseq_NMDS <- function(res,grp,ellipses){
       t(center + scale * t(Circle %*% chol(cov)))
     }
 
-    # Create a new dataframe with data and ellipses
     df_ell <- data.frame()
-    for(g in levels(NMDS$Treatment)){
+    for(g in levels(NMDS[,grp])){
       df_ell <- rbind(df_ell,
-                      cbind(as.data.frame(with(NMDS[NMDS$Treatment==g,],
-                      veganCovEllipse(cov.wt(cbind(NMDS1,NMDS2),wt=rep(1/length(NMDS1),length(NMDS1)))$cov,center=c(mean(NMDS1),mean(NMDS2))))),
-                      group=g))
+                      cbind(as.data.frame(with(NMDS[NMDS[,grp]==g,],
+                        veganCovEllipse(cov.wt(NMDS[which(NMDS[,grp]==g),c(x_axis,y_axis)],
+                                               wt=rep(1/length(NMDS[which(NMDS[,grp]==g),x_axis])
+                                                      ,length(NMDS[which(NMDS[,grp]==g),x_axis])))$cov,
+                                        center=c(mean(NMDS[which(NMDS[,grp]==g),x_axis]),
+                                                 mean(NMDS[which(NMDS[,grp]==g),y_axis]))))),
+                            group=g))
     }
 
     # Plot
-    X1 <- ggplot(data = NMDS, aes(NMDS1, NMDS2)) +
-      geom_point(aes(color = Treatment), size=2.5, alpha=1) +
-      geom_path(data=df_ell, aes(x=NMDS1, y=NMDS2, colour=group), size=1.5, linetype=5, alpha=0.7)+
+    map1 <- aes_string(x=x_axis, y=y_axis, color=grp)
+    map2 <- aes_string(x=x_axis, y=y_axis, color="group")
+    X1 <- ggplot(data = NMDS) +
+      geom_point(map1, size=2.5, alpha=1) +
+      geom_path(data = df_ell, map2, size=1.5, linetype=5, alpha=0.7)+
       theme_bw()+
       theme(aspect.ratio=1,
             axis.text.x=element_text(size=20),
@@ -85,15 +86,10 @@ pmartRseq_NMDS <- function(res,grp,ellipses){
             legend.text=element_text(size=15),
             panel.grid=element_blank())
   }else{
-    df_ell <- data.frame()
-    for(g in levels(NMDS$Treatment)){
-      df_ell <- rbind(df_ell,
-                      cbind(as.data.frame(NMDS[NMDS$Treatment==g,],group=g)))
-    }
-
     # Plot
-    X1 <- ggplot(data = NMDS, aes(NMDS1, NMDS2)) +
-      geom_point(aes(color = Treatment), size=2.5, alpha=0.75) +
+    map1 <- aes_string(x=x_axis, y=y_axis, color=grp)
+    X1 <- ggplot(data = NMDS) +
+      geom_point(map1, size=2.5, alpha=1) +
       theme_bw()+
       theme(aspect.ratio=1,
             axis.text.x=element_text(size=20),

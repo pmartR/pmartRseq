@@ -4,12 +4,14 @@
 \alias{pmartRseq_NMDS}
 \title{NMDS plot for beta diversity}
 \usage{
-pmartRseq_NMDS(res, grp)
+pmartRseq_NMDS(res, grp, ellipses)
 }
 \arguments{
 \item{res}{an object created by vegan::metaMDS}
 
 \item{grp}{vector of grouping variables}
+
+\item{ellipses}{logical indicating whether or not to show ellipses on the plot}
 }
 \value{
 An NMDS plot of a beta diversity index.

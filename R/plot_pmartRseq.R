@@ -1000,26 +1000,29 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
   vars <- lapply(vars, as.symbol)
 
-  data_grp1 <- data_melt %>% group_by_(.dots=vars) %>% summarise(sum=sum(value, na.rm=TRUE))
+  data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
   data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
 
   vars1 <- c(x_axis, class)
   vars1 <- lapply(vars1, as.symbol)
 
   if(grp_fn %in% c("median","med")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=median(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=median(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("mean","average","avg")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=mean(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=mean(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("sum")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=sum(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=sum(sum, na.rm=TRUE))
   }
 
   data_grp <- data_grp[order(-data_grp$value),]
+
+  TaxonBarPallette <- c("#FF00BB","#CC00FF","#F2BFFF","#7A0099","#0022FF","#8091FF","#001499","#00F2FF","#CCFCFF","#009199","#00D90E","#BFFFC4","#007308","#FFFF00","#DDFF00","#B3B300","#FF9100","#FFC880","#995700","#FF0000","#FFABAB","#990000","#BFBFBF","#636363","#000000")
 
   ## Bar plot ##
   map <- aes_string(x=x_axis, y="value", fill=class)
   p <- ggplot(data_grp, map) +
     geom_bar(stat="identity", position="stack") +
+    scale_fill_manual(values=rep(TaxonBarPallette,5))+
     theme_bw() +
     theme(axis.line.x = element_line(colour = "black"),
           axis.line.y = element_line(colour="black"),
@@ -1162,18 +1165,18 @@ plot.cDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn=
   vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
   vars <- lapply(vars, as.symbol)
 
-  data_grp1 <- data_melt %>% group_by_(.dots=vars) %>% summarise(sum=sum(value, na.rm=TRUE))
+  data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
   data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
 
   vars1 <- c(x_axis, class)
   vars1 <- lapply(vars1, as.symbol)
 
   if(grp_fn %in% c("median","med")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=median(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=median(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("mean","average","avg")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=mean(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=mean(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("sum")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=sum(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=sum(sum, na.rm=TRUE))
   }
 
   data_grp <- data_grp[order(-data_grp$value),]
@@ -1323,18 +1326,18 @@ plot.gDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn=
   vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
   vars <- lapply(vars, as.symbol)
 
-  data_grp1 <- data_melt %>% group_by_(.dots=vars) %>% summarise(sum=sum(value, na.rm=TRUE))
+  data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
   data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
 
   vars1 <- c(x_axis, class)
   vars1 <- lapply(vars1, as.symbol)
 
   if(grp_fn %in% c("median","med")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=median(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=median(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("mean","average","avg")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=mean(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=mean(sum, na.rm=TRUE))
   }else if(grp_fn %in% c("sum")){
-    data_grp <- data_grp1 %>% group_by_(.dots=vars1) %>% summarise(value=sum(sum, na.rm=TRUE))
+    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=sum(sum, na.rm=TRUE))
   }
 
   data_grp <- data_grp[order(-data_grp$value),]

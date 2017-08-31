@@ -47,8 +47,8 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
   vars <- c(attr(omicsData,"cnames")$edata_cname, x_axis)
   vars <- lapply(vars, as.symbol)
   normgp <- normdata %>%
-    group_by_(.dots=vars) %>%
-    summarise(MeanNorm=mean(value, na.rm=TRUE))
+    dplyr::group_by_(.dots=vars) %>%
+    dplyr::summarise(MeanNorm=mean(value, na.rm=TRUE))
 
   # format indicator species results
   colnames(indsp) <- gsub("-","\\.",colnames(indsp))

@@ -67,6 +67,8 @@ split_emeta <- function(omicsData, cname=NULL, split1=";", numcol=NULL, split2="
   }
 
   split_data <- as.data.frame(split_data)
+  split_data <- apply(split_data, 1:2, as.character)
+  split_data[is.na(split_data)] <- "Unknown"
 
   res <- omicsData
   res$e_meta <- cbind(emeta, split_data)

@@ -556,12 +556,12 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+plot.jaccardRes <- function(results_object, variable="Average", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
                             x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
   .plot.jaccardRes(results_object, variable, x_axis, color, shape, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+.plot.jaccardRes <- function(results_object, variable="Average", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
                              x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -615,23 +615,37 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   }
   ## end initial checks ##
 
-  plot.data <- reshape2::melt(results_object)
-  names(plot.data)[1] <- "Grp"
-  names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
-  plot.data <- plot.data[which(plot.data$variable == variable),]
+  # plot.data <- reshape2::melt(results_object)
+  # names(plot.data)[1] <- "Grp"
+  # names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
+  # plot.data <- plot.data[which(plot.data$variable == variable),]
 
-  plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  plot.data <- merge(results_object[,-which(colnames(results_object)=="Group")], attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
-  p <- ggplot2::ggplot(plot.data, map) +
-    ggplot2::geom_jitter(size=3, width=0.1, height=0) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
-          axis.line.y = ggplot2::element_line(colour="black"),
-          plot.background = ggplot2::element_blank(),
-          panel.grid.major = ggplot2::element_blank(),
-          panel.grid.minor = ggplot2::element_blank(),
-          panel.border = ggplot2::element_blank())
+  if(variable == "Average"){
+    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape)
+    p <- ggplot2::ggplot(plot.data, map) +
+      ggplot2::geom_point(size=3) +
+      ggplot2::geom_errorbar(aes(ymin=Average-StdDev,ymax=Average+StdDev))+
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+                     axis.line.y = ggplot2::element_line(colour="black"),
+                     plot.background = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.border = ggplot2::element_blank())
+  }else{
+    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape)
+    p <- ggplot2::ggplot(plot.data, map) +
+      ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
+  }
 
   if(!is.null(x_lab)){
     p <- p + ggplot2::labs(x=x_lab)

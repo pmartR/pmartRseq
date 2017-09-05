@@ -83,6 +83,7 @@ jaccard_calc <- function(omicsData, sim=TRUE){
   })
 
   jac_res <- do.call(rbind, results)
+  colnames(jac_res)[which(colnames(jac_res) == "Sample")] <- attr(omicsData,"cnames")$fdata_cname
 
   jac_results <- jac_res
 

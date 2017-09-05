@@ -16,10 +16,6 @@
 \alias{plot_pmartRseq}
 \alias{plot.seqData}
 \alias{plot_pmartRseq}
-\alias{plot.cDNAdata}
-\alias{plot_pmartRseq}
-\alias{plot.gDNAdata}
-\alias{plot_pmartRseq}
 \alias{plot.richRes}
 \alias{plot_pmartRseq}
 \alias{plot.abunRes}
@@ -41,7 +37,7 @@ plot.evenRes(results_object, x_axis = "Group", color = "Group",
   shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-plot.jaccardRes(results_object, variable = "Median", x_axis = "Group",
+plot.jaccardRes(results_object, variable = "Average", x_axis = "Group",
   color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
@@ -53,14 +49,6 @@ plot.sampleFilter(results_object, breaks = 100, max_count = NULL,
   min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
 
 plot.seqData(results_object, x_axis = "Group", class = "Phylum",
-  grp_fn = "median", subset_by = NULL, subset_val = NULL,
-  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-plot.cDNAdata(results_object, x_axis = "Group", class = "ECNum",
-  grp_fn = "median", subset_by = NULL, subset_val = NULL,
-  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
-
-plot.gDNAdata(results_object, x_axis = "Group", class = "ECNum",
   grp_fn = "median", subset_by = NULL, subset_val = NULL,
   plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
@@ -188,42 +176,6 @@ NULL.}
 \item{y_lab}{Optional, a character vector to use as the y-axis label}
 
 \item{x_axis}{Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".}
-
-\item{plot_title}{Optional, a character vector to use as the plot title}
-
-\item{leglab}{Optional, a character vector to use as the legend label}
-
-\item{x_lab}{Optional, a character vector to use as the x-axis label}
-
-\item{y_lab}{Optional, a character vector to use as the y-axis label}
-
-\item{x_axis}{Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".}
-
-\item{class}{Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".}
-
-\item{grp_fn}{Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".}
-
-\item{subset_by}{Optional, which variable to subset the data by. NULL will not subset the data. Default is NULL.}
-
-\item{subset_val}{Optional, which values to include in the subset.}
-
-\item{plot_title}{Optional, a character vector to use as the plot title}
-
-\item{leglab}{Optional, a character vector to use as the legend label}
-
-\item{x_lab}{Optional, a character vector to use as the x-axis label}
-
-\item{y_lab}{Optional, a character vector to use as the y-axis label}
-
-\item{x_axis}{Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".}
-
-\item{class}{Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".}
-
-\item{grp_fn}{Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".}
-
-\item{subset_by}{Optional, which variable to subset the data by. NULL will not subset the data. Default is NULL.}
-
-\item{subset_val}{Optional, which values to include in the subset.}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 

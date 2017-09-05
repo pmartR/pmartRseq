@@ -56,17 +56,17 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
     colData <- colData[match(colnames(omicsData$e_data), colData[,attr(omicsData,"cnames")$fdata_cname]),]
 
     # Create the appropriate data object
-    DESeq_data_set_object <- DESeqDataSetFromMatrix(countData = omicsData$e_data, colData = colData, design = ~Group)
+    DESeq_data_set_object <- DESeq2::DESeqDataSetFromMatrix(countData = omicsData$e_data, colData = colData, design = ~Group)
   }else{
     colData <- attributes(omicsData)$group_DF
     colData <- colData[match(colnames(omicsData$e_data), colData[,attr(omicsData,"cnames")$fdata_cname]),]
-    DESeq_data_set_object <- DESeqDataSetFromMatrix(countData=omicsData$e_data,colData=colData,design=~1)
+    DESeq_data_set_object <- DESeq2::DESeqDataSetFromMatrix(countData=omicsData$e_data,colData=colData,design=~1)
   }
 
   # Set own sizeFactors(normalization factors), after running normalization
   if(is.null(norm_factors)){
     warning("Using DESeq2's inbuilt normalization - if want to use own normalization, input norm_factors")
-    DESeq_data_set_object <- estimateSizeFactors(DESeq_data_set_object)
+    DESeq_data_set_object <- DESeq2::estimateSizeFactors(DESeq_data_set_object)
   }else{
     # check that normalization (size) factors are present for every sample
     if(all(colnames(omicsData$e_data) %in% names(norm_factors))){
@@ -79,12 +79,12 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
 
   # DESeq2 analysis
   if(tolower(test)=="wald"){
-    DESeq_data_set_object <- DESeq(DESeq_data_set_object, test="Wald", quiet=TRUE)
+    DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, test="Wald", quiet=TRUE)
     # extract results for each pairwise comparison
     res <- apply(pairs, 2, function(x){
       x <- as.character(x)
       myContrast <- c("Group", x[1], x[2])
-      res <- results(DESeq_data_set_object, contrast=myContrast, pAdjustMethod=adj)
+      res <- DESeq2::results(DESeq_data_set_object, contrast=myContrast, pAdjustMethod=adj)
       res$Flag <- ifelse(res$padj <= thresh, 1, 0)
       res$Flag[which(res$log2FoldChange < 0)] <- res$Flag[which(res$log2FoldChange < 0)] * -1
       names(res) <- unlist(lapply(names(res), function(y) paste(y,"_",x[1],"_vs_",x[2],sep="")))
@@ -94,12 +94,12 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
     # combine results from all pairwise comparisons
     res2 <- do.call(cbind, res)
   }else if(tolower(test)=="lrt"){
-    DESeq_data_set_object <- DESeq(DESeq_data_set_object, test="LRT", quiet=TRUE, reduced = ~ 1)
+    DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, test="LRT", quiet=TRUE, reduced = ~ 1)
     # extract results for each pairwise comparison
     res <- apply(pairs, 2, function(x){
       x <- as.character(x)
       myContrast <- c("Group", x[1], x[2])
-      res <- results(DESeq_data_set_object, contrast=myContrast, pAdjustMethod=adj)
+      res <- DESeq2::results(DESeq_data_set_object, contrast=myContrast, pAdjustMethod=adj)
       res$Flag <- ifelse(res$padj <= thresh, 1, 0)
       res$Flag[which(res$log2FoldChange < 0)] <- res$Flag[which(res$log2FoldChange < 0)] * -1
       #names(res) <- unlist(lapply(names(res), function(y) paste(y,"_",x[1],"_vs_",x[2],sep="")))
@@ -111,9 +111,9 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
   }else if(test=="paired"){
     paired <- paste("~",pairs[2],"+",pairs[1],sep="")
     design(DESeq_data_set_object) <- formula(paired)
-    DESeq_data_set_object <- DESeq(DESeq_data_set_object, quiet=TRUE)
+    DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, quiet=TRUE)
     # extract results for paired condition
-    res <- results(DESeq_data_set_object, pAdjustMethod=adj)
+    res <- DESeq2::results(DESeq_data_set_object, pAdjustMethod=adj)
     res$Flag <- ifelse(res$padj <= thresh, 1, 0)
     res$Flag[which(res$log2FoldChange < 0)] <- res$Flag[which(res$log2FoldChange < 0)] * -1
     names(res) <- unlist(lapply(names(res), function(y) paste(y,"_",levels(attributes(omicsData)$group_DF[,pairs[[1]][1]])[2],"_vs_",levels(attributes(omicsData)$group_DF[,pairs[[1]][1]])[1],sep="")))

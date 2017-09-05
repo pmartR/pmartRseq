@@ -63,12 +63,12 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
   metadata <- metadata[match(colnames(omicsData$e_data), metadata[,attr(omicsData,"cnames")$fdata_cname]),]
 
   # Creates object to be used in differential expression tests
-  y <- DGEList(counts = omicsData$e_data, group = metadata$Group)
+  y <- edgeR::DGEList(counts = omicsData$e_data, group = metadata$Group)
 
   # Set own sizeFactors(normalization factors), after running normalization
   if(is.null(norm_factors)){
     warning("using edgeR's inbuilt TMM normalization - if want to use own normalization, run normalization function first")
-    y <- calcNormFactors(y)
+    y <- edgeR::calcNormFactors(y)
   }else{
     # check that normalization (size) factors are present for every sample
     if(all(colnames(omicsData$e_data) %in% names(norm_factors))){
@@ -84,12 +84,12 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
     group <- metadata$Group
     design <- model.matrix(~0+group, data=y$samples)
 
-    y <- estimateDisp(y, design)
+    y <- edgeR::estimateDisp(y, design)
 
     # get results from all pairwise comparisons
     results <- apply(pairs, 2, function(x){
       x <- as.character(x)
-      eres <- topTags(exactTest(y, pair=c(x[2],x[1])), n=nrow(omicsData$e_data), adjust.method=adj)
+      eres <- edgeR::topTags(exactTest(y, pair=c(x[2],x[1])), n=nrow(omicsData$e_data), adjust.method=adj)
     })
 
     if(adj == "none"){
@@ -116,8 +116,8 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
     group <- metadata$Group
     design <- model.matrix(~0+group, data=y$samples)
 
-    y <- estimateDisp(y, design)
-    fit <- glmFit(y, design)
+    y <- edgeR::estimateDisp(y, design)
+    fit <- edgeR::glmFit(y, design)
 
     # get results from all comparisons
     results <- apply(pairs, 2, function(x){
@@ -125,8 +125,8 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       cntrst <- rep(0, length(levels(metadata$Group)))
       cntrst[which(levels(metadata$Group) == x[1])] <- 1
       cntrst[which(levels(metadata$Group) == x[2])] <- -1
-      lrt <- glmLRT(fit, contrast=cntrst)
-      results <- topTags(lrt, n=nrow(omicsData$e_data), adjust.method=adj)
+      lrt <- edgeR::glmLRT(fit, contrast=cntrst)
+      results <- edgeR::topTags(lrt, n=nrow(omicsData$e_data), adjust.method=adj)
       return(results)
     })
 
@@ -157,8 +157,8 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
     group <- metadata$Group
     design <- model.matrix(~0+group, data=y$samples)
 
-    y <- estimateDisp(y, design)
-    fit <- glmQLFit(y, design)
+    y <- edgeR::estimateDisp(y, design)
+    fit <- edgeR::glmQLFit(y, design)
 
     # get results from all comparisons
     results <- apply(pairs, 2, function(x){
@@ -166,8 +166,8 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       cntrst <- rep(0, length(levels(metadata$Group)))
       cntrst[which(levels(metadata$Group) == x[1])] <- 1
       cntrst[which(levels(metadata$Group) == x[2])] <- -1
-      qlf <- glmQLFTest(fit, contrast=cntrst)
-      results <- topTags(qlf, n=nrow(omicsData$e_data), adjust.method=adj)
+      qlf <- edgeR::glmQLFTest(fit, contrast=cntrst)
+      results <- edgeR::topTags(qlf, n=nrow(omicsData$e_data), adjust.method=adj)
       return(results)
     })
 
@@ -199,11 +199,11 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
     grp2 <- factor(attributes(omicsData)$group_DF[,pairs[2]])
     design <- model.matrix(~grp2+grp1)
 
-    y <- estimateDisp(y, design)
-    fit <- glmFit(y, design)
-    lrt <- glmLRT(fit)
+    y <- edgeR::estimateDisp(y, design)
+    fit <- edgeR::glmFit(y, design)
+    lrt <- edgeR::glmLRT(fit)
 
-    results <- topTags(lrt, n=nrow(omicsData$e_data), adjust.method=adj)
+    results <- edgeR::topTags(lrt, n=nrow(omicsData$e_data), adjust.method=adj)
 
     if(adj == "none"){
       results@.Data[[1]]$FDR = results@.Data[[1]]$PValue

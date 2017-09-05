@@ -65,7 +65,7 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
 
   if(is.null(within)){
     # indicator species analysis from indicspecies
-    IS <- multipatt(indspec, group, func="IndVal.g", control=how(nperm=999))
+    IS <- indicspecies::multipatt(indspec, group, func="IndVal.g", control=how(nperm=999))
 
     # format results
     results <- IS$sign
@@ -85,7 +85,7 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
       meta.data <- meta.data[match(rownames(indspec2),meta.data[,fdata_cname]),]
 
       # indicator species analysis
-      IS <- multipatt(indspec2, as.character(meta.data$Group), func="IndVal.g", control=how(nperm=999))
+      IS <- indicspecies::multipatt(indspec2, as.character(meta.data$Group), func="IndVal.g", control=how(nperm=999))
       results <- IS$sign
       results$Flag <- ifelse(results$p.value <= pval_thresh, 1, 0)
 

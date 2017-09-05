@@ -40,7 +40,7 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
   attr(omicsData, "group_DF")$Group <- gsub("-","\\.",attr(omicsData, "group_DF")$Group)
   groupDF <- unique(attr(omicsData, "group_DF")[,-which(colnames(attr(omicsData, "group_DF")) == attr(omicsData,"cnames")$fdata_cname)])
   normdata <- omicsData$e_data
-  normdata <- melt(normdata)
+  normdata <- reshape2::melt(normdata)
   normdata <- merge(normdata, attr(omicsData,"group_DF"), by.x="variable", by.y=attr(omicsData,"cnames")$fdata_cname)
 
   # get mean normalized abundance for every group for every feature
@@ -101,26 +101,26 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
   # make better colors
   TaxonBarPallette <- c("#FF00BB","#CC00FF","#F2BFFF","#7A0099","#0022FF","#8091FF","#001499","#00F2FF","#CCFCFF","#009199","#00D90E","#BFFFC4","#007308","#FFFF00","#DDFF00","#B3B300","#FF9100","#FFC880","#995700","#FF0000","#FFABAB","#990000","#BFBFBF","#636363","#000000")
 
-  map <- aes_string(x=x_axis, y=attr(omicsData,"cnames")$edata_cname, fill=group)
-  ggplot(alldata, map)+
-    geom_tile(alpha=0.25)+
-    geom_tile(aes(alpha=ifelse(indsp==1,1,0)))+
-    guides(alpha=FALSE)+
-    scale_fill_manual(values=rep(TaxonBarPallette,3))+
-    #geom_text(aes(label=round(MeanNorm, digits=1)), cex=3)+
-    theme_bw()+
-    theme(panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          axis.title=element_text(size=18, face="bold"),
-          title=element_text(size=18, face="bold"),
-          legend.title=element_text(size=18, face="bold"),
-          axis.text.x=element_text(size=9,angle=45,vjust=1,hjust=1),
-          axis.text.y=element_text(size=7),
-          legend.text=element_text(size=12))+
-    labs(title="Indicator Species", y=attr(omicsData,"cnames")$edata_cname, x=x_axis)+
-    scale_y_discrete(limits=levels(alldata[,attr(omicsData,"cnames")$edata_cname]))+
-    #coord_flip()+
-    theme(aspect.ratio=7/3)
+  map <- ggplot2::aes_string(x=x_axis, y=attr(omicsData,"cnames")$edata_cname, fill=group)
+  ggplot2::ggplot(alldata, map)+
+    ggplot2::geom_tile(alpha=0.25)+
+    ggplot2::geom_tile(aes(alpha=ifelse(indsp==1,1,0)))+
+    ggplot2::guides(alpha=FALSE)+
+    ggplot2::scale_fill_manual(values=rep(TaxonBarPallette,3))+
+    #ggplot2::geom_text(aes(label=round(MeanNorm, digits=1)), cex=3)+
+    ggplot2::theme_bw()+
+    ggplot2::theme(panel.grid.major=ggplot2::element_blank(),
+          panel.grid.minor=ggplot2::element_blank(),
+          axis.title=ggplot2::element_text(size=18, face="bold"),
+          title=ggplot2::element_text(size=18, face="bold"),
+          legend.title=ggplot2::element_text(size=18, face="bold"),
+          axis.text.x=ggplot2::element_text(size=9,angle=45,vjust=1,hjust=1),
+          axis.text.y=ggplot2::element_text(size=7),
+          legend.text=ggplot2::element_text(size=12))+
+    ggplot2::labs(title="Indicator Species", y=attr(omicsData,"cnames")$edata_cname, x=x_axis)+
+    ggplot2::scale_y_discrete(limits=levels(alldata[,attr(omicsData,"cnames")$edata_cname]))+
+    #ggplot2::coord_flip()+
+    ggplot2::theme(aspect.ratio=7/3)
 
 
 }

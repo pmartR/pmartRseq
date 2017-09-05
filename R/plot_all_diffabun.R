@@ -84,7 +84,7 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", fac
     data.padj <- data.frame(Temp=rownames(data), data.padj)
     colnames(data.padj)[1] <- attr(omicsData, "cnames")$edata_cname
     colnames(data.padj)[-1] <- colnames(data)[grep("padj",colnames(data))]
-    data.padj <- melt(data.padj)
+    data.padj <- reshape2::melt(data.padj)
     colnames(data.padj)[3] <- "padj"
     data.padj$Comparison <- unlist(lapply(data.padj$variable, function(x) strsplit(as.character(x),"padj_")[[1]][2]))
 
@@ -93,7 +93,7 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", fac
     data.logfc <- data.frame(Temp=rownames(data), data.logfc)
     colnames(data.logfc)[1] <- attr(omicsData, "cnames")$edata_cname
     colnames(data.logfc)[-1] <- colnames(data)[grep("logFC",colnames(data))]
-    data.logfc <- melt(data.logfc)
+    data.logfc <- reshape2::melt(data.logfc)
     colnames(data.logfc)[3] <- "logFC"
     data.logfc$Comparison <- unlist(lapply(data.logfc$variable, function(x) strsplit(as.character(x),"logFC_")[[1]][2]))
 
@@ -103,45 +103,45 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", fac
     plot.data <- merge(plot.data, omicsData$e_meta, by=attr(omicsData, "cnames")$edata_cname)
 
     map <- aes_string(x=x_axis, y="logFC", colour="padj")
-    p <- ggplot(plot.data, map) +
-      geom_point()+
-      geom_hline(yintercept=log2(2),lty="dashed")+
-      geom_hline(yintercept=-log2(2),lty="dashed")+
-      geom_hline(yintercept=log2(10),lty="dotted")+
-      geom_hline(yintercept=-log2(10),lty="dotted")+
-      theme_bw()+
-      theme(axis.text.x=element_text(angle=90),
-            axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
+    p <- ggplot2::ggplot(plot.data, map) +
+      ggplot2::geom_point()+
+      ggplot2::geom_hline(yintercept=log2(2),lty="dashed")+
+      ggplot2::geom_hline(yintercept=-log2(2),lty="dashed")+
+      ggplot2::geom_hline(yintercept=log2(10),lty="dotted")+
+      ggplot2::geom_hline(yintercept=-log2(10),lty="dotted")+
+      ggplot2::theme_bw()+
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90),
+            axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
 
     if(!is.null(x_lab)){
-      p <- p + labs(x=x_lab)
+      p <- p + ggplot2::labs(x=x_lab)
     }else{
-      p <- p + labs(x=x_axis)
+      p <- p + ggplot2::labs(x=x_axis)
     }
 
     if(!is.null(y_lab)){
-      p <- p + labs(y=y_lab)
+      p <- p + ggplot2::labs(y=y_lab)
     }else{
-      p <- p + labs(y="Log2 Fold Change")
+      p <- p + ggplot2::labs(y="Log2 Fold Change")
     }
 
     if(!is.null(plot_title)){
-      p <- p + ggtitle(plot_title)
+      p <- p + ggplot2::ggtitle(plot_title)
     }else{
-      p <- p + ggtitle(paste(t," Results"))
+      p <- p + ggplot2::ggtitle(paste(t," Results"))
     }
 
     if(!is.null(leglab)){
-      p <- p + guides(colour=guide_legend(title=leglab))
+      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
     }
 
     if(!is.null(facet)){
-      p <- p + facet_wrap(as.formula(facet), scales=scales)
+      p <- p + ggplot2::facet_wrap(as.formula(facet), scales=scales)
     }
 
     return(p)

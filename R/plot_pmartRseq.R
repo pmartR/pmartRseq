@@ -80,7 +80,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
         Counts <- do.call(rbind, Counts)
         Counts <- data.frame(Threshold=thresholds, Counts)
         Counts$Threshold <- as.factor(Counts$Threshold)
-        Counts <- melt(Counts)
+        Counts <- reshape2::melt(Counts)
         Counts$Threshold <- as.numeric(as.character(Counts$Threshold))
         Counts$Comparison <- unlist(lapply(as.character(Counts$variable), function(x) strsplit(x,"padj_")[[1]][2]))
 
@@ -94,38 +94,38 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
       }
 
 
-      p1 <- ggplot(Counts, aes(x=Threshold, y=value, colour=Comparison)) +
-        geom_line(cex=1.5) +
-        theme_bw() +
-        theme(axis.line.x = element_line(colour = "black"),
-              axis.line.y = element_line(colour="black"),
-              plot.background=element_blank(),
-              panel.grid.major=element_blank(),
-              panel.grid.minor=element_blank(),
-              panel.border=element_blank())
-      #labs(x="P-Value Threshold",y="Number of differentially expressed genes") +
-      #ggtitle(paste(x," Test",sep=""))
+      p1 <- ggplot2::ggplot(Counts, aes(x=Threshold, y=value, colour=Comparison)) +
+        ggplot2::geom_line(cex=1.5) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+              axis.line.y = ggplot2::element_line(colour="black"),
+              plot.background = ggplot2::element_blank(),
+              panel.grid.major = ggplot2::element_blank(),
+              panel.grid.minor = ggplot2::element_blank(),
+              panel.border = ggplot2::element_blank())
+      #ggplot2::labs(x="P-Value Threshold",y="Number of differentially expressed genes") +
+      #ggplot2::ggtitle(paste(x," Test",sep=""))
 
       if(!is.null(x_lab)){
-        p1 <- p1 + labs(x=x_lab)
+        p1 <- p1 + ggplot2::labs(x=x_lab)
       }else{
-        p1 <- p1 + labs(x="P-Value Threshold")
+        p1 <- p1 + ggplot2::labs(x="P-Value Threshold")
       }
 
       if(!is.null(y_lab)){
-        p1 <- p1 + labs(y=y_lab)
+        p1 <- p1 + ggplot2::labs(y=y_lab)
       }else{
-        p1 <- p1 + labs(y="Number of differentially expressed genes")
+        p1 <- p1 + ggplot2::labs(y="Number of differentially expressed genes")
       }
 
       if(!is.null(plot_title)){
-        p1 <- p1 + ggtitle(plot_title)
+        p1 <- p1 + ggplot2::ggtitle(plot_title)
       }else{
-        p1 <- p1 + ggtitle(paste(x," Test",sep=""))
+        p1 <- p1 + ggplot2::ggtitle(paste(x," Test",sep=""))
       }
 
       if(!is.null(leglab)){
-        p1 <- p1 + guides(colour=guide_legend(title=leglab))
+        p1 <- p1 + ggplot2::guides(colour=guide_legend(title=leglab))
       }
 
       print(p1)
@@ -134,7 +134,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
 
   ## flags barplot ##
   if("flag" %in% tolower(type)){
-    pal <- brewer.pal(9, "Set1")
+    pal <- RColorBrewer::brewer.pal(9, "Set1")
 
     invisible(lapply(test, function(r){
       idx1 <- grep("Flag", colnames(results_object$allResults))
@@ -142,7 +142,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
       idx <- intersect(idx1, idx2)
 
       data <- results_object$allResults[,idx]
-      data <- melt(data)
+      data <- reshape2::melt(data)
       if(length(idx) == 1){data$variable = colnames(results_object$allResults)[idx]}
       data$Pairs <- unlist(lapply(as.character(data$variable), function(x) strsplit(x,"Flag_")[[1]][2]))
       data <- data[-which(data$value==0),]
@@ -150,43 +150,43 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
       data$Direction <- factor(data$Direction, levels=c("Up","Down"))
 
       plotData <- table(data$Pairs, data$Direction)
-      plotData <- melt(plotData)
+      plotData <- reshape2::melt(plotData)
       names(plotData) <- c("Comparison","Direction","Count")
 
-      p2 <- ggplot(plotData, aes(x=Comparison,y=Count,fill=Direction)) +
-        geom_bar(stat="identity", position="dodge") +
-        scale_fill_manual(values=pal[c(3,1)], name="Regulatory\nDirection") +
-        theme_bw() +
-        theme(axis.line.x = element_line(colour = "black"),
-              axis.line.y = element_line(colour="black"),
-              plot.background=element_blank(),
-              panel.grid.major=element_blank(),
-              panel.grid.minor=element_blank(),
-              panel.border=element_blank()) +
-        geom_text(aes(label=Count), position=position_dodge(width=0.9), vjust=1)
-      #labs(x="Comparisons",y="Number of differentially expressed genes") +
-      #ggtitle(paste(r, " Test",sep=""))
+      p2 <- ggplot2::ggplot(plotData, aes(x=Comparison,y=Count,fill=Direction)) +
+        ggplot2::geom_bar(stat="identity", position="dodge") +
+        ggplot2::scale_fill_manual(values=pal[c(3,1)], name="Regulatory\nDirection") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+              axis.line.y = ggplot2::element_line(colour="black"),
+              plot.background = ggplot2::element_blank(),
+              panel.grid.major = ggplot2::element_blank(),
+              panel.grid.minor = ggplot2::element_blank(),
+              panel.border = ggplot2::element_blank()) +
+        ggplot2::geom_text(aes(label=Count), position=position_dodge(width=0.9), vjust=1)
+      #ggplot2::labs(x="Comparisons",y="Number of differentially expressed genes") +
+      #ggplot2::ggtitle(paste(r, " Test",sep=""))
 
       if(!is.null(x_lab)){
-        p2 <- p2 + labs(x=x_lab)
+        p2 <- p2 + ggplot2::labs(x=x_lab)
       }else{
-        p2 <- p2 + labs(x="Comparisons")
+        p2 <- p2 + ggplot2::labs(x="Comparisons")
       }
 
       if(!is.null(y_lab)){
-        p2 <- p2 + labs(y=y_lab)
+        p2 <- p2 + ggplot2::labs(y=y_lab)
       }else{
-        p2 <- p2 + labs(y="Number of differentially expressed genes")
+        p2 <- p2 + ggplot2::labs(y="Number of differentially expressed genes")
       }
 
       if(!is.null(plot_title)){
-        p2 <- p2 + ggtitle(plot_title)
+        p2 <- p2 + ggplot2::ggtitle(plot_title)
       }else{
-        p2 <- p2 + ggtitle(paste(r," Test",sep=""))
+        p2 <- p2 + ggplot2::ggtitle(paste(r," Test",sep=""))
       }
 
       if(!is.null(leglab)){
-        p2 <- p2 + guides(fill=guide_legend(title=leglab))
+        p2 <- p2 + ggplot2::guides(fill=guide_legend(title=leglab))
       }
 
       print(p2)
@@ -212,8 +212,8 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
       data <- as.matrix(data)
 
       numCols <- length(seq(from=0, to=max(abs(data)), by=0.1))
-      cols1 <- colorRampPalette(colors=rev(brewer.pal(11, "RdYlGn")[6:11]))(numCols)
-      cols2 <- colorRampPalette(colors=rev(brewer.pal(11, "RdYlGn")[1:6]))(numCols)
+      cols1 <- grDevices::colorRampPalette(colors=rev(brewer.pal(11, "RdYlGn")[6:11]))(numCols)
+      cols2 <- grDevices::colorRampPalette(colors=rev(brewer.pal(11, "RdYlGn")[1:6]))(numCols)
 
       cols <- c(cols1, cols2)
       breaks <- numCols + numCols + 1
@@ -231,7 +231,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
         data <- t(data)
 
         par(cex.main=.75)
-        heatmap.2(data, dendrogram="none", col=cols, breaks=breaks, trace="none", Rowv=FALSE, Colv=TRUE,
+        gplots::heatmap.2(data, dendrogram="none", col=cols, breaks=breaks, trace="none", Rowv=FALSE, Colv=TRUE,
                   key=TRUE, keysize=2, labCol="", labRow=rowLabels, cexRow=.8, xlab=x_lab, ylab=y_lab,
                   main=ifelse(is.null(plot_title),paste(r," Test\nLog2FoldChanges",sep=""),plot_title))
       }else if(length(sig.genes) > 1 & length(idx) == 1){
@@ -278,37 +278,37 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
       plotData <- do.call(rbind,data)
       plotData$Comp <- as.factor(plotData$Comp)
 
-      p3 <- ggplot(plotData, aes(x=logFC, y=-log10(padj), colour=Threshold)) +
-        geom_point(alpha=0.4, size=1.75) +
-        facet_wrap(~Comp) +
-        theme_bw() +
-        theme(axis.line.x = element_line(colour = "black"),
-              axis.line.y = element_line(colour="black"),
-              plot.background=element_blank(),
-              panel.grid.major=element_blank(),
-              panel.grid.minor=element_blank(),
-              panel.border=element_blank())
+      p3 <- ggplot2::ggplot(plotData, aes(x=logFC, y=-log10(padj), colour=Threshold)) +
+        ggplot2::geom_point(alpha=0.4, size=1.75) +
+        ggplot2::facet_wrap(~Comp) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+              axis.line.y = ggplot2::element_line(colour="black"),
+              plot.background = ggplot2::element_blank(),
+              panel.grid.major = ggplot2::element_blank(),
+              panel.grid.minor = ggplot2::element_blank(),
+              panel.border = ggplot2::element_blank())
 
       if(!is.null(x_lab)){
-        p3 <- p3 + labs(x=x_lab)
+        p3 <- p3 + ggplot2::labs(x=x_lab)
       }else{
-        p3 <- p3 + labs(x="Log2FC")
+        p3 <- p3 + ggplot2::labs(x="Log2FC")
       }
 
       if(!is.null(y_lab)){
-        p3 <- p3 + labs(y=y_lab)
+        p3 <- p3 + ggplot2::labs(y=y_lab)
       }else{
-        p3 <- p3 + labs(y="-log10(padj)")
+        p3 <- p3 + ggplot2::labs(y="-log10(padj)")
       }
 
       if(!is.null(plot_title)){
-        p3 <- p3 + ggtitle(plot_title)
+        p3 <- p3 + ggplot2::ggtitle(plot_title)
       }else{
-        p3 <- p3 + ggtitle(paste(r," Test", sep=""))
+        p3 <- p3 + ggplot2::ggtitle(paste(r," Test", sep=""))
       }
 
       if(!is.null(leglab)){
-        p3 <- p3 + guides(colour=guide_legend(title=leglab))
+        p3 <- p3 + ggplot2::guides(colour=guide_legend(title=leglab))
       }
 
       print(p3)
@@ -338,6 +338,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
                            x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
@@ -385,44 +386,44 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
 
 
   results_object2 <- cbind(rownames(results_object), results_object)
-  plot.data <- melt(results_object2)
+  plot.data <- reshape2::melt(results_object2)
   names(plot.data)[1] <- "Test"
   names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
   plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-  map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-  p <- ggplot(plot.data, map) +
-    geom_jitter(size=3, width=0.1, height=0) +
-    facet_wrap(~Test, scales=scales) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  p <- ggplot2::ggplot(plot.data, map) +
+    ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+    ggplot2::facet_wrap(~Test, scales=scales) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
+    p <- p + ggplot2::labs(x=x_lab)
   }else{
-    p <- p + labs(x="Group")
+    p <- p + ggplot2::labs(x="Group")
   }
 
   if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
+    p <- p + ggplot2::labs(y=y_lab)
   }else{
-    p <- p + labs(y="Alpha Diversity Measure")
+    p <- p + ggplot2::labs(y="Alpha Diversity Measure")
   }
 
   if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
+    p <- p + ggplot2::ggtitle(plot_title)
   }else{
-    p <- p + ggtitle("Alpha Diversity")
+    p <- p + ggplot2::ggtitle("Alpha Diversity")
   }
 
   if(!is.null(leglab)){
-    p <- p + guides(colour=guide_legend(title=leglab))
+    p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
   }
 
   return(p)
@@ -451,6 +452,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
@@ -497,44 +499,44 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   }
 
   results_object2 <- cbind(rownames(results_object), results_object)
-  plot.data <- melt(results_object2)
+  plot.data <- reshape2::melt(results_object2)
   names(plot.data)[1] <- "Test"
   names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
   plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-  map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-  p <- ggplot(plot.data, map) +
-    geom_jitter(size=3, width=0.1, height=0) +
-    facet_wrap(~Test, scales=scales) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  p <- ggplot2::ggplot(plot.data, map) +
+    ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+    ggplot2::facet_wrap(~Test, scales=scales) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
+    p <- p + ggplot2::labs(x=x_lab)
   }else{
-    p <- p + labs(x="Group")
+    p <- p + ggplot2::labs(x="Group")
   }
 
   if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
+    p <- p + ggplot2::labs(y=y_lab)
   }else{
-    p <- p + labs(y="Evenness Measure")
+    p <- p + ggplot2::labs(y="Evenness Measure")
   }
 
   if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
+    p <- p + ggplot2::ggtitle(plot_title)
   }else{
-    p <- p + ggtitle("Evenness")
+    p <- p + ggplot2::ggtitle("Evenness")
   }
 
   if(!is.null(leglab)){
-    p <- p + guides(colour=guide_legend(title=leglab))
+    p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
   }
 
   return(p)
@@ -563,6 +565,7 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
                              x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   ## initial checks ##
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
@@ -612,48 +615,48 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   }
   ## end initial checks ##
 
-  plot.data <- melt(results_object)
+  plot.data <- reshape2::melt(results_object)
   names(plot.data)[1] <- "Grp"
   names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
   plot.data <- plot.data[which(plot.data$variable == variable),]
 
   plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-  map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-  p <- ggplot(plot.data, map) +
-    geom_jitter(size=3, width=0.1, height=0) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  p <- ggplot2::ggplot(plot.data, map) +
+    ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
+    p <- p + ggplot2::labs(x=x_lab)
   }else{
-    p <- p + labs(x="Group")
+    p <- p + ggplot2::labs(x="Group")
   }
 
   if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
+    p <- p + ggplot2::labs(y=y_lab)
   }else{
     if(attr(results_object, "similarity")){
-      p <- p + labs(y=paste(variable," Jaccard Similarity", sep=""))
+      p <- p + ggplot2::labs(y=paste(variable," Jaccard Similarity", sep=""))
     }else{
-      p <- p + labs(y=paste(variable," Jaccard Dissimilarity", sep=""))
+      p <- p + ggplot2::labs(y=paste(variable," Jaccard Dissimilarity", sep=""))
     }
   }
 
   if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
+    p <- p + ggplot2::ggtitle(plot_title)
   }else{
-    p <- p + ggtitle("Jaccard Index")
+    p <- p + ggplot2::ggtitle("Jaccard Index")
   }
 
   if(!is.null(leglab)){
-    p <- p + guides(colour=guide_legend(title=leglab))
+    p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
   }
 
   return(p)
@@ -761,20 +764,20 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Biomolecules in Samples",sep=""), plot_title)
   }
 
-  p <- ggplot(all_counts) +
-    geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
+  p <- ggplot2::ggplot(all_counts) +
+    ggplot2::geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
                   ymin=0, ymax=sumcount), fill="royalblue1", col="black") +
-    xlab(xlabel) +
-    ylab(ylabel) +
-    ggtitle(plot_title) +
-    scale_x_continuous(breaks = scales::pretty_breaks()) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+    ggplot2::xlab(xlabel) +
+    ggplot2::ylab(ylabel) +
+    ggplot2::ggtitle(plot_title) +
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(min_num)) {
     # mark on graph where min_num is #
@@ -866,20 +869,20 @@ plot.sampleFilter <- function(results_object, breaks=100, max_count=NULL, min_nu
   ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
   plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Sample Biomolecules",sep=""), plot_title)
 
-  p <- ggplot(all_counts) +
-    geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
+  p <- ggplot2::ggplot(all_counts) +
+    ggplot2::geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
                   ymin=0, ymax=sumcount), fill="royalblue1", col="black") +
-    xlab(xlabel) +
-    ylab(ylabel) +
-    ggtitle(plot_title) +
-    scale_x_continuous(breaks = scales::pretty_breaks()) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+    ggplot2::xlab(xlabel) +
+    ggplot2::ylab(ylabel) +
+    ggplot2::ggtitle(plot_title) +
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(min_num)) {
     # mark on graph where min_num is #
@@ -991,7 +994,7 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   }
 
   ## Format data for plotting ##
-  data_melt <- melt(data)
+  data_melt <- reshape2::melt(data)
   colnames(data_melt)[which(colnames(data_melt)=="variable")] <- attr(results_object, "cnames")$fdata_cname
 
   ## Merge data with group_DF to get groupings ##
@@ -1019,361 +1022,38 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   TaxonBarPallette <- c("#FF00BB","#CC00FF","#F2BFFF","#7A0099","#0022FF","#8091FF","#001499","#00F2FF","#CCFCFF","#009199","#00D90E","#BFFFC4","#007308","#FFFF00","#DDFF00","#B3B300","#FF9100","#FFC880","#995700","#FF0000","#FFABAB","#990000","#BFBFBF","#636363","#000000")
 
   ## Bar plot ##
-  map <- aes_string(x=x_axis, y="value", fill=class)
-  p <- ggplot(data_grp, map) +
-    geom_bar(stat="identity", position="stack") +
-    scale_fill_manual(values=rep(TaxonBarPallette,5))+
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+  map <- ggplot2::aes_string(x=x_axis, y="value", fill=class)
+  p <- ggplot2::ggplot(data_grp, map) +
+    ggplot2::geom_bar(stat="identity", position="stack") +
+    ggplot2::scale_fill_manual(values=rep(TaxonBarPallette,5))+
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
+    p <- p + ggplot2::labs(x=x_lab)
   }else{
-    p <- p + labs(x=x_axis)
+    p <- p + ggplot2::labs(x=x_axis)
   }
 
   if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
+    p <- p + ggplot2::labs(y=y_lab)
   }else{
-    p <- p + labs(y="Abundance")
+    p <- p + ggplot2::labs(y="Abundance")
   }
 
   if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
+    p <- p + ggplot2::ggtitle(plot_title)
   }else{
-    p <- p + ggtitle("Taxonomy")
+    p <- p + ggplot2::ggtitle("Taxonomy")
   }
 
   if(!is.null(leglab)){
-    p <- p + guides(fill=guide_legend(title=leglab))
-  }
-
-  return(p)
-
-}
-
-
-
-#'@export
-#'@rdname plot_pmartRseq
-#'@name plot_pmartRseq
-#'@param x_axis Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".
-#'@param class Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".
-#'@param grp_fn Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".
-#'@param subset_by Optional, which variable to subset the data by. NULL will not subset the data. Default is NULL.
-#'@param subset_val Optional, which values to include in the subset.
-#'@param plot_title Optional, a character vector to use as the plot title
-#'@param leglab Optional, a character vector to use as the legend label
-#'@param x_lab Optional, a character vector to use as the x-axis label
-#'@param y_lab Optional, a character vector to use as the y-axis label
-plot.cDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn="median", subset_by=NULL, subset_val=NULL,
-                          plot_title=NULL, x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.cDNAdata(results_object, x_axis, class, grp_fn, subset_by, subset_val, plot_title, x_lab, y_lab, leglab, ...)
-}
-
-.plot.cDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn="median", subset_by=NULL, subset_val=NULL, plot_title=NULL,
-                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
-
-  # normalized or not-normalized counts???
-  # remove 0/NA from data, so med(0,0,4,0,0) is 4, not 0???
-
-  library(reshape2)
-  library(ggplot2)
-  library(dplyr)
-
-  if(!is.null(plot_title)){
-    if(!is.character(plot_title)){
-      stop("plot_title must be a character vector")
-    }
-  }
-
-  if(!is.null(x_lab)){
-    if(!is.character(x_lab)){
-      stop("x_lab must be a character vector")
-    }
-  }
-
-  if(!is.null(y_lab)){
-    if(!is.character(y_lab)){
-      stop("y_lab must be a character vector")
-    }
-  }
-
-  if(!is.null(leglab)){
-    if(!is.character(leglab)){
-      stop("leglab must be a character vector")
-    }
-  }
-
-  if(!is.null(subset_by)){
-    if(!is.character(subset_by) | !(subset_by %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"groupDF"))))){
-      stop("subset_by must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-    }
-  }
-
-  if(!is.character(x_axis) | !(x_axis %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"group_DF"))))){
-    stop("x_axis must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-  }
-
-  if(!is.character(class) | !(class %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"groupDF"))))){
-    stop("class must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-  }
-
-  if(!is.null(subset_val)){
-    if(!is.character(subset_val)){
-      stop("subset_val must be a character vector")
-    }
-  }
-
-  ## Check group designation ##
-  if(is.null(attr(results_object,"group_DF"))){
-    stop("Run group designation function first")
-  }
-
-  ## Check subsetting ##
-  if(!is.null(subset_by) & is.null(subset_val)){
-    stop("Must specify values to subset to when specifying variable to subset with")
-  }else if(is.null(subset_by) & !is.null(subset_val)){
-    stop("Must specify which variable to use for subsetting when specifying values for subset")
-  }
-
-  ## Merge e_data with e_meta to get feature meta data ##
-  if(!is.null(results_object$e_meta)){
-    data <- merge(results_object$e_data, results_object$e_meta, by=attr(results_object,"cnames")$edata_cname)
-  }else{
-    #data <- results_object$e_data
-    stop("Data must have an e_meta mapping")
-  }
-
-  ## Subset ##
-  if(!is.null(subset_by) & !is.null(subset_val)){
-    data <- subset(data, get(subset_by) %in% subset_val)
-  }
-
-  ## Format data for plotting ##
-  data_melt <- melt(data)
-  colnames(data_melt)[which(colnames(data_melt)=="variable")] <- attr(results_object, "cnames")$fdata_cname
-
-  ## Merge data with group_DF to get groupings ##
-  data_melt <-  merge(data_melt, attr(results_object,"group_DF"), by=attr(results_object, "cnames")$fdata_cname)
-
-  vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
-  vars <- lapply(vars, as.symbol)
-
-  data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
-  data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
-
-  vars1 <- c(x_axis, class)
-  vars1 <- lapply(vars1, as.symbol)
-
-  if(grp_fn %in% c("median","med")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=median(sum, na.rm=TRUE))
-  }else if(grp_fn %in% c("mean","average","avg")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=mean(sum, na.rm=TRUE))
-  }else if(grp_fn %in% c("sum")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=sum(sum, na.rm=TRUE))
-  }
-
-  data_grp <- data_grp[order(-data_grp$value),]
-
-  ## Bar plot ##
-  map <- aes_string(x=x_axis, y="value", fill=class)
-  p <- ggplot(data_grp, map) +
-    geom_bar(stat="identity", position="stack") +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
-
-  if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
-  }else{
-    p <- p + labs(x=x_axis)
-  }
-
-  if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
-  }else{
-    p <- p + labs(y="Abundance")
-  }
-
-  if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
-  }else{
-    p <- p + ggtitle("cDNAdata")
-  }
-
-  if(!is.null(leglab)){
-    p <- p + guides(fill=guide_legend(title=leglab))
-  }
-
-  return(p)
-
-}
-
-
-#'@export
-#'@rdname plot_pmartRseq
-#'@name plot_pmartRseq
-#'@param x_axis Required, a character vector specifying which variable to group data by and put on the x-axis, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "Group".
-#'@param class Required, a character vector specifying which variable to group and color data by, must be one of the column names in results_object$e_data, results_object$e_meta, or attr(results_object, "group_DF"). Default is "ECNum".
-#'@param grp_fn Required, a character vector specifying which function to use to summarise values across replicates. Can use one of "median", "mean", or "sum". Default is "median".
-#'@param subset_by Optional, which variable to subset the data by. NULL will not subset the data. Default is NULL.
-#'@param subset_val Optional, which values to include in the subset.
-#'@param plot_title Optional, a character vector to use as the plot title
-#'@param leglab Optional, a character vector to use as the legend label
-#'@param x_lab Optional, a character vector to use as the x-axis label
-#'@param y_lab Optional, a character vector to use as the y-axis label
-plot.gDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn="median", subset_by=NULL, subset_val=NULL,
-                          plot_title=NULL, x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.gDNAdata(results_object, x_axis, class, grp_fn, subset_by, subset_val, plot_title, x_lab, y_lab, leglab, ...)
-}
-
-.plot.gDNAdata <- function(results_object, x_axis="Group", class="ECNum", grp_fn="median", subset_by=NULL, subset_val=NULL, plot_title=NULL,
-                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
-
-  # normalized or not-normalized counts???
-  # remove 0/NA from data, so med(0,0,4,0,0) is 4, not 0???
-
-  library(reshape2)
-  library(ggplot2)
-  library(dplyr)
-
-  if(!is.null(plot_title)){
-    if(!is.character(plot_title)){
-      stop("plot_title must be a character vector")
-    }
-  }
-
-  if(!is.null(x_lab)){
-    if(!is.character(x_lab)){
-      stop("x_lab must be a character vector")
-    }
-  }
-
-  if(!is.null(y_lab)){
-    if(!is.character(y_lab)){
-      stop("y_lab must be a character vector")
-    }
-  }
-
-  if(!is.null(leglab)){
-    if(!is.character(leglab)){
-      stop("leglab must be a character vector")
-    }
-  }
-
-  if(!is.null(subset_by)){
-    if(!is.character(subset_by) | !(subset_by %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"groupDF"))))){
-      stop("subset_by must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-    }
-  }
-
-  if(!is.character(x_axis) | !(x_axis %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"group_DF"))))){
-    stop("x_axis must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-  }
-
-  if(!is.character(class) | !(class %in% c(colnames(results_object$e_data), colnames(results_object$e_meta), colnames(attr(results_object,"groupDF"))))){
-    stop("class must be a character vector and a column name found in results_object$e_data, results_object$e_meta, or group_DF")
-  }
-
-  if(!is.null(subset_val)){
-    if(!is.character(subset_val)){
-      stop("subset_val must be a character vector")
-    }
-  }
-
-  ## Check group designation ##
-  if(is.null(attr(results_object,"group_DF"))){
-    stop("Run group designation function first")
-  }
-
-  ## Check subsetting ##
-  if(!is.null(subset_by) & is.null(subset_val)){
-    stop("Must specify values to subset to when specifying variable to subset with")
-  }else if(is.null(subset_by) & !is.null(subset_val)){
-    stop("Must specify which variable to use for subsetting when specifying values for subset")
-  }
-
-  ## Merge e_data with e_meta to get feature meta data ##
-  if(!is.null(results_object$e_meta)){
-    data <- merge(results_object$e_data, results_object$e_meta, by=attr(results_object,"cnames")$edata_cname)
-  }else{
-    #data <- results_object$e_data
-    stop("Data must have an e_meta mapping")
-  }
-
-  ## Subset ##
-  if(!is.null(subset_by) & !is.null(subset_val)){
-    data <- subset(data, get(subset_by) %in% subset_val)
-  }
-
-  ## Format data for plotting ##
-  data_melt <- melt(data)
-  colnames(data_melt)[which(colnames(data_melt)=="variable")] <- attr(results_object, "cnames")$fdata_cname
-
-  ## Merge data with group_DF to get groupings ##
-  data_melt <-  merge(data_melt, attr(results_object,"group_DF"), by=attr(results_object, "cnames")$fdata_cname)
-
-  vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
-  vars <- lapply(vars, as.symbol)
-
-  data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
-  data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
-
-  vars1 <- c(x_axis, class)
-  vars1 <- lapply(vars1, as.symbol)
-
-  if(grp_fn %in% c("median","med")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=median(sum, na.rm=TRUE))
-  }else if(grp_fn %in% c("mean","average","avg")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=mean(sum, na.rm=TRUE))
-  }else if(grp_fn %in% c("sum")){
-    data_grp <- data_grp1 %>% dplyr::group_by_(.dots=vars1) %>% dplyr::summarise(value=sum(sum, na.rm=TRUE))
-  }
-
-  data_grp <- data_grp[order(-data_grp$value),]
-
-  ## Bar plot ##
-  map <- aes_string(x=x_axis, y="value", fill=class)
-  p <- ggplot(data_grp, map) +
-    geom_bar(stat="identity", position="stack") +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
-
-  if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
-  }else{
-    p <- p + labs(x=x_axis)
-  }
-
-  if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
-  }else{
-    p <- p + labs(y="Abundance")
-  }
-
-  if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
-  }else{
-    p <- p + ggtitle("gDNAdata")
-  }
-
-  if(!is.null(leglab)){
-    p <- p + guides(fill=guide_legend(title=leglab))
+    p <- p + ggplot2::guides(fill=guide_legend(title=leglab))
   }
 
   return(p)
@@ -1402,6 +1082,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
@@ -1449,44 +1130,44 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
 
   if(is.null(abun)){
     results_object2 <- cbind(rownames(results_object), results_object)
-    plot.data <- melt(results_object2)
+    plot.data <- reshape2::melt(results_object2)
     names(plot.data)[1] <- "Test"
     names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
     plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-    map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-    p <- ggplot(plot.data, map) +
-      geom_jitter(size=3, width=0.1, height=0) +
-      facet_wrap(~Test, scales=scales) +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
+    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+    p <- ggplot2::ggplot(plot.data, map) +
+      ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+      ggplot2::facet_wrap(~Test, scales=scales) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
 
     if(!is.null(x_lab)){
-      p <- p + labs(x=x_lab)
+      p <- p + ggplot2::labs(x=x_lab)
     }else{
-      p <- p + labs(x="Group")
+      p <- p + ggplot2::labs(x="Group")
     }
 
     if(!is.null(y_lab)){
-      p <- p + labs(y=y_lab)
+      p <- p + ggplot2::labs(y=y_lab)
     }else{
-      p <- p + labs(y="Richness")
+      p <- p + ggplot2::labs(y="Richness")
     }
 
     if(!is.null(plot_title)){
-      p <- p + ggtitle(plot_title)
+      p <- p + ggplot2::ggtitle(plot_title)
     }else{
-      p <- p + ggtitle("Richness")
+      p <- p + ggplot2::ggtitle("Richness")
     }
 
     if(!is.null(leglab)){
-      p <- p + guides(colour=guide_legend(title=leglab))
+      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
     }
   }else{
     if(!("abunRes" %in% class(abun))){stop("abun must be of class 'abunRes'")}
@@ -1496,37 +1177,37 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
     data <- merge(rich, abun, by="Samples")
     data <- merge(data, attr(results_object, "group_DF"), by.x="Samples", by.y=attr(results_object, "cnames")$fdata_cname)
 
-    map <- aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
-    p <- ggplot(data, map) +
-      geom_jitter(size=3, width=0.1, height=0) +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
+    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
+    p <- ggplot2::ggplot(data, map) +
+      ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
 
     if(!is.null(x_lab)){
-      p <- p + labs(x=x_lab)
+      p <- p + ggplot2::labs(x=x_lab)
     }else{
-      p <- p + labs(x="Richness")
+      p <- p + ggplot2::labs(x="Richness")
     }
 
     if(!is.null(y_lab)){
-      p <- p + labs(y=y_lab)
+      p <- p + ggplot2::labs(y=y_lab)
     }else{
-      p <- p + labs(y="Abundance")
+      p <- p + ggplot2::labs(y="Abundance")
     }
 
     if(!is.null(plot_title)){
-      p <- p + ggtitle(plot_title)
+      p <- p + ggplot2::ggtitle(plot_title)
     }else{
-      p <- p + ggtitle("Richness vs Abundance")
+      p <- p + ggplot2::ggtitle("Richness vs Abundance")
     }
 
     if(!is.null(leglab)){
-      p <- p + guides(colour=guide_legend(title=leglab))
+      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
     }
   }
 
@@ -1555,6 +1236,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
@@ -1597,43 +1279,43 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
 
   if(is.null(rich)){
     results_object2 <- cbind(rownames(results_object), results_object)
-    plot.data <- melt(results_object2)
+    plot.data <- reshape2::melt(results_object2)
     names(plot.data)[2] <- "Abundance"
     names(plot.data)[1] <- attr(results_object, "cnames")$fdata_cname
 
     plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-    map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-    p <- ggplot(plot.data, map) +
-      geom_jitter(size=3, width=0.1, height=0) +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
+    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+    p <- ggplot2::ggplot(plot.data, map) +
+      ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
 
     if(!is.null(x_lab)){
-      p <- p + labs(x=x_lab)
+      p <- p + ggplot2::labs(x=x_lab)
     }else{
-      p <- p + labs(x="Group")
+      p <- p + ggplot2::labs(x="Group")
     }
 
     if(!is.null(y_lab)){
-      p <- p + labs(y=y_lab)
+      p <- p + ggplot2::labs(y=y_lab)
     }else{
-      p <- p + labs(y="Abundance")
+      p <- p + ggplot2::labs(y="Abundance")
     }
 
     if(!is.null(plot_title)){
-      p <- p + ggtitle(plot_title)
+      p <- p + ggplot2::ggtitle(plot_title)
     }else{
-      p <- p + ggtitle("Abundance")
+      p <- p + ggplot2::ggtitle("Abundance")
     }
 
     if(!is.null(leglab)){
-      p <- p + guides(colour=guide_legend(title=leglab))
+      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
     }
   }else{
     if(!("richRes" %in% class(rich))){stop("rich must be of class 'richRes'")}
@@ -1643,37 +1325,37 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     data <- merge(rich, abun, by="Samples")
     data <- merge(data, attr(results_object, "group_DF"), by.x="Samples", by.y=attr(results_object, "cnames")$fdata_cname)
 
-    map <- aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
-    p <- ggplot(data, map) +
-      geom_jitter(size=3, width=0.1, height=0) +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
+    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
+    p <- ggplot2::ggplot(data, map) +
+      ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
 
     if(!is.null(x_lab)){
-      p <- p + labs(x=x_lab)
+      p <- p + ggplot2::labs(x=x_lab)
     }else{
-      p <- p + labs(x="Richness")
+      p <- p + ggplot2::labs(x="Richness")
     }
 
     if(!is.null(y_lab)){
-      p <- p + labs(y=y_lab)
+      p <- p + ggplot2::labs(y=y_lab)
     }else{
-      p <- p + labs(y="Abundance")
+      p <- p + ggplot2::labs(y="Abundance")
     }
 
     if(!is.null(plot_title)){
-      p <- p + ggtitle(plot_title)
+      p <- p + ggplot2::ggtitle(plot_title)
     }else{
-      p <- p + ggtitle("Richness vs Abundance")
+      p <- p + ggplot2::ggtitle("Richness vs Abundance")
     }
 
     if(!is.null(leglab)){
-      p <- p + guides(colour=guide_legend(title=leglab))
+      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
     }
   }
 
@@ -1701,6 +1383,7 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
                            x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
+  library(reshape2)
 
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
@@ -1742,43 +1425,43 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
 
 
   results_object2 <- cbind(rownames(results_object), results_object)
-  plot.data <- melt(results_object2)
+  plot.data <- reshape2::melt(results_object2)
   names(plot.data)[2] <- "EffSpecies"
   names(plot.data)[1] <- attr(results_object, "cnames")$fdata_cname
 
   plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
-  map <- aes_string(x=x_axis, y="value", colour=color, shape=shape)
-  p <- ggplot(plot.data, map) +
-    geom_jitter(size=3, width=0.1, height=0) +
-    theme_bw() +
-    theme(axis.line.x = element_line(colour = "black"),
-          axis.line.y = element_line(colour="black"),
-          plot.background=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          panel.border=element_blank())
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  p <- ggplot2::ggplot(plot.data, map) +
+    ggplot2::geom_jitter(size=3, width=0.1, height=0) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+          axis.line.y = ggplot2::element_line(colour="black"),
+          plot.background = ggplot2::element_blank(),
+          panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank())
 
   if(!is.null(x_lab)){
-    p <- p + labs(x=x_lab)
+    p <- p + ggplot2::labs(x=x_lab)
   }else{
-    p <- p + labs(x="Group")
+    p <- p + ggplot2::labs(x="Group")
   }
 
   if(!is.null(y_lab)){
-    p <- p + labs(y=y_lab)
+    p <- p + ggplot2::labs(y=y_lab)
   }else{
-    p <- p + labs(y="Effective Species")
+    p <- p + ggplot2::labs(y="Effective Species")
   }
 
   if(!is.null(plot_title)){
-    p <- p + ggtitle(plot_title)
+    p <- p + ggplot2::ggtitle(plot_title)
   }else{
-    p <- p + ggtitle("Effective Species")
+    p <- p + ggplot2::ggtitle("Effective Species")
   }
 
   if(!is.null(leglab)){
-    p <- p + guides(colour=guide_legend(title=leglab))
+    p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
   }
 
   return(p)
@@ -1834,42 +1517,42 @@ plot.indspRes <- function(results_object, type="pvals", ...){
 
     Counts <- data.frame(Threshold=thresholds, Counts)
     Counts$Threshold <- as.factor(Counts$Threshold)
-    Counts <- melt(Counts)
+    Counts <- reshape2::melt(Counts)
     Counts$Threshold <- as.numeric(as.character(Counts$Threshold))
     names(Counts) <- gsub("Counts","value",names(Counts))
 
-    p1 <- ggplot(Counts, aes(x=Threshold, y=value)) +
-      geom_line(cex=1.5) +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank())
-    #labs(x="P-Value Threshold",y="Number of differentially expressed genes") +
-    #ggtitle(paste(x," Test",sep=""))
+    p1 <- ggplot2::ggplot(Counts, aes(x=Threshold, y=value)) +
+      ggplot2::geom_line(cex=1.5) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank())
+    #ggplot2::labs(x="P-Value Threshold",y="Number of differentially expressed genes") +
+    #ggplot2::ggtitle(paste(x," Test",sep=""))
 
     if(!is.null(x_lab)){
-      p1 <- p1 + labs(x=x_lab)
+      p1 <- p1 + ggplot2::labs(x=x_lab)
     }else{
-      p1 <- p1 + labs(x="P-Value Threshold")
+      p1 <- p1 + ggplot2::labs(x="P-Value Threshold")
     }
 
     if(!is.null(y_lab)){
-      p1 <- p1 + labs(y=y_lab)
+      p1 <- p1 + ggplot2::labs(y=y_lab)
     }else{
-      p1 <- p1 + labs(y="Number of indicator species")
+      p1 <- p1 + ggplot2::labs(y="Number of indicator species")
     }
 
     if(!is.null(plot_title)){
-      p1 <- p1 + ggtitle(plot_title)
+      p1 <- p1 + ggplot2::ggtitle(plot_title)
     }else{
-      p1 <- p1 + ggtitle("Indicator Species")
+      p1 <- p1 + ggplot2::ggtitle("Indicator Species")
     }
 
     if(!is.null(leglab)){
-      p1 <- p1 + guides(colour=guide_legend(title=leglab))
+      p1 <- p1 + ggplot2::guides(colour=guide_legend(title=leglab))
     }
 
     print(p1)
@@ -1877,7 +1560,7 @@ plot.indspRes <- function(results_object, type="pvals", ...){
 
   ## flags barplot ##
   if("flag" %in% tolower(type)){
-    pal <- brewer.pal(9, "Set1")
+    pal <- RColorBrewer::brewer.pal(9, "Set1")
 
     idx <- grep("Flag", colnames(results_object))
 
@@ -1914,40 +1597,40 @@ plot.indspRes <- function(results_object, type="pvals", ...){
     #   names(plotData) <- c("Comparison", "Flags", "Count")
     # }
 
-    p2 <- ggplot(plotData, aes(x=Sample,y=NumIndSp,fill="NumFlags")) +
-      geom_bar(stat="identity", position="dodge") +
-      scale_fill_manual(values=pal[c(3,1)], name="NumIndSp") +
-      theme_bw() +
-      theme(axis.line.x = element_line(colour = "black"),
-            axis.line.y = element_line(colour="black"),
-            plot.background=element_blank(),
-            panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            panel.border=element_blank()) +
-      geom_text(aes(label=NumIndSp), position=position_dodge(width=0.9), vjust=1)
-    #labs(x="Comparisons",y="Number of differentially expressed genes") +
-    #ggtitle(paste(r, " Test",sep=""))
+    p2 <- ggplot2::ggplot(plotData, aes(x=Sample,y=NumIndSp,fill="NumFlags")) +
+      ggplot2::geom_bar(stat="identity", position="dodge") +
+      ggplot2::scale_fill_manual(values=pal[c(3,1)], name="NumIndSp") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+            axis.line.y = ggplot2::element_line(colour="black"),
+            plot.background = ggplot2::element_blank(),
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank()) +
+      ggplot2::geom_text(aes(label=NumIndSp), position=position_dodge(width=0.9), vjust=1)
+    #ggplot2::labs(x="Comparisons",y="Number of differentially expressed genes") +
+    #ggplot2::ggtitle(paste(r, " Test",sep=""))
 
     if(!is.null(x_lab)){
-      p2 <- p2 + labs(x=x_lab)
+      p2 <- p2 + ggplot2::labs(x=x_lab)
     }else{
-      p2 <- p2 + labs(x="Comparisons")
+      p2 <- p2 + ggplot2::labs(x="Comparisons")
     }
 
     if(!is.null(y_lab)){
-      p2 <- p2 + labs(y=y_lab)
+      p2 <- p2 + ggplot2::labs(y=y_lab)
     }else{
-      p2 <- p2 + labs(y="Number of indicator species")
+      p2 <- p2 + ggplot2::labs(y="Number of indicator species")
     }
 
     if(!is.null(plot_title)){
-      p2 <- p2 + ggtitle(plot_title)
+      p2 <- p2 + ggplot2::ggtitle(plot_title)
     }else{
-      p2 <- p2 + ggtitle("Indicator Species")
+      p2 <- p2 + ggplot2::ggtitle("Indicator Species")
     }
 
     if(!is.null(leglab)){
-      p2 <- p2 + guides(fill=guide_legend(title=leglab))
+      p2 <- p2 + ggplot2::guides(fill=guide_legend(title=leglab))
     }
 
     print(p2)

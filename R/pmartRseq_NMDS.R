@@ -71,34 +71,34 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
     }
 
     # Plot
-    map1 <- aes_string(x=x_axis, y=y_axis, color=grp)
-    map2 <- aes_string(x=x_axis, y=y_axis, color="group")
-    X1 <- ggplot(data = NMDS) +
-      geom_point(map1, size=2.5, alpha=1) +
-      geom_path(data = df_ell, map2, size=1.5, linetype=5, alpha=0.7)+
-      theme_bw()+
-      theme(aspect.ratio=1,
-            axis.text.x=element_text(size=20),
-            axis.text.y=element_text(size=20),
-            axis.title.x=element_text(size=20),
-            axis.title.y=element_text(size=20),
-            legend.title=element_text(size=15),
-            legend.text=element_text(size=15),
-            panel.grid=element_blank())
+    map1 <- ggplot2::aes_string(x=x_axis, y=y_axis, color=grp)
+    map2 <- ggplot2::aes_string(x=x_axis, y=y_axis, color="group")
+    X1 <- ggplot2::ggplot(data = NMDS) +
+      ggplot2::geom_point(map1, size=2.5, alpha=1) +
+      ggplot2::geom_path(data = df_ell, map2, size=1.5, linetype=5, alpha=0.7)+
+      ggplot2::theme_bw()+
+      tggplot2::heme(aspect.ratio = 1,
+            axis.text.x = ggplot2::element_text(size=20),
+            axis.text.y = ggplot2::element_text(size=20),
+            axis.title.x = ggplot2::element_text(size=20),
+            axis.title.y = ggplot2::element_text(size=20),
+            legend.title = ggplot2::element_text(size=15),
+            legend.text = ggplot2::element_text(size=15),
+            panel.grid = ggplot2::element_blank())
   }else{
     # Plot
-    map1 <- aes_string(x=x_axis, y=y_axis, color=grp)
-    X1 <- ggplot(data = NMDS) +
-      geom_point(map1, size=2.5, alpha=1) +
-      theme_bw()+
-      theme(aspect.ratio=1,
-            axis.text.x=element_text(size=20),
-            axis.text.y=element_text(size=20),
-            axis.title.x=element_text(size=20),
-            axis.title.y=element_text(size=20),
-            legend.title=element_text(size=15),
-            legend.text=element_text(size=15),
-            panel.grid=element_blank())
+    map1 <- ggplot2::aes_string(x=x_axis, y=y_axis, color=grp)
+    X1 <- ggplot2::ggplot(data = NMDS) +
+      ggplot2::geom_point(map1, size=2.5, alpha=1) +
+      ggplot2::theme_bw()+
+      ggplot2::theme(aspect.ratio = 1,
+            axis.text.x = ggplot2::element_text(size=20),
+            axis.text.y = ggplot2::element_text(size=20),
+            axis.title.x = ggplot2::element_text(size=20),
+            axis.title.y = ggplot2::element_text(size=20),
+            legend.title = ggplot2::element_text(size=15),
+            legend.text = ggplot2::element_text(size=15),
+            panel.grid = ggplot2::element_blank())
   }
   X1
 }

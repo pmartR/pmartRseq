@@ -141,7 +141,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
     e_data <- omicsData$e_data[,-1]
 
     # Run breakaway function and only pull out the estimated richness value
-    chats <- apply(e_data, 2, function(x) breakaway(as.data.frame(table(x)), print=FALSE, plot=FALSE, answers=TRUE, force=FALSE)$est)
+    chats <- apply(e_data, 2, function(x) breakaway::breakaway(as.data.frame(table(x)), print=FALSE, plot=FALSE, answers=TRUE, force=FALSE)$est)
     res[["break"]] <- chats
   }
 

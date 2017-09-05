@@ -56,7 +56,7 @@ split_emeta <- function(omicsData, cname=NULL, split1=";", numcol=NULL, split2="
 
 
   if(!is.null(split1)){
-    split_data <- str_split_fixed(emeta[,cname], split1, numcol)
+    split_data <- stringr::str_split_fixed(emeta[,cname], split1, numcol)
   }else{
     split_data <- emeta[,-which(colnames(emeta)==cname)]
   }

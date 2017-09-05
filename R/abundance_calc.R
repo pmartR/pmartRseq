@@ -9,12 +9,14 @@
 #' @return An object of class abunRes (also a data.frame) containing the abundance value for every sample in the data object.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_abundance <- abundance_calc(omicsData = rRNA_data)
 #' rRNA_abundance
 #' summary(rRNA_abundance)
 #' plot(rRNA_abundance)
+#' }
 #'
 #' @author Allison Thompson
 #'

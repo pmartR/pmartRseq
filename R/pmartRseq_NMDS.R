@@ -77,7 +77,7 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
       ggplot2::geom_point(map1, size=2.5, alpha=1) +
       ggplot2::geom_path(data = df_ell, map2, size=1.5, linetype=5, alpha=0.7)+
       ggplot2::theme_bw()+
-      tggplot2::heme(aspect.ratio = 1,
+      ggplot2::heme(aspect.ratio = 1,
             axis.text.x = ggplot2::element_text(size=20),
             axis.text.y = ggplot2::element_text(size=20),
             axis.title.x = ggplot2::element_text(size=20),

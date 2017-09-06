@@ -19,12 +19,14 @@ This function calculates the total number of features seen in each sample.
 Abundance is the total number of features (individuals) seen in each sample.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_abundance <- abundance_calc(omicsData = rRNA_data)
 rRNA_abundance
 summary(rRNA_abundance)
 plot(rRNA_abundance)
+}
 
 }
 \author{

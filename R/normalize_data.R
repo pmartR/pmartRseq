@@ -19,6 +19,8 @@
 #'  \tab \cr
 #'  \code{"tmm"}  \tab Normalize the data using the trimmed mean of M values\cr
 #'  \tab \cr
+#'  \code{"none"} \tab No normalization is performed\cr
+#'  \tab \cr
 #'  }
 #'
 #' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
@@ -82,24 +84,30 @@ normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){
   edata <-  omicsData$e_data
   #omicsData_groupDF <- attr(omicsData, "group_DF")
 
-  norm_fn <- try(match.arg(tolower(norm_fn),c("percentile","tss","rarefy","poisson","deseq","tmm","css")),silent=TRUE)
+
+  norm_fn <- try(match.arg(tolower(norm_fn),c("percentile","tss","rarefy","poisson","deseq","tmm","css","none")),silent=TRUE)
 
   # apply normalization scheme
 
   if(norm_fn%in%c("percentile","tss","poisson","deseq","tmm","css")){
-
     fn_to_use <- switch(norm_fn,percentile=Quant_Norm,tss=TSS_Norm,poisson=poisson_norm,deseq=med_scounts_norm,tmm=TMM_Norm,css=CSS_Norm)
     temp <- fn_to_use(e_data = edata, edata_id=edata_id, ...)
     norm_results <- list(norm_data=temp$normed_data, location_param=temp$location_param, scale_param=temp$scale_param)
 
   }else if(norm_fn=="rarefy"){
-    message("The size of the subsample used in the Rarefy function is passed as the 'scale_param'.")
+    message("The size of the subsample used in the Rarefy function is passed as the 'location_param'.")
     temp <- Rarefy(e_data = edata,edata_id = edata_id,...)
     norm_results <- list(norm_data=temp$normed_data, location_param=temp$location_param, scale_param=temp$scale_param)
+
+  }else if(norm_fn == "none"){
+    scale_param <- rep(1, ncol(edata[,-which(colnames(edata)==edata_id)]))
+    names(scale_param) <- colnames(edata)[-which(colnames(edata) == edata_id)]
+    norm_resuts <- list(norm_data=edata, location_param=NULL, scale_param=scale_param)
 
   }else{
     stop("The specified 'norm_fn' option provided is not currently available (or you made a typo) so no normalization was done.")
     norm_results <- list(norm_data=omicsData$e_data , location_param=NULL, scale_param=NULL)
+
   }
 
   # change attributes of omics_data to indicate that data has been normalized #

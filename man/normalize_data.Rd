@@ -39,6 +39,8 @@ The choices for normalization currently available, \code{norm_fn}, are:
  \tab \cr
  \code{"tmm"}  \tab Normalize the data using the trimmed mean of M values\cr
  \tab \cr
+ \code{"none"} \tab No normalization is performed\cr
+ \tab \cr
  }
 }
 \examples{

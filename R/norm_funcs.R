@@ -90,6 +90,8 @@ med_scounts_norm <- function(e_data, edata_id){
   #Compute size factors: sjs
   sjs <- as.numeric(apply(e_data[,-col_to_omit], 2, function(cnts) median(exp(log(cnts) - log_scale_mean),na.rm=T)))
 
+  e_data[is.na(e_data)] <- 0
+
   e_data[,-col_to_omit] <- data.matrix(e_data[,-col_to_omit])%*%diag(1/sjs)
 
   e_data[is.na(e_data)] <- 0

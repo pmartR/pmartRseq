@@ -52,7 +52,7 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
   # format e_data
   #indspec <- mintR:::helper_edata_replace(omicsData, x=NA , y=0)$e_data
   indspec <- omicsData$e_data
-  indspec[which(is.na(indspec))] <- 0
+  indspec[is.na(indspec)] <- 0
 
   rownames(indspec) <- omicsData$e_data[,attr(omicsData, "cnames")$edata_cname]
   indspec <- indspec[,-which(colnames(indspec) == attr(omicsData,"cnames")$edata_cname)]

@@ -279,7 +279,11 @@ Rarefy <- function(e_data, edata_id, size=NULL){
   # Replace e_data with rarefied counts
   e_data <- temp
 
-  return(list(normed_data=e_data, location_param=NULL, scale_param=size))
+  scale_param <- rep(1, ncol(e_data[,-which(colnames(e_data) == edata_id)]))
+  names(scale_param) <- colnames(e_data)[-which(colnames(e_data) == edata_id)]
+
+  return(list(normed_data=e_data, location_param=size, scale_param=size))
+
 }
 
 

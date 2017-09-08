@@ -70,7 +70,7 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
     alldata <- do.call(rbind, alldata)
   }else{
     ids <- grep("s\\.",colnames(myinds))
-    alldata <- merge(melt(myinds[,c(1,inds)]), myinds[,-inds], by=attr(omicsData,"cnames")$edata_cname)
+    alldata <- merge(melt(myinds[,c(1,ids)]), myinds[,-ids], by=attr(omicsData,"cnames")$edata_cname)
   }
 
   # comine indicator species results with e_meta information

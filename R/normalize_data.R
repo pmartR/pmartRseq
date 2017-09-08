@@ -102,7 +102,7 @@ normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){
   }else if(norm_fn == "none"){
     scale_param <- rep(1, ncol(edata[,-which(colnames(edata)==edata_id)]))
     names(scale_param) <- colnames(edata)[-which(colnames(edata) == edata_id)]
-    norm_resuts <- list(norm_data=edata, location_param=NULL, scale_param=scale_param)
+    norm_results <- list(norm_data=edata, location_param=NULL, scale_param=scale_param)
 
   }else{
     stop("The specified 'norm_fn' option provided is not currently available (or you made a typo) so no normalization was done.")

@@ -31,6 +31,19 @@ This function creates an NMDS plot for a beta diversity object from vegan.
 \details{
 After beta diversity is calculated, this function will create a plot of the results, along with ellipses, to show the different groupings.
 }
+\examples{
+\dontrun{
+library(mintJansson)
+library(vegan)
+data(rRNA_data)
+rRNA_data <- group_designation(omicsData = rRNA_data, main_effects = c("treatment"))
+rRNA_norm <- normalize_data(omicsData = rRNA_data, norm_fn = "css", normalize = TRUE)
+rRNA_veg <- pmartRseq_to_vegan(omicsData = rRNA_norm)
+rRNA_metamds <- vegan::metaMDS(rRNA_veg, distance = "bray", k = 4, autotransform = FALSE, na.rm = TRUE)
+pmartRseq_NMDS(rRNA_metamds, as.factor(attr(rRNA_norm,"group_DF")[match(rownames(rRNA_veg),attr(rRNA_norm,"group_DF")[,attr(rRNA_norm,"cnames")$fdata_cname]),"Group"]))
+}
+
+}
 \author{
 Allison Thompson
 }

@@ -77,6 +77,8 @@ CSS_Norm <- function(e_data, edata_id, q=0.75, qg="median"){
 
 med_scounts_norm <- function(e_data, edata_id){
 
+  e_data[e_data == 0] <- NA
+
   #Which column has the ID variable we want to remove?
   col_to_omit <- which(colnames(e_data)==edata_id)
   if(length(col_to_omit)==0){
@@ -89,6 +91,8 @@ med_scounts_norm <- function(e_data, edata_id){
   sjs <- as.numeric(apply(e_data[,-col_to_omit], 2, function(cnts) median(exp(log(cnts) - log_scale_mean),na.rm=T)))
 
   e_data[,-col_to_omit] <- data.matrix(e_data[,-col_to_omit])%*%diag(1/sjs)
+
+  e_data[is.na(e_data)] <- 0
 
   #if(nas){
   #  edata_nona[which_na] <- NA
@@ -124,7 +128,7 @@ med_scounts_norm <- function(e_data, edata_id){
 poisson_norm <- function(e_data, edata_id){
 
   #Compute sequence depts for each experiment
-  ds <- colSums(e_data[,-1],na.rm=T)
+  ds <- colSums(e_data[,-which(colnames(e_data) == edata_id)],na.rm=T)
 
   #Compute geometric mean of counts by computing the mean on the log scale and exponentiating
   dbar <- exp(mean(log(ds)))
@@ -144,7 +148,7 @@ poisson_norm <- function(e_data, edata_id){
 
 
 pois_samp <- function(Nij,dbar){
-  rmna <- which(is.na(Nij))
+  rmna <- which(is.na(Nij) | Nij == 0)
   di <- sum(Nij,na.rm=T)
   Nij[-rmna] <- rpois(length(Nij)-length(rmna),Nij[-rmna]*dbar/di)
   return(Nij)
@@ -173,6 +177,7 @@ pois_samp <- function(Nij,dbar){
 #'
 
 Quant_Norm <- function(e_data, edata_id, q=0.75){
+  e_data[e_data == 0] <- NA
   e_data_norm <- e_data[,-which(colnames(e_data)==edata_id)]
 
   # calculate the q quantile of data, per sample and globally #
@@ -186,6 +191,9 @@ Quant_Norm <- function(e_data, edata_id, q=0.75){
 
   e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
   colnames(e_data)[1] <- edata_id
+
+  e_data[is.na(e_data)] <- 0
+
   return(list(normed_data=e_data, location_param=NULL, scale_param=col.q/g.q))
 }
 
@@ -298,7 +306,9 @@ Rarefy <- function(e_data, edata_id, size=NULL){
 #'
 
 TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
-  e_data[which(e_data==0)] <- NA
+  old <- e_data
+
+  e_data[e_data==0] <- NA
   e_data_norm <- e_data[,-which(colnames(e_data)==edata_id)]
   # determine which sample should be used as the reference
   if(is.null(reference)){
@@ -311,7 +321,7 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
       ref = which(colSums(e_data_norm[,ref], na.rm=TRUE) == max(colSums(e_data_norm[,ref], na.rm=TRUE)))
     }
   }else{
-    ref = reference
+    0 = reference
   }
 
   # remove genes where the reference has a value of NA
@@ -386,6 +396,9 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
 
   e_data <- data.frame(e_data[,edata_id],e_data_norm)
   names(e_data)[1] <- edata_id
+
+  e_data[,which(colnames(e_data) == names(ref))] <- old[,which(colnames(old) == names(ref))]
+
   names(TMM) <- names(data)
   TMM[is.na(TMM)] <- 1
 

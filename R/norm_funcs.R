@@ -94,8 +94,7 @@ med_scounts_norm <- function(e_data, edata_id){
 
   e_data[,-col_to_omit] <- data.matrix(e_data[,-col_to_omit])%*%diag(1/sjs)
 
-  e_data[is.na(e_data)] <- 0
-
+  names(sjs) <- colnames(e_data)[-col_to_omit]
   #if(nas){
   #  edata_nona[which_na] <- NA
   #}

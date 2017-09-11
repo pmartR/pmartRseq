@@ -201,12 +201,13 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
   # if sample names are given, make sure they exist in the data
   if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
+  if (length(samps_to_remove) == 0) stop("samps_to_remove must contain at least one sample to remove")
 
   edata_cname <- attr(omicsData, "cnames")$edata_cname
   fn <- attr(filter_object, "function")
 
   if( fn == "criteria" ){
-    to_remove <- which(samps_to_remove %in% filter_object[, "Sample"])
+    to_remove <- which(filter_object[, "Sample"] %in% samps_to_remove)
     filter_object[to_remove, paste(fn,"Samps",sep="")] <- TRUE
     inds <- filter_object[to_remove, "Sample"]
   } else {

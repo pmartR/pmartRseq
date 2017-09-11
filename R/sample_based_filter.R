@@ -6,7 +6,8 @@
 #'
 #' @param omicsData An object of the classes "seqData"
 #'
-#' @param fn Specify "sum" to use the total OTU count of each sample
+#' @param fn Specify "sum" to use the total OTU count of each sample and "criteria"
+#' to use sample names
 #'
 #' @return An object of class sampleFilter (also a data.frame) that contains the
 #'   sample identifier and the sum count across all OTUs.

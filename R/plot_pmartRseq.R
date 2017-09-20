@@ -1018,7 +1018,9 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   vars <- lapply(vars, as.symbol)
 
   data_grp1 <- data_melt %>% dplyr::group_by_(.dots=vars) %>% dplyr::summarise(sum=sum(value, na.rm=TRUE))
-  data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
+  if(any(data_grp1$sum==0)){
+    data_grp1 <- data_grp1[-which(data_grp1$sum==0),]
+  }
 
   vars1 <- c(x_axis, class)
   vars1 <- lapply(vars1, as.symbol)

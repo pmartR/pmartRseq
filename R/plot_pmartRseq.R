@@ -253,7 +253,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
     invisible(lapply(test, function(r){
 
       data <- lapply(comparison, function(c){
-
+        c <- gsub("-","\\.",c)
         idx1 <- grep(c, colnames(results_object$allResults))
         idx2 <- grep(r, colnames(results_object$allResults))
         idx <- intersect(idx1, idx2)

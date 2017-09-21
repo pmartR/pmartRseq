@@ -123,8 +123,10 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
     results <- group_designation(omicsData = results, main_effects = attr(attr(omicsData, "group_DF"), "main_effects"), covariates = attr(attr(omicsData, "group_DF"), "covariates"), time_course = attr(attr(omicsData, "group_DF"), "time_course"))
     # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
     attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
-    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
-    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
@@ -150,8 +152,10 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   }else{
     # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
     attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
-    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
-    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
@@ -241,8 +245,10 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
     results <- group_designation(omicsData = results, main_effects = attr(attr(omicsData, "group_DF"), "main_effects"), covariates = attr(attr(omicsData, "group_DF"), "covariates"), time_course = attr(attr(omicsData, "group_DF"), "time_course"))
     # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
     attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
-    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
-    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {
@@ -268,8 +274,10 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   }else{
     # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
     attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
-    attributes(results)$data_info$num_miss_obs = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
-    attributes(results)$data_info$num_frac_missing = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
     attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
 
     if (!is.null(results$e_meta)) {

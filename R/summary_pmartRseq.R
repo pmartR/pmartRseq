@@ -256,7 +256,7 @@ summary.indspRes <- function(pmartRseq_results){
   fidx <- grep("Flag",colnames(pmartRseq_results))
   if(length(fidx) > 1){
     num_sig <- apply(pmartRseq_results[,fidx], 2, function(x) length(which(x != 0)))
-    num_sig <- as.data.frame(num_sig)
+    num_sig <- data.frame(Comparison=unlist(lapply(names(num_sig),function(x) strsplit(x,"Flag_")[[1]][2])),as.data.frame(num_sig))
   }else{
     num_sig <- length(which(pmartRseq_results[,fidx] != 0))
   }
@@ -265,10 +265,10 @@ summary.indspRes <- function(pmartRseq_results){
   )
 
   res <- data.frame(pval_threshold=attr(pmartRseq_results,"Threshold"), num_sig)
-  res <- rbind(colnames(res), res)
+  #res <- rbind(colnames(res), res)
   rownames(res) <- NULL
 
-  colnames(res) <- NULL
+  #colnames(res) <- NULL
   cat("\nSummary of 'indicatorSpecies' Object\n-------------------------------------")
   cat(capture.output(res), sep="\n")
   cat("\n")

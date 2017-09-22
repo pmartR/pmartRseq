@@ -36,7 +36,7 @@ summary.seqData <- function(omicsData, omicsDataFilter = NULL){
   #if(is.null(omicsDataFilter)){
     res = list(num_samps = attr(omicsData, "data_info")$num_samps,
                num_edata = attr(omicsData, "data_info")$num_edata,
-               num_emeta = attr(omicsData, "data_info")$num_emeta,
+               num_taxa = attr(omicsData, "data_info")$num_taxa,
                num_na = attr(omicsData, "data_info")$num_na,
                frac_na = attr(omicsData, "data_info")$frac_na,
                num_zero = attr(omicsData, "data_info")$num_zero,
@@ -46,7 +46,7 @@ summary.seqData <- function(omicsData, omicsDataFilter = NULL){
     newres <- lapply(res, function(x) ifelse(is.null(x), "NA", as.character(x)))
     catmat <- data.frame(unlist(newres, use.names=FALSE))
     colnames(catmat) <- NULL
-    rownames(catmat) <- c("Samples ", "Rows (e_data) ", "Rows (e_meta) ", "Missing Observations (NA) ", "Fraction Missing (NA) ", "Missing Observations (0) ", "Fraction Missing (0) ")
+    rownames(catmat) <- c("Samples ", "Rows (e_data) ", "Rows (taxa) ", "Missing Observations (NA) ", "Fraction Missing (NA) ", "Missing Observations (0) ", "Fraction Missing (0) ")
 
     cat("\nSummary of 'seqData' Object\n----------------------------")
     cat(capture.output(catmat), sep="\n")

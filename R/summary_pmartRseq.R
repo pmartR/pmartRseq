@@ -269,7 +269,7 @@ summary.indspRes <- function(pmartRseq_results){
   rownames(res) <- NULL
 
   #colnames(res) <- NULL
-  cat("\nSummary of 'indicatorSpecies' Object\n-------------------------------------")
+  cat("\nSummary of 'indicatorSpecies' Object\n-------------------------------------\n")
   cat(capture.output(res), sep="\n")
   cat("\n")
 

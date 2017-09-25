@@ -36,7 +36,8 @@ evenness_calc <- function(omicsData, index=c("shannon","simpson")){
   ## end initial checks ##
 
   # change 0 to NA, makes for easier calculation
-  omicsData <- helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+  #omicsData <- helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+  omicsData$e_data[omicsData$e_data==0] <- NA
   rownames(omicsData$e_data) <- omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData,"cnames")$edata_cname)]
   omicsData$e_data <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData,"cnames")$edata_cname)]
 

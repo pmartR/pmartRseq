@@ -101,6 +101,7 @@ taxa_rollup <- function(omicsData, level, taxa_levels=NULL){
                         db=attr(omicsData,"database")$db, db_version=attr(omicsData,"database")$db_version,
                         data_norm=attr(omicsData,"data_info")$data_norm, norm_method=attr(omicsData,"data_info")$norm_method,
                         location_param=attr(omicsData,"data_info")$location_param, scale_param=attr(omicsData,"data_info")$scale_param)
+    attr(data,"group_DF") <- attr(omicsData, "group_DF")
   }
 
   attr(data, "rollup")$text = paste("Data was rolled up to the ", level, " level", sep="")

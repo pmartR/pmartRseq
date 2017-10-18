@@ -5,8 +5,6 @@
 #' @param countSTAT_results Required, an object of the class \code{countSTAT} created by \code{\link{countSTAT}}.
 #' @param omicsData Required, omicsData ,an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param x_axis Required, a character vector stating which variable to group data by and put on the x-axis, must be one of "Comparison" or one of the column names in omicsData$e_meta. Default is "Phylum".
-#'@param facet Optional, a character vector depicting the formula to use when faceting the plots. Default is "~Comparison".
-#'@param scales Optional, a character vector to describe if any of the axes should be free when faceting. Default is "fixed".
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
@@ -26,14 +24,14 @@
 #' norm_data <- normalize_data(omicsData=rRNAdata, subset_fn="none", norm_fn="percentile", normalize=TRUE)
 #' diffexp <- countSTAT(omicsData=rRNAdata, norm_factors=norm_factors, comparisons="all", test="dw", pval_adjust="none", pval_thresh=0.05)
 #'
-#' plot_all_diffabun(countSTAT_results=diffexp, omicsData=norm_data, x_axis="Phylum", facet="~Comparison", scales="fixed")
+#' plot_all_diffabun(countSTAT_results=diffexp, omicsData=norm_data, x_axis="Phylum")
 #'}
 #'
 #' @author Allison Thompson
 #'
 #' @export
 #'
-plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", facet="~Comparison", scales="fixed",
+plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", scales="fixed",
                                 x_lab=NULL, y_lab=NULL, leglab=NULL, plot_title=NULL){
 
   library(ggplot2)
@@ -74,6 +72,9 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", fac
   # Extract differential expression results
   data <- countSTAT_results$allResults
 
+  library(RColorBrewer)
+  myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+
   # Create a new plot for every test that was run
  lapply(attr(countSTAT_results, "Tests")$Test, function(t){
     # Extract only data for specific test
@@ -102,49 +103,48 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", fac
     # Merge data with e_meta
     plot.data <- merge(plot.data, omicsData$e_meta, by=attr(omicsData, "cnames")$edata_cname)
 
-    map <- aes_string(x=x_axis, y="logFC", colour="padj")
-    p <- ggplot2::ggplot(plot.data, map) +
-      ggplot2::geom_point()+
-      ggplot2::geom_hline(yintercept=log2(2),lty="dashed")+
-      ggplot2::geom_hline(yintercept=-log2(2),lty="dashed")+
-      ggplot2::geom_hline(yintercept=log2(10),lty="dotted")+
-      ggplot2::geom_hline(yintercept=-log2(10),lty="dotted")+
-      ggplot2::theme_bw()+
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90),
-            axis.line.x = ggplot2::element_line(colour = "black"),
-            axis.line.y = ggplot2::element_line(colour="black"),
-            plot.background = ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_blank(),
-            panel.grid.minor = ggplot2::element_blank(),
-            panel.border = ggplot2::element_blank())
+    lapply(attr(countSTAT_results, "comparisons")$comparison, function(c){
+      map <- aes_string(x=x_axis, y="logFC", colour="padj")
+      p <- ggplot2::ggplot(subset(plot.data, Comparison==c), map) +
+        ggplot2::geom_point(size=ifelse(subset(plot.data, Comparison==c)$padj <= 0.1, 3, 1))+
+        ggplot2::scale_colour_gradientn(colours=rev(myPalette(100)), limits=c(0,0.1), name="P-value\n")+
+        ggplot2::geom_hline(yintercept=log2(2),lty="dashed")+
+        ggplot2::geom_hline(yintercept=-log2(2),lty="dashed")+
+        ggplot2::geom_hline(yintercept=log2(10),lty="dotted")+
+        ggplot2::geom_hline(yintercept=-log2(10),lty="dotted")+
+        ggplot2::theme_bw()+
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90),
+              axis.line.x = ggplot2::element_line(colour = "black"),
+              axis.line.y = ggplot2::element_line(colour="black"),
+              plot.background = ggplot2::element_blank(),
+              panel.grid.major = ggplot2::element_blank(),
+              panel.grid.minor = ggplot2::element_blank(),
+              panel.border = ggplot2::element_blank())
 
-    if(!is.null(x_lab)){
-      p <- p + ggplot2::labs(x=x_lab)
-    }else{
-      p <- p + ggplot2::labs(x=x_axis)
-    }
+      if(!is.null(x_lab)){
+        p <- p + ggplot2::labs(x=x_lab)
+      }else{
+        p <- p + ggplot2::labs(x=x_axis)
+      }
 
-    if(!is.null(y_lab)){
-      p <- p + ggplot2::labs(y=y_lab)
-    }else{
-      p <- p + ggplot2::labs(y="Log2 Fold Change")
-    }
+      if(!is.null(y_lab)){
+        p <- p + ggplot2::labs(y=y_lab)
+      }else{
+        p <- p + ggplot2::labs(y="Log2 Fold Change")
+      }
 
-    if(!is.null(plot_title)){
-      p <- p + ggplot2::ggtitle(plot_title)
-    }else{
-      p <- p + ggplot2::ggtitle(paste(t," Results"))
-    }
+      if(!is.null(plot_title)){
+        p <- p + ggplot2::ggtitle(plot_title)
+      }else{
+        p <- p + ggplot2::ggtitle(paste(t," ",c," Results"))
+      }
 
-    if(!is.null(leglab)){
-      p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
-    }
+      if(!is.null(leglab)){
+        p <- p + ggplot2::guides(colour=guide_legend(title=leglab))
+      }
 
-    if(!is.null(facet)){
-      p <- p + ggplot2::facet_wrap(as.formula(facet), scales=scales)
-    }
-
-    return(p)
+      return(p)
+   })
 
   })
 

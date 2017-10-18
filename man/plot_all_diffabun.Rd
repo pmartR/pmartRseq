@@ -5,8 +5,8 @@
 \title{Plot all differential abundance results}
 \usage{
 plot_all_diffabun(countSTAT_results, omicsData, x_axis = "Phylum",
-  facet = "~Comparison", scales = "fixed", x_lab = NULL, y_lab = NULL,
-  leglab = NULL, plot_title = NULL)
+  scales = "fixed", x_lab = NULL, y_lab = NULL, leglab = NULL,
+  plot_title = NULL)
 }
 \arguments{
 \item{countSTAT_results}{Required, an object of the class \code{countSTAT} created by \code{\link{countSTAT}}.}
@@ -14,10 +14,6 @@ plot_all_diffabun(countSTAT_results, omicsData, x_axis = "Phylum",
 \item{omicsData}{Required, omicsData ,an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{x_axis}{Required, a character vector stating which variable to group data by and put on the x-axis, must be one of "Comparison" or one of the column names in omicsData$e_meta. Default is "Phylum".}
-
-\item{facet}{Optional, a character vector depicting the formula to use when faceting the plots. Default is "~Comparison".}
-
-\item{scales}{Optional, a character vector to describe if any of the axes should be free when faceting. Default is "fixed".}
 
 \item{x_lab}{Optional, a character vector to use as the x-axis label}
 
@@ -45,7 +41,7 @@ norm_factors <- normalize_data(omicsData=rRNAdata, subset_fn="none", norm_fn="pe
 norm_data <- normalize_data(omicsData=rRNAdata, subset_fn="none", norm_fn="percentile", normalize=TRUE)
 diffexp <- countSTAT(omicsData=rRNAdata, norm_factors=norm_factors, comparisons="all", test="dw", pval_adjust="none", pval_thresh=0.05)
 
-plot_all_diffabun(countSTAT_results=diffexp, omicsData=norm_data, x_axis="Phylum", facet="~Comparison", scales="fixed")
+plot_all_diffabun(countSTAT_results=diffexp, omicsData=norm_data, x_axis="Phylum")
 }
 
 }

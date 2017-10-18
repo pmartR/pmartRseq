@@ -1041,7 +1041,7 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   map <- ggplot2::aes_string(x=x_axis, y="value", fill=class)
   p <- ggplot2::ggplot(data_grp, map) +
     ggplot2::geom_bar(stat="identity", position="stack") +
-    ggplot2::scale_fill_manual(values=rep(TaxonBarPallette,5))+
+    ggplot2::scale_fill_manual(values=rep(TaxonBarPallette,15))+
     ggplot2::theme_bw() +
     ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
           axis.line.y = ggplot2::element_line(colour="black"),

@@ -23,6 +23,8 @@
 \alias{plot.effspRes}
 \alias{plot_pmartRseq}
 \alias{plot.indspRes}
+\alias{plot_pmartRseq}
+\alias{plot.paRes}
 \title{Produce a plot of an omicsData Object}
 \usage{
 plot.countSTAT_results(results_object, type = "pvals", test = NULL,
@@ -65,6 +67,8 @@ plot.effspRes(results_object, x_axis = "Group", color = "Group",
   leglab = NULL, ...)
 
 plot.indspRes(results_object, type = "pvals", ...)
+
+plot.paRes(results_object, type = "pvals", ...)
 }
 \arguments{
 \item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), seqData (\code{\link{as.seqData}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).}
@@ -220,6 +224,16 @@ NULL.}
 \item{color}{Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
+
+\item{plot_title}{Optional, a character vector to use as the plot title}
+
+\item{leglab}{Optional, a character vector to use as the legend label}
+
+\item{x_lab}{Optional, a character vector to use as the x-axis label}
+
+\item{y_lab}{Optional, a character vector to use as the y-axis label}
+
+\item{type}{Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of indicated species in each group, at the previously specified threshold. The default is "pvals".}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 

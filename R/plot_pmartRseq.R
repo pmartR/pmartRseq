@@ -1653,3 +1653,142 @@ plot.indspRes <- function(results_object, type="pvals", ...){
   }
 
 }
+
+
+
+#' @export
+#' @rdname plot_pmartRseq
+#' @name plot_pmartRseq
+#' @param type Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of indicated species in each group, at the previously specified threshold. The default is "pvals".
+#'@param plot_title Optional, a character vector to use as the plot title
+#'@param leglab Optional, a character vector to use as the legend label
+#'@param x_lab Optional, a character vector to use as the x-axis label
+#'@param y_lab Optional, a character vector to use as the y-axis label
+plot.paRes <- function(results_object, type="pvals", ...){
+  .plot.paRes(results_object, type, ...)
+}
+
+.plot.paRes <- function(results_object, type="pvals", x_lab=NULL, y_lab=NULL, plot_title=NULL, leglab=NULL, pval_thresh=0.05){
+  library(ggplot2)
+  library(reshape2)
+  library(gplots)
+  library(RColorBrewer)
+
+  ## initial checks ##
+  if(!is.null(plot_title)){
+    if(!is.character(plot_title)){ stop("plot_title must be a character vector")}
+  }
+  if(!is.null(x_lab)){
+    if(!is.character(x_lab)){ stop("x_lab must be a character vector")}
+  }
+  if(!is.null(y_lab)){
+    if(!is.character(y_lab)){ stop("y_lab must be a character vector")}
+  }
+  if(!is.null(type)){
+    if(!is.character(type)){ stop("type must be a character vector")}
+    if(any(!(type %in% c("pvals","flag")))){ stop("type must be at least one of 'pvals' or 'flag'")}
+  }
+  if(!("paRes" %in% class(results_object))){
+    stop("results_object must be of class paRes")
+  }
+  ## end of initial checks ##
+
+  ## p-value plot ##
+  if("pvals" %in% tolower(type)){
+    thresholds <- seq(0,0.4,0.05)
+
+    Counts <- results_object$res
+    Counts <- lapply(unique(Counts$term), function(x){
+      tmp <- Counts[which(Counts$term==x),]
+      res1 <- lapply(thresholds, function(y){
+        data.frame(Threshold=y, NumSig=length(which(tmp$p.value < y)))
+      })
+      data.frame(term=x,do.call(rbind, res1))
+    })
+    Counts <- do.call(rbind, Counts)
+    Counts <- Counts[-which(Counts$term == "(Intercept)"),]
+
+    p1 <- ggplot2::ggplot(Counts, aes(x=Threshold, y=NumSig, colour=term)) +
+      ggplot2::geom_line(cex=1.5) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+                     axis.line.y = ggplot2::element_line(colour="black"),
+                     plot.background = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.border = ggplot2::element_blank())
+    #ggplot2::labs(x="P-Value Threshold",y="Number of differentially expressed genes") +
+    #ggplot2::ggtitle(paste(x," Test",sep=""))
+
+    if(!is.null(x_lab)){
+      p1 <- p1 + ggplot2::labs(x=x_lab)
+    }else{
+      p1 <- p1 + ggplot2::labs(x="P-Value Threshold")
+    }
+
+    if(!is.null(y_lab)){
+      p1 <- p1 + ggplot2::labs(y=y_lab)
+    }else{
+      p1 <- p1 + ggplot2::labs(y="Number of Significant Features")
+    }
+
+    if(!is.null(plot_title)){
+      p1 <- p1 + ggplot2::ggtitle(plot_title)
+    }else{
+      p1 <- p1 + ggplot2::ggtitle("Differential Abundance")
+    }
+
+    if(!is.null(leglab)){
+      p1 <- p1 + ggplot2::guides(colour=guide_legend(title=leglab))
+    }
+
+    print(p1)
+  }
+
+  ## flags barplot ##
+  if("flag" %in% tolower(type)){
+    pal <- RColorBrewer::brewer.pal(9, "Set1")
+
+    plotData <- results_object$res %>% dplyr::group_by(term) %>% dplyr::summarise(NumSig=length(which(p.value <= pval_thresh)))
+    plotData <- plotData[-which(plotData$term == "(Intercept)"),]
+
+    p2 <- ggplot2::ggplot(plotData, aes(x=term,y=NumSig)) +
+      ggplot2::geom_bar(stat="identity", fill=pal[3]) +
+      #ggplot2::scale_fill_manual(values=pal[3], name="NumSig") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+                     axis.line.y = ggplot2::element_line(colour="black"),
+                     plot.background = ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.border = ggplot2::element_blank()) +
+      ggplot2::geom_text(aes(label=NumSig), position=position_dodge(width=0.9), vjust=1)
+    #ggplot2::labs(x="Comparisons",y="Number of differentially expressed genes") +
+    #ggplot2::ggtitle(paste(r, " Test",sep=""))
+
+    if(!is.null(x_lab)){
+      p2 <- p2 + ggplot2::labs(x=x_lab)
+    }else{
+      p2 <- p2 + ggplot2::labs(x="Term")
+    }
+
+    if(!is.null(y_lab)){
+      p2 <- p2 + ggplot2::labs(y=y_lab)
+    }else{
+      p2 <- p2 + ggplot2::labs(y="Number of Significant Features")
+    }
+
+    if(!is.null(plot_title)){
+      p2 <- p2 + ggplot2::ggtitle(plot_title)
+    }else{
+      p2 <- p2 + ggplot2::ggtitle("Differential Abundance")
+    }
+
+    if(!is.null(leglab)){
+      p2 <- p2 + ggplot2::guides(fill=guide_legend(title=leglab))
+    }
+
+    print(p2)
+  }
+
+}

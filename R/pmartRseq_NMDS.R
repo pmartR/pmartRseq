@@ -84,6 +84,7 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
             axis.title.y = ggplot2::element_text(size=20),
             legend.title = ggplot2::element_text(size=15),
             legend.text = ggplot2::element_text(size=15),
+            title = ggplot2::element_text(size=20),
             panel.grid = ggplot2::element_blank())
   }else{
     # Plot
@@ -98,6 +99,7 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
             axis.title.y = ggplot2::element_text(size=20),
             legend.title = ggplot2::element_text(size=15),
             legend.text = ggplot2::element_text(size=15),
+            title = ggplot2::element_text(size=20),
             panel.grid = ggplot2::element_blank())
   }
   X1

@@ -1673,6 +1673,7 @@ plot.paRes <- function(results_object, type="pvals", ...){
   library(reshape2)
   library(gplots)
   library(RColorBrewer)
+  library(dplyr)
 
   ## initial checks ##
   if(!is.null(plot_title)){

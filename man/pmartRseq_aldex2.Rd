@@ -6,7 +6,7 @@
 \usage{
 pmartRseq_aldex2(omicsData, mainEffects = NULL, mc.samples = 128,
   denom = "all", verbose = FALSE, interactions = FALSE,
-  randomEffect = NULL)
+  randomEffect = NULL, pval_thresh = 0.05)
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' reated by \code{\link{as.seqData}}.}

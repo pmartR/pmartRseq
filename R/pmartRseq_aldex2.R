@@ -26,14 +26,15 @@
 #' @export
 
 pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom="all", verbose=FALSE,
-                             interactions=FALSE, randomEffect=NULL, pval_thresh){
+                             interactions=FALSE, randomEffect=NULL, pval_thresh=0.05){
 
   library(ALDEx2)
   library(gtools)
   library(broom)
   library(car)
+  library(lme4)
 
-  aldex.clr.function <- function(omicsData, mc.samples=128, denom="all", verbose=FALSE) {
+  pmartRseq.aldex.clr.function <- function(omicsData, mc.samples=128, denom="all", verbose=FALSE) {
 
     # INPUT
     # The 'reads' data.frame MUST have row
@@ -229,7 +230,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
   #returns a dataframe of expected P and fdr statistics for each feature
 
-  aldex.glm <- function(clr, mainEffects, interactions=FALSE, randomEffect=NULL){
+  pmartRseq.aldex.glm <- function(clr, mainEffects, interactions=FALSE, randomEffect=NULL){
     #library(nlme)
     #library(papeR)
     # make sure that the multicore package is in scope and return if available
@@ -328,7 +329,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
         if(!is.null(randomEffect)){
           tmp <- data.frame(Samples=names(yy), yy=yy)
           colnames(tmp)[1] <- attr(omicsData, "cnames")$fdata_cname
-          tmp <- merge(tmp, omicsData$f_data[,which(colnames(attr(omicsData,"group_DF")) %in% c(mainEffects, randomEffect, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
+          tmp <- merge(tmp, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(mainEffects, randomEffect, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
           rownames(tmp) <- tmp[,which(colnames(tmp) == attr(omicsData, "cnames")$fdata_cname)]
           tmp <- tmp[,-which(colnames(tmp) == attr(omicsData, "cnames")$fdata_cname)]
 
@@ -344,7 +345,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
         }else{
           tmp <- data.frame(Samples=names(yy), yy=yy)
           colnames(tmp)[1] <- attr(omicsData, "cnames")$fdata_cname
-          tmp <- merge(tmp, omicsData$f_data[,which(colnames(attr(omicsData,"group_DF")) %in% c(mainEffects, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
+          tmp <- merge(tmp, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(mainEffects, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
           rownames(tmp) <- tmp[,which(colnames(tmp) == attr(omicsData, "cnames")$fdata_cname)]
           tmp <- tmp[,-which(colnames(tmp) == attr(omicsData, "cnames")$fdata_cname)]
 
@@ -419,22 +420,39 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
     glm.res <- Reduce(function(x, y) merge(x, y, by=c("Feature", "term")), glm.matrices)
 
-    glm.p.res <- apply(glm.res[,grep("p.value",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
-    glm.s.res <- apply(glm.res[,grep("statistic",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
-    glm.df.res <- apply(glm.res[,grep("df",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
-    glm.sumsq.res <- apply(glm.res[,grep("sumsq",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+    if(!is.null(randomEffect)){
+      glm.p.res <- apply(glm.res[,grep("p.value",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+      glm.s.res <- apply(glm.res[,grep("statistic",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+      glm.df.res <- apply(glm.res[,grep("df",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
 
-    glm.tot <- data.frame(glm.res[,c(1,2)], p.value=glm.p.res, statistic=glm.s.res, df=glm.df.res, sumsq=glm.sumsq.res)
+      glm.tot <- data.frame(glm.res[,c(1,2)], p.value=glm.p.res, statistic=glm.s.res, df=glm.df.res)
 
-    glm.tot <- glm.tot[-which(glm.tot$term == "Residuals"),]
-    #glm.tot <- glm.tot[-which(glm.tot$term == "(Intercept)"),]
-    rownames(glm.tot) <- c(1:nrow(glm.tot))
+      if(length(grep("Residuals", glm.tot$term)) > 0){
+        glm.tot <- glm.tot[-which(glm.tot$term == "Residuals"),]
+      }
+      #glm.tot <- glm.tot[-which(glm.tot$term == "(Intercept)"),]
+      rownames(glm.tot) <- c(1:nrow(glm.tot))
+
+    }else{
+      glm.p.res <- apply(glm.res[,grep("p.value",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+      glm.s.res <- apply(glm.res[,grep("statistic",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+      glm.df.res <- apply(glm.res[,grep("df",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+      glm.sumsq.res <- apply(glm.res[,grep("sumsq",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
+
+      glm.tot <- data.frame(glm.res[,c(1,2)], p.value=glm.p.res, statistic=glm.s.res, df=glm.df.res, sumsq=glm.sumsq.res)
+
+      if(length(grep("Residuals", glm.tot$term)) > 0){
+        glm.tot <- glm.tot[-which(glm.tot$term == "Residuals"),]
+      }
+      #glm.tot <- glm.tot[-which(glm.tot$term == "(Intercept)"),]
+      rownames(glm.tot) <- c(1:nrow(glm.tot))
+    }
 
     return(glm.tot)
 
   }
 
-  aldexclr <- aldex.clr.function(omicsData=omicsData, mc.samples=mc.samples, denom=denom, verbose=verbose)
+  aldexclr <- pmartRseq.aldex.clr.function(omicsData=omicsData, mc.samples=mc.samples, denom=denom, verbose=verbose)
 
   if(is.null(mainEffects)){
     mainEffects <- attr(attr(omicsData, "group_DF"), "main_effects")
@@ -444,7 +462,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     stop("Main effects were not given and cannot be found from the group data frame. Please run group designation function with desired main effects.")
   }
 
-  aldexres <- aldex.glm(clr=aldexclr, mainEffects=mainEffects, interactions=interactions, randomEffect=randomEffect)
+  aldexres <- pmartRseq.aldex.glm(clr=aldexclr, mainEffects=mainEffects, interactions=interactions, randomEffect=randomEffect)
 
   results <- list(clr=aldexclr, results=aldexres)
 

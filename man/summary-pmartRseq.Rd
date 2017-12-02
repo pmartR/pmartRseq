@@ -21,6 +21,8 @@
 \alias{summary.countFilter}
 \alias{summary-pmartRseq}
 \alias{summary.indspRes}
+\alias{summary-pmartRseq}
+\alias{summary.paRes}
 \title{Produce a basic summary of an pmartRseq S3 Object}
 \usage{
 \method{summary}{seqData}(omicsData, omicsDataFilter = NULL)
@@ -42,6 +44,8 @@
 \method{summary}{countFilter}(pmartRseq_results, min_num = NULL)
 
 \method{summary}{indspRes}(pmartRseq_results)
+
+\method{summary}{paRes}(pmartRseq_results)
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}}

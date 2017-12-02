@@ -275,3 +275,40 @@ summary.indspRes <- function(pmartRseq_results){
 
   return(invisible(res))
 }
+
+
+#' @export
+#' @rdname summary-pmartRseq
+#' @name summary-pmartRseq
+summary.paRes <- function(pmartRseq_results){
+  library(dplyr)
+
+  num_sig <- pmartRseq_results$results %>% dplyr::group_by(term) %>% dplyr::summarise(NumSig=length(which(p.value <= attr(pmartRseq_results, "pval_thresh")$pval_thresh)))
+  #
+  # fidx <- grep("Flag",colnames(pmartRseq_results$allResults))
+  # if(length(fidx) > 1){
+  #   num_sig <- apply(pmartRseq_results$allResults[,fidx], 2, function(x) length(which(x != 0)))
+  # }else{
+  #   num_sig <- length(which(pmartRseq_results$allResults[,fidx] != 0))
+  # }
+  # num_sig <- as.data.frame(num_sig)
+  # res = list()
+  #
+  # res[[1]] <- rbind(PValue_Threshold=attr(pmartRseq_results,"Threshold"),
+  #                   Tests = paste(attr(pmartRseq_results, "Tests")$Test,collapse="; "),
+  #                   Adjustment = attr(pmartRseq_results, "Adjustment"))
+  # res[[1]] <- as.data.frame(res[[1]])
+  # colnames(res[[1]]) <- NULL
+  #
+  # res[[2]] <- num_sig
+  # res[[2]] <- rbind("NumSig",res[[2]])
+  # rownames(res[[2]])[1] <- "Comparison"
+  # rownames(res[[2]])[-1] <- unlist(lapply(colnames(pmartRseq_results$allResults)[fidx], function(x) gsub("Flag_","",x)))
+  # colnames(res[[2]]) <- NULL
+  # #res <- rbind(res[[1]], res[[2]])
+
+  cat("\nSummary of 'paRes' Object\n-----------------------------\n")
+  cat(capture.output(as.data.frame(num_sig)), sep="\n")
+  cat("\n")
+  return(invisible(num_sig))
+}

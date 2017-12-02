@@ -26,7 +26,7 @@
 #' @export
 
 pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom="all", verbose=FALSE,
-                             interactions=FALSE, randomEffect=NULL){
+                             interactions=FALSE, randomEffect=NULL, pval_thresh){
 
   library(ALDEx2)
   library(gtools)
@@ -449,6 +449,8 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
   results <- list(clr=aldexclr, results=aldexres)
 
   attr(results, "effects") <- list(mainEffects=mainEffects, interactions=ifelse(interactions, "All", "None"), randomEffect=randomEffect)
+
+  attr(results, "pval_thresh") <- list(pval_thresh=pval_thresh)
 
   class(results) <- "paRes"
 

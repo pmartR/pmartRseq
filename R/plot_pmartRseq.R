@@ -1254,8 +1254,10 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   library(ggplot2)
   library(reshape2)
 
-  if(x_axis %in% c("Group","Groups","group","groups","G","g")){
-    x_axis <- "Group"
+  if(!is.null(attr(results_object, "group_DF"))){
+    if(x_axis %in% c("Group","Groups","group","groups","G","g")){
+      x_axis <- "Group"
+    }
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")

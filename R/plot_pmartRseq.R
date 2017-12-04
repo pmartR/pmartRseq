@@ -340,17 +340,28 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
   library(ggplot2)
   library(reshape2)
 
-  if(x_axis %in% c("Group","Groups","group","groups","G","g")){
-    x_axis <- "Group"
+  if(x_axis %in% c("Group","Groups","group","groups")){
+    if(!is.null(attr(results_object, "group_DF"))){
+      x_axis <- "Group"
+    }else{
+      warning("Group designation must be run for 'group' to be on the x-axis, using fdata_cname instead.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
+    }
   }else{
-    if(!(x_axis %in% names(attr(results_object, "group_DF")))){
+    if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
+    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+      warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
+    }else if(!(color %in% attr(results_object, "cnames"))){
+      warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
+      color <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -390,7 +401,9 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
   names(plot.data)[1] <- "Test"
   names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
-  plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  if(!is.null(attr(results_object, "group_DF"))){
+    plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  }
 
   map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
   p <- ggplot2::ggplot(plot.data, map) +
@@ -454,17 +467,28 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   library(ggplot2)
   library(reshape2)
 
-  if(x_axis %in% c("Group","Groups","group","groups","G","g")){
-    x_axis <- "Group"
+  if(x_axis %in% c("Group","Groups","group","groups")){
+    if(!is.null(attr(results_object, "group_DF"))){
+      x_axis <- "Group"
+    }else{
+      warning("Group designation must be run for 'group' to be on the x-axis, using fdata_cname instead.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
+    }
   }else{
-    if(!(x_axis %in% names(attr(results_object, "group_DF")))){
+    if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
+    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+      warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
+    }else if(!(color %in% attr(results_object, "cnames"))){
+      warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
+      color <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -503,7 +527,9 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   names(plot.data)[1] <- "Test"
   names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
-  plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  if(!is.null(attr(results_object, "group_DF"))){
+    plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  }
 
   map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
   p <- ggplot2::ggplot(plot.data, map) +
@@ -1012,7 +1038,9 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
   colnames(data_melt)[which(colnames(data_melt)=="variable")] <- attr(results_object, "cnames")$fdata_cname
 
   ## Merge data with group_DF to get groupings ##
-  data_melt <-  merge(data_melt, attr(results_object,"group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  if(!is.null(attr(results_object, "group_DF"))){
+    data_melt <-  merge(data_melt, attr(results_object,"group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  }
 
   vars <- c(x_axis, class, attr(results_object, "cnames")$fdata_cname)
   vars <- lapply(vars, as.symbol)
@@ -1100,17 +1128,28 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
   library(ggplot2)
   library(reshape2)
 
-  if(x_axis %in% c("Group","Groups","group","groups","G","g")){
-    x_axis <- "Group"
+  if(x_axis %in% c("Group","Groups","group","groups")){
+    if(!is.null(attr(results_object, "group_DF"))){
+      x_axis <- "Group"
+    }else{
+      warning("Group designation must be run for 'group' to be on the x-axis, using fdata_cname instead.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
+    }
   }else{
-    if(!(x_axis %in% names(attr(results_object, "group_DF")))){
+    if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
+    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+      warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
+    }else if(!(color %in% attr(results_object, "cnames"))){
+      warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
+      color <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -1150,7 +1189,9 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
     names(plot.data)[1] <- "Test"
     names(plot.data)[2] <- attr(results_object, "cnames")$fdata_cname
 
-    plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    if(!is.null(attr(results_object, "group_DF"))){
+      plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    }
 
     map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
     p <- ggplot2::ggplot(plot.data, map) +
@@ -1191,7 +1232,9 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
     abun <- data.frame(Samples=rownames(abun), Abundance=abun$abundance)
 
     data <- merge(rich, abun, by="Samples")
-    data <- merge(data, attr(results_object, "group_DF"), by.x="Samples", by.y=attr(results_object, "cnames")$fdata_cname)
+    if(!is.null(attr(results_object, "group_DF"))){
+      data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    }
 
     map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
     p <- ggplot2::ggplot(data, map) +
@@ -1254,9 +1297,12 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   library(ggplot2)
   library(reshape2)
 
-  if(!is.null(attr(results_object, "group_DF"))){
-    if(x_axis %in% c("Group","Groups","group","groups","G","g")){
+  if(x_axis %in% c("Group","Groups","group","groups")){
+    if(!is.null(attr(results_object, "group_DF"))){
       x_axis <- "Group"
+    }else{
+      warning("Group designation must be run for 'group' to be on the x-axis, using fdata_cname instead.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
@@ -1268,7 +1314,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
     }else if(!(color %in% attr(results_object, "cnames"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
@@ -1349,7 +1395,9 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     rich <- data.frame(Samples=colnames(rich), Richness=as.data.frame(t(rich))$observed)
 
     data <- merge(rich, abun, by="Samples")
-    data <- merge(data, attr(results_object, "group_DF"), by.x="Samples", by.y=attr(results_object, "cnames")$fdata_cname)
+    if(!is.null(attr(results_object, "group_DF"))){
+      data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    }
 
     map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
     p <- ggplot2::ggplot(data, map) +
@@ -1411,17 +1459,28 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   library(ggplot2)
   library(reshape2)
 
-  if(x_axis %in% c("Group","Groups","group","groups","G","g")){
-    x_axis <- "Group"
+  if(x_axis %in% c("Group","Groups","group","groups")){
+    if(!is.null(attr(results_object, "group_DF"))){
+      x_axis <- "Group"
+    }else{
+      warning("Group designation must be run for 'group' to be on the x-axis, using fdata_cname instead.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
+    }
   }else{
-    if(!(x_axis %in% names(attr(results_object, "group_DF")))){
+    if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
+    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+      warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
+    }else if(!(color %in% attr(results_object, "cnames"))){
+      warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
+      color <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -1455,7 +1514,9 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   names(plot.data)[2] <- "EffSpecies"
   names(plot.data)[1] <- attr(results_object, "cnames")$fdata_cname
 
-  plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  if(!is.null(attr(results_object, "group_DF"))){
+    plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+  }
 
   map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
   p <- ggplot2::ggplot(plot.data, map) +

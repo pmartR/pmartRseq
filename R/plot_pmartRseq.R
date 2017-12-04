@@ -350,7 +350,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
-    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+    }else if(!(x_axis %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
       x_axis <- attr(results_object, "cnames")$fdata_cname
     }
@@ -359,7 +359,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
   if(!is.null(color)){
     if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
-    }else if(!(color %in% attr(results_object, "cnames"))){
+    }else if(!(color %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
       color <- attr(results_object, "cnames")$fdata_cname
     }
@@ -477,7 +477,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
-    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+    }else if(!(x_axis %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
       x_axis <- attr(results_object, "cnames")$fdata_cname
     }
@@ -486,7 +486,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   if(!is.null(color)){
     if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
-    }else if(!(color %in% attr(results_object, "cnames"))){
+    }else if(!(color %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
       color <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1138,7 +1138,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
-    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+    }else if(!(x_axis %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
       x_axis <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1147,7 +1147,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
   if(!is.null(color)){
     if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
-    }else if(!(color %in% attr(results_object, "cnames"))){
+    }else if(!(color %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
       color <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1307,7 +1307,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
-    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+    }else if(!(x_axis %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
       x_axis <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1316,7 +1316,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   if(!is.null(color)){
     if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
-    }else if(!(color %in% attr(results_object, "cnames"))){
+    }else if(!(color %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
       color <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1395,6 +1395,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     rich <- data.frame(Samples=colnames(rich), Richness=as.data.frame(t(rich))$observed)
 
     data <- merge(rich, abun, by="Samples")
+    colnames(data)[1] <- attr(results_object, "cnames")$fdata_cname
     if(!is.null(attr(results_object, "group_DF"))){
       data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }
@@ -1469,7 +1470,7 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   }else{
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
-    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+    }else if(!(x_axis %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
       x_axis <- attr(results_object, "cnames")$fdata_cname
     }
@@ -1478,7 +1479,7 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   if(!is.null(color)){
     if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
-    }else if(!(color %in% attr(results_object, "cnames"))){
+    }else if(!(color %in% attr(results_object, "cnames")) & is.null(attr(results_object, "group_DF"))){
       warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
       color <- attr(results_object, "cnames")$fdata_cname
     }

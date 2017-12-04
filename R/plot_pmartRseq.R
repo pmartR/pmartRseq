@@ -1257,8 +1257,10 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   if(x_axis %in% c("Group","Groups","group","groups","G","g")){
     x_axis <- "Group"
   }else{
-    if(!(x_axis %in% names(attr(results_object, "group_DF")))){
+    if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
+    }else if(!(x_axis %in% attr(results_object, "cnames"))){
+      stop("x_axis must be fdata_cname if no grouping has been performed.")
     }
   }
 
@@ -1299,7 +1301,9 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     names(plot.data)[2] <- "Abundance"
     names(plot.data)[1] <- attr(results_object, "cnames")$fdata_cname
 
-    plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    if(!is.null(attr(results_object, "group_DF"))){
+      plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
+    }
 
     map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
     p <- ggplot2::ggplot(plot.data, map) +

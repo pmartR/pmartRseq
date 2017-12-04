@@ -35,7 +35,7 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
 
   # Check that main_effects is of an appropriate length #
   if (length(main_effects) < 1) stop("No main effects were provided")
-  if (length(main_effects) > 2) stop("No more than two main effects can be provided")
+  #if (length(main_effects) > 2) stop("No more than two main effects can be provided")
 
   # Check that covariates is of an appropriate length #
   if( !is.null(covariates)){
@@ -84,7 +84,7 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
   }
 
   # Case 2: 2 main effect variables #
-  if(n.maineffects==2){
+  if(n.maineffects>1){
 
     # get main effect variables #
     obs.effects = temp_data[,names(temp_data)%in% main_effects]
@@ -95,9 +95,11 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
     Group = rep(NA, nrow(temp_data))
 
     # identify samples that will have a Group membership that is not missing #
-    nonna.group = (!is.na(obs.effects[,1]) & !is.na(obs.effects[,2]) )
+    #nonna.group = (!is.na(obs.effects[,1]) & !is.na(obs.effects[,2]) )
+    nonna.group <- apply(obs.effects, 1, function(x) all(!is.na(x)))
 
-    Group[nonna.group] = paste(as.character(obs.effects[nonna.group,1]), as.character(obs.effects[nonna.group,2]), sep = "_")
+    #Group[nonna.group] = paste(as.character(obs.effects[nonna.group,1]), as.character(obs.effects[nonna.group,2]), sep = "_")
+    Group[nonna.group] = apply(obs.effects[nonna.group,], 1, function(x) paste(x, collapse="_"))
 
     # create output formatted with first column being sample id and second column group id #
     # third and fourth columns are the original main effect levels #
@@ -122,11 +124,11 @@ group_designation <- function(omicsData, main_effects, covariates=NULL, time_cou
       }
     }
     # output a warning message listing the groups and samples that are removed (7/8/2016 KS)
-    sm.samps = as.character(output$Names[is.na(output$Group)])
+    sm.samps = as.character(output[is.na(output$Group),samp_id])
     n.samps = length(sm.samps)
     mystr <- paste("The following ", n.sm.groups, " groups have been removed from the dataset due to a group size of less than 2 samples: \n", sep="")
     mystr2 <- paste(as.character(sm.groups), sep="' '", collapse=", ")
-    mystr3 <- paste("\n\nThis corresponds to the following", n.samps, " samples: \n", sep="")
+    mystr3 <- paste("\n\nThis corresponds to the following ", n.samps, " samples: \n", sep="")
     mystr4 <- paste(as.character(sm.samps), sep="' '", collapse=", ")
     warning(paste(mystr, mystr2, mystr3, mystr4, sep=""))
   }

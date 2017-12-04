@@ -366,7 +366,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }
@@ -493,7 +493,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }
@@ -603,13 +603,13 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("color must be one of the columns in group_DF")
     }
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }
@@ -1154,7 +1154,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }
@@ -1323,7 +1323,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }
@@ -1485,7 +1485,7 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   }
 
   if(!is.null(shape)){
-    if(!(shape %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
     }
   }

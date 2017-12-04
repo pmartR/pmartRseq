@@ -556,12 +556,12 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.jaccardRes <- function(results_object, variable="Average", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
                             x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
   .plot.jaccardRes(results_object, variable, x_axis, color, shape, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.jaccardRes <- function(results_object, variable="Average", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+.plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
                              x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)

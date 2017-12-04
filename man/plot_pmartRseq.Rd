@@ -39,7 +39,7 @@ plot.evenRes(results_object, x_axis = "Group", color = "Group",
   shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-plot.jaccardRes(results_object, variable = "Average", x_axis = "Group",
+plot.jaccardRes(results_object, variable = "Median", x_axis = "Group",
   color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 

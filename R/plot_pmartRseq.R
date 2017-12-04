@@ -1260,13 +1260,17 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     if(!(x_axis %in% names(attr(results_object, "group_DF"))) & !is.null(attr(results_object, "group_DF"))){
       stop("x_axis must be one of the columns in group_DF")
     }else if(!(x_axis %in% attr(results_object, "cnames"))){
-      stop("x_axis must be fdata_cname if no grouping has been performed.")
+      warning("x_axis must be fdata_cname if no grouping has been performed, setting to use that value.")
+      x_axis <- attr(results_object, "cnames")$fdata_cname
     }
   }
 
   if(!is.null(color)){
-    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF"))))){
+    if(!(color %in% c("Group","Groups","group","groups","G","g",names(attr(results_object, "group_DF")))) & !is.null(attr(results_object, "group_DF"))){
       stop("color must be one of the columns in group_DF")
+    }else if(!(color %in% attr(results_object, "cnames"))){
+      warning("color must be fdata_cname if no grouping has been performed, setting color to that value. If no color is desired, set color to 'NULL'.")
+      color <- attr(results_object, "cnames")$fdata_cname
     }
   }
 

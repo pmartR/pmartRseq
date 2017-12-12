@@ -786,9 +786,18 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
 
   break_data <- seq(from=0, to=ifelse(is.null(max_count),max(results_object[,paste(fn,"OTUs",sep="")]),max_count), by=brkpt)
 
-  all_counts <- lapply(break_data, function(x){
-    data.frame(point=x, sumcount=length(which(results_object[,paste(fn,"OTUs",sep="")] <= x)))
-  })
+  if(!is.null(attr(results_object, "group_var"))){
+    all_counts <- lapply(break_data, function(x){
+      temp <- lapply(unique(results_object$Group), function(y){
+        data.frame(point=x, sumcount=length(which(subset(results_object, Group==y)[,paste(fn,"OTUs",sep="")] <= x)), Group=y)
+      })
+      do.call(rbind, temp)
+    })
+  }else{
+    all_counts <- lapply(break_data, function(x){
+      data.frame(point=x, sumcount=length(which(results_object[,paste(fn,"OTUs",sep="")] <= x)))
+    })
+  }
   all_counts <- do.call(rbind, all_counts)
 
   fn_lab <- paste(toupper(substring(fn, 1, 1)),substring(fn, 2), sep="", collapse=" ")
@@ -819,14 +828,34 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
           panel.grid.minor = ggplot2::element_blank(),
           panel.border = ggplot2::element_blank())
 
-  if(!is.null(min_num)) {
-    # mark on graph where min_num is #
-    if(fn == "percent"){
-      min_num = min_num / 100
+  if(!is.null(attr(results_object, "group_var"))){
+    p <- p + ggplot2::facet_wrap(~Group)
+
+    if(!is.null(min_num)) {
+      # mark on graph where min_num is #
+      if(fn == "percent"){
+        min_num = min_num / 100
+      }
+      num_tested <- lapply(unique(results_object$Group), function(x){
+        tmp <- results_object[which(results_object$Group == x),]
+        ymax <- length(which(tmp[,paste(fn,"OTUs",sep="")] <= min_num))
+        data.frame(Group=x, ymax=ymax)
+      })
+      num_tested <- do.call(rbind, num_tested)
+      p <- p + ggplot2::geom_rect(data=num_tested, xmin=min_num-brkpt/2, xmax=min_num+brkpt/2,
+                                  ymin = 0, fill="black", col="black", size=1.5, aes(ymax=ymax))
     }
-    num_tested <- length(which(results_object[,paste(fn,"OTUs",sep="")] <= min_num))
-    p <- p + ggplot2::annotate(geom = "rect", xmin = min_num - brkpt/2, xmax = min_num + brkpt/2,
-                               ymin = 0, ymax = num_tested, fill="black", col="black", size=1.5)
+  }else{
+
+    if(!is.null(min_num)) {
+      # mark on graph where min_num is #
+      if(fn == "percent"){
+        min_num = min_num / 100
+      }
+      num_tested <- length(which(results_object[,paste(fn,"OTUs",sep="")] <= min_num))
+      p <- p + ggplot2::annotate(geom = "rect", xmin = min_num - brkpt/2, xmax = min_num + brkpt/2,
+                                 ymin = 0, ymax = num_tested, fill="black", col="black", size=1.5)
+    }
   }
 
   return(p)

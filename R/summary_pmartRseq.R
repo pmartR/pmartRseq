@@ -221,31 +221,65 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
     if(!is.numeric(min_num) | min_num < 0){ stop("min_num must be an integer >= 0")}
   }
 
-  # return numeric version of plot, the threshold used, the number that would be tested and the number that would not be tested #
-  filt_fn <- attr(pmartRseq_results, "function")
+  if(!is.null(attr(pmartRseq_results, "group_var"))){
+    # return numeric version of plot, the threshold used, the number that would be tested and the number that would not be tested #
+    filt_fn <- attr(pmartRseq_results, "function")
 
-  if(!is.null(min_num)){
-    # get number molecules tested
-    num_not_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] <= min_num))
+    if(!is.null(min_num)){
+      res <- lapply(unique(pmartRseq_results$Group), function(x){
+        temp <- pmartRseq_results[which(pmartRseq_results$Group == x),]
 
-    # get number molecules not tested
-    num_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] > min_num))
+        # get number molecules tested
+        num_not_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] <= min_num))
+        # get number molecules not tested
+        num_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] > min_num))
 
+        data.frame(Group=x, Num.Not.Filtered=num_tested, Num.Filtered=num_not_tested)
+      })
+
+      res <- do.call(rbind, res)
+
+    }else{
+      num_tested = "NULL"
+      num_not_tested = "NULL"
+      min_num = "NULL"
+      res <- list(Num.Not.Filtered=num_tested, Num.Filtered=num_not_tested)
+    }
+
+    # create output #
+    cat("\nSummary of Count Filter\n-----------------------\n")
+    catmat <- data.frame(c("Filter Function:"=filt_fn,"Minimum Number:"=min_num, res))
+    #colnames(catmat) <- NULL
+    cat(capture.output(print(catmat, row.names=TRUE)), sep="\n")
+
+    return(invisible(res))
   }else{
-    num_tested = "NULL"
-    num_not_tested = "NULL"
-    min_num = "NULL"
+    # return numeric version of plot, the threshold used, the number that would be tested and the number that would not be tested #
+    filt_fn <- attr(pmartRseq_results, "function")
+
+    if(!is.null(min_num)){
+      # get number molecules tested
+      num_not_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] <= min_num))
+
+      # get number molecules not tested
+      num_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] > min_num))
+
+    }else{
+      num_tested = "NULL"
+      num_not_tested = "NULL"
+      min_num = "NULL"
+    }
+
+    res <- list(min_num=min_num, num_not_filtered=num_tested, num_filtered=num_not_tested)
+
+    # create output #
+    cat("\nSummary of Count Filter\n-----------------------")
+    catmat <- data.frame(c("Filter Function:"=filt_fn,"Minimum Number:"=min_num, "Num Filtered:"=res$num_filtered, "Num Not Filtered:"=res$num_not_filtered))
+    colnames(catmat) <- NULL
+    cat(capture.output(print(catmat, row.names=TRUE)), sep="\n")
+
+    return(invisible(res))
   }
-
-  res <- list(min_num=min_num, num_not_filtered=num_tested, num_filtered=num_not_tested)
-
-  # create output #
-  cat("\nSummary of Count Filter\n-----------------------")
-  catmat <- data.frame(c("Filter Function:"=filt_fn,"Minimum Number:"=min_num, "Num Filtered:"=res$num_filtered, "Num Not Filtered:"=res$num_not_filtered))
-  colnames(catmat) <- NULL
-  cat(capture.output(print(catmat, row.names=TRUE)), sep="\n")
-
-  return(invisible(res))
 }
 
 

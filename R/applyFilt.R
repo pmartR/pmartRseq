@@ -50,6 +50,7 @@ applyFilt <- function(filter_object, omicsData, ...) {
 
   if (!is.null(filter_object$filter_samples) & is.null(fdata_cname)) warning("Sample identifier column specified in filter_object is not present in omicsData. Specified samples cannot be filtered from data.")
 
+  if(!is.null(attr(filter_object, "group_var"))){group=TRUE}
 
   UseMethod("applyFilt")
 }
@@ -62,7 +63,7 @@ applyFilt <- function(filter_object, omicsData, ...) {
 #' @rdname applyFilt
 #' @param num_samps for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features
 #' @param  upper_lim OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.
-applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL) {
+applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL, group=FALSE) {
 
   # Check if k/a fn
   if (attr(filter_object, "function") == "ka") {
@@ -103,6 +104,8 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 
   if (length(inds) < 1) {
     filter.edata <- NULL
+  }else if(group){
+    filter.edata <- filter_object[inds,]
   }else{
     filter.edata <- omicsData$e_data[, which(names(omicsData$e_data) == edata_cname)][inds]
   }
@@ -110,7 +113,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   filter_object_new = list(edata_filt = filter.edata, emeta_filt = NULL, samples_filt = NULL)
 
   # call the function that does the filter application
-  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
+  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new, group=group)
 
   # return filtered data object #
   results <- omicsData
@@ -321,7 +324,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 #' @return list similar to as.omicsData object
 #' @author Kelly Stratton, Lisa Bramer, Allison Thompson
 #'
-applyFilt_worker <- function(filter_object, omicsData) {
+applyFilt_worker <- function(filter_object, omicsData, group) {
   # pull column names from omicR_data attributes #
   col_nms = attr(omicsData, "cnames")
   fdata_cname = col_nms$fdata_cname
@@ -342,69 +345,114 @@ applyFilt_worker <- function(filter_object, omicsData) {
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      temp.dat = omicsData$e_data
+      if(group){
 
-      # have to check that at least one of the items is present in the data #
-      edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
+        temp.dat = omicsData$e_data
 
-      if (length(edat_ids) > 0) {
-        # identify which features in e_data match filter list and remove #
-        temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
-      }else{temp.dat1 = temp.dat}
+        # have to check that at least one of the items is present in the data #
+        edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt[,edata_cname])
 
+        if (length(edat_ids) > 0) {
+          # identify which features in e_data match filter list and remove #
+          temp.dat1 <- lapply(unique(filter_object$edata_filt$Group), function(x){
+            temp <- temp.dat[,which(colnames(temp.dat) %in% c(edata_cname, attr(filter_object$edata_filt, "samps_in_grps")[[x]]))]
+            ids <- filter_object$edata_filt[which(filter_object$edata_filt$Group == x),]
+            temp.dat1 <- temp[-which(temp[,edata_cname] %in% ids[,edata_cname]),]
+            return(temp.dat1)
+          })
+          temp.dat1 <- Reduce(function(x, y) merge(x, y, by=edata_cname, all=TRUE), temp.dat1)
+        }else{temp.dat1 = temp.dat}
+
+
+
+      }else{
+        temp.dat = omicsData$e_data
+
+        # have to check that at least one of the items is present in the data #
+        edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
+
+        if (length(edat_ids) > 0) {
+          # identify which features in e_data match filter list and remove #
+          temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
+        }else{temp.dat1 = temp.dat}
+
+      }
     }else{ # no entries in edata need to be removed
       temp.dat1 = omicsData$e_data
     }
 
-    ## remove samples ##
-    if (!is.null(filter_object$samples_filt) & !is.null(fdata_cname)) {
-      # identify which samples in f_data match filter list #
-      temp.samp = omicsData$f_data
+      ## remove samples ##
+      if (!is.null(filter_object$samples_filt) & !is.null(fdata_cname)) {
+        # identify which samples in f_data match filter list #
+        temp.samp = omicsData$f_data
 
-      # check that at least one sample is in f_data and e_data #
-      fdat_ids = which(temp.samp[,fdata_cname] %in% filter_object$samples_filt)
-      edat_ids2 = which(names(temp.dat1) %in% filter_object$samples_filt)
+        # check that at least one sample is in f_data and e_data #
+        fdat_ids = which(temp.samp[,fdata_cname] %in% filter_object$samples_filt)
+        edat_ids2 = which(names(temp.dat1) %in% filter_object$samples_filt)
 
-      if (length(fdat_ids) > 0) {
-        temp.samp2 = temp.samp[-which(temp.samp[,fdata_cname] %in% filter_object$samples_filt),]
-      }else{temp.samp2 = temp.samp}
+        if (length(fdat_ids) > 0) {
+          temp.samp2 = temp.samp[-which(temp.samp[,fdata_cname] %in% filter_object$samples_filt),]
+        }else{temp.samp2 = temp.samp}
 
-      # identify which samples in e_data match filter list and remove #
-      if (length(edat_ids2) > 0) {
-        temp.dat2 = temp.dat1[, -which(names(temp.dat1) %in% filter_object$samples_filt)]
-      }else{temp.dat2 = temp.dat1}
+        # identify which samples in e_data match filter list and remove #
+        if (length(edat_ids2) > 0) {
+          temp.dat2 = temp.dat1[, -which(names(temp.dat1) %in% filter_object$samples_filt)]
+        }else{temp.dat2 = temp.dat1}
 
-    }else{ # no entries in f_data need to be removed
-      temp.samp2 = omicsData$f_data
-      temp.dat2 = temp.dat1
-    }
+      }else{ # no entries in f_data need to be removed
+        temp.samp2 = omicsData$f_data
+        temp.dat2 = temp.dat1
+      }
 
-    temp.meta2 = NULL
-
-
+      temp.meta2 = NULL
 
 
   }else{ # e_meta is present, so we need to work with it as well
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      temp.dat = omicsData$e_data
+      if(group){
 
-      # have to check that at least one of the items is present in the data #
-      edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
+        temp.dat = omicsData$e_data
 
-      if (length(edat_ids) > 0) {
-        # identify which features in e_data and e_meta match filter list and remove#
-        temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
-      }else{temp.dat1 = temp.dat}
+        # have to check that at least one of the items is present in the data #
+        edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt[,edata_cname])
+
+        if (length(edat_ids) > 0) {
+          # identify which features in e_data match filter list and remove #
+          temp.dat1 <- lapply(unique(filter_object$edata_filt$Group), function(x){
+            temp <- temp.dat[,which(colnames(temp.dat) %in% c(edata_cname, attr(filter_object$edata_filt, "samps_in_grps")[[x]]))]
+            ids <- filter_object$edata_filt[which(filter_object$edata_filt$Group == x),]
+            temp.dat1 <- temp[-which(temp[,edata_cname] %in% ids[,edata_cname]),]
+            return(temp.dat1)
+          })
+          temp.dat1 <- Reduce(function(x, y) merge(x, y, by=edata_cname, all=TRUE), temp.dat1)
+        }else{temp.dat1 = temp.dat}
+
+
+
+      }else{
+        temp.dat = omicsData$e_data
+
+        # have to check that at least one of the items is present in the data #
+        edat_ids = which(temp.dat[,edata_cname] %in% filter_object$edata_filt)
+
+        if (length(edat_ids) > 0) {
+          # identify which features in e_data match filter list and remove #
+          temp.dat1 = temp.dat[-which(temp.dat[,edata_cname] %in% filter_object$edata_filt),]
+        }else{temp.dat1 = temp.dat}
+
+      }
 
       temp.meta = omicsData$e_meta
 
       # check that at least one of the features is present in e_meta #
-      emeta_ids = which(temp.meta[,edata_cname] %in% filter_object$edata_filt)
+      #emeta_ids = which(temp.meta[,edata_cname] %in% filter_object$edata_filt)
+      emeta_ids <- length(which(!(temp.meta[,edata_cname] %in% temp.dat1[,edata_cname])))
 
       if (length(emeta_ids) > 0) {
-        temp.meta1 = temp.meta[-which(temp.meta[,edata_cname] %in% filter_object$edata_filt),]
+        #temp.meta1 = temp.meta[-which(temp.meta[,edata_cname] %in% filter_object$edata_filt),]
+        temp.meta1 <- temp.meta[-which(!(temp.meta[,edata_cname] %in% temp.dat1[,edata_cname])),]
       }else{temp.meta1 = temp.meta}
 
     }else{

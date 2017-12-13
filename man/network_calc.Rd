@@ -5,7 +5,7 @@
 \title{Calculates Correlations}
 \usage{
 network_calc(omicsData, type = "spearman", group = FALSE,
-  group_var = NULL)
+  group_var = NULL, fdr_method = "fndr")
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' reated by \code{\link{as.seqData}}.}
@@ -15,6 +15,8 @@ network_calc(omicsData, type = "spearman", group = FALSE,
 \item{group}{Logical, should correlation analysis be performed on sub-groups of the data. Default is FALSE, will use all of the samples in the data.}
 
 \item{group_var}{Character, if group==TRUE, which variable to use as the grouping variable.}
+
+\item{fdr_method}{a character vector stating which cutoff method to use, one of 'fndr', 'pct0', or 'locfdr'. Default is 'fndr'.}
 }
 \value{
 An object of class corrRes (also a data.frame) containing the correlation values.
@@ -30,7 +32,7 @@ Correlation is calculated between every pair of features.
 library(mintJansson)
 data(rRNA_data)
 mynetwork <- network_calc(omicsData = rRNA_data)
-mynetwork
+head(mynetwork)
 }
 
 }

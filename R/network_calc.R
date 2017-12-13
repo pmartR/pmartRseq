@@ -6,6 +6,7 @@
 #' @param type Character, which correlation metric to use. Must be one of 'pearson' or 'spearman'. Default is 'spearman'.
 #' @param group Logical, should correlation analysis be performed on sub-groups of the data. Default is FALSE, will use all of the samples in the data.
 #' @param group_var Character, if group==TRUE, which variable to use as the grouping variable.
+#' @param fdr_method a character vector stating which cutoff method to use, one of 'fndr', 'pct0', or 'locfdr'. Default is 'fndr'.
 #'
 #' @details Correlation is calculated between every pair of features.
 #'
@@ -16,7 +17,7 @@
 #' library(mintJansson)
 #' data(rRNA_data)
 #' mynetwork <- network_calc(omicsData = rRNA_data)
-#' mynetwork
+#' head(mynetwork)
 #' }
 #'
 #' @author Allison Thompson
@@ -24,9 +25,10 @@
 #' @references
 #'
 #' @export
-network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL){
+network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL, fdr_method="fndr"){
 
  library(Hmisc)
+ library(fdrtool)
 
   # Extract data
   cordata <- omicsData$e_data
@@ -80,6 +82,9 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
       # Exctract correlation coefficient, p-value, and which features are compared
       pairs <- flattenCorrMatrix(res$r, res$P)
 
+      # Calculate FDR
+      pairs$q.value <- fdrtool::fdrtool(pairs$p.value, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
+
       # State which group this is for
       pairs$Group <- grp
 
@@ -107,6 +112,9 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
 
     # Exctract correlation coefficient, p-value, and which features are compared
     pairs <- flattenCorrMatrix(res$r, res$P)
+
+    # Calculate FDR
+    pairs$q.value <- fdrtool::fdrtool(pairs$p.value, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
 
     results <- pairs
     colnames(results) <- c("Row","Column","cor.coeff","p.value")

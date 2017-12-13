@@ -103,10 +103,12 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
       warning("No grouping variable specified, will use 'Group' found in group_DF.")
       groupings <- unique(attr(omicsData, "group_DF")$Group)
       samps <- lapply(groupings, function(x) colnames(edata)[which(colnames(edata) %in% subset(attr(omicsData, "group_DF"), Group == x)[,edata_cname])])
+      names(samps) <- groupings
     }else{
       if(!is.null(attr(omicsData, "group_DF")) & group_var %in% colnames(attr(omicsData, "group_DF"))){
         groupings <- unique(attr(omicsData, "group_DF")[,group_var])
         samps <- lapply(groupings, function(x) colnames(edata)[which(colnames(edata) %in% attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,group_var]==x),fdata_cname])])
+        names(samps) <- groupings
       }else{
         groupings <- unique(omicsData$f_data[,group_var])
         samps <- lapply(groupings, function(x) colnames(edata)[which(colnames(edata) %in% omicsData$f_data[which(omicsData$f_data[,group_var] == x), fdata_cname])])

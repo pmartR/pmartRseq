@@ -177,7 +177,7 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
 
     })
 
-    infrequent_OTUs <- do.call(rbind, infrequent_OTUs)
+    infrequent_OTUs <- do.call(plyr::rbind.fill, infrequent_OTUs)
     attr(infrequent_OTUs, "samps_in_grps") <- samps
     attr(infrequent_OTUs, "group_var") <- group_var
 

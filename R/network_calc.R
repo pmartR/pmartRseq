@@ -7,6 +7,7 @@
 #' @param group Logical, should correlation analysis be performed on sub-groups of the data. Default is FALSE, will use all of the samples in the data.
 #' @param group_var Character, if group==TRUE, which variable to use as the grouping variable.
 #' @param fdr_method a character vector stating which cutoff method to use, one of 'fndr', 'pct0', or 'locfdr'. Default is 'fndr'.
+#' @param missing_val Use 0 or NA for any 'missing' values? Default is 0.
 #'
 #' @details Correlation is calculated between every pair of features.
 #'
@@ -25,13 +26,21 @@
 #' @references
 #'
 #' @export
-network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL, fdr_method="fndr"){
+network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL, fdr_method="fndr", missing_val=0){
 
  library(Hmisc)
  library(fdrtool)
 
   # Extract data
   cordata <- omicsData$e_data
+
+  if(missing_val == 0){
+    cordata[is.na(cordata)] <- 0
+  }else if(is.na(missing_val)){
+    cordata[cordata==0] <- NA
+  }else{
+    stop("missing_val must be 0 or NA")
+  }
 
   # Extract cnames
   edata_cname <- attr(omicsData, "cnames")$edata_cname

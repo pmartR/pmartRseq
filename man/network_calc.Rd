@@ -5,7 +5,7 @@
 \title{Calculates Correlations}
 \usage{
 network_calc(omicsData, type = "spearman", group = FALSE,
-  group_var = NULL, fdr_method = "fndr")
+  group_var = NULL, fdr_method = "fndr", missing_val = 0)
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' reated by \code{\link{as.seqData}}.}
@@ -17,6 +17,8 @@ network_calc(omicsData, type = "spearman", group = FALSE,
 \item{group_var}{Character, if group==TRUE, which variable to use as the grouping variable.}
 
 \item{fdr_method}{a character vector stating which cutoff method to use, one of 'fndr', 'pct0', or 'locfdr'. Default is 'fndr'.}
+
+\item{missing_val}{Use 0 or NA for any 'missing' values? Default is 0.}
 }
 \value{
 An object of class corrRes (also a data.frame) containing the correlation values.

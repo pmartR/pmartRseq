@@ -82,10 +82,15 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
 
       # State which group this is for
       pairs$Group <- grp
+
+      return(pairs)
     })
 
     # Combine results for all groups
     results <- do.call(rbind, res)
+    colnames(results) <- c("Row","Column","cor.coeff","p.value","Group")
+
+    attr(results, "group_var") <- group_var
 
   }else{
     # Make this a matrix
@@ -104,13 +109,14 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
     pairs <- flattenCorrMatrix(res$r, res$P)
 
     results <- pairs
+    colnames(results) <- c("Row","Column","cor.coeff","p.value")
   }
 
   # Format results
   attr(results,"type") <- type
   attr(results, "group_DF") <- attr(omicsData, "group_DF")
   attr(results, "cnames") <- attr(omicsData, "cnames")
-  class(results) <- c("corrRes", class(res))
+  class(results) <- c("corrRes", class(results))
 
   return(results)
 

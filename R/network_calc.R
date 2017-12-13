@@ -71,8 +71,8 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
       # Make this a matrix
       rownames(cord) <- cord[,which(colnames(cord) == edata_cname)]
       cord <- cord[,-which(colnames(cord) == edata_cname)]
-      if(any(rowSums(cord) == 0)){
-        cord <- cord[-which(rowSums(cord) == 0),]
+      if(any(rowSums(cord, na.rm=TRUE) == 0)){
+        cord <- cord[-which(rowSums(cord, na.rm=TRUE) == 0),]
       }
       cord <- as.matrix(t(cord))
 
@@ -83,7 +83,7 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
       pairs <- flattenCorrMatrix(res$r, res$P)
 
       # Calculate FDR
-      pairs$q.value <- fdrtool::fdrtool(pairs$p.value, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
+      pairs$q.value <- fdrtool::fdrtool(pairs$p, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
 
       # State which group this is for
       pairs$Group <- grp
@@ -93,7 +93,7 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
 
     # Combine results for all groups
     results <- do.call(rbind, res)
-    colnames(results) <- c("Row","Column","cor.coeff","p.value","Group")
+    colnames(results) <- c("Row","Column","cor.coeff","p.value","q.value","Group")
 
     attr(results, "group_var") <- group_var
 
@@ -102,8 +102,8 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
     cord <- cordata
     rownames(cord) <- cord[,which(colnames(cord) == edata_cname)]
     cord <- cord[,-which(colnames(cord) == edata_cname)]
-    if(any(rowSums(cord) == 0)){
-      cord <- cord[-which(rowSums(cord) == 0),]
+    if(any(rowSums(cord, na.rm=TRUE) == 0)){
+      cord <- cord[-which(rowSums(cord, na.rm=TRUE) == 0),]
     }
     cord <- as.matrix(t(cord))
 
@@ -114,10 +114,10 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
     pairs <- flattenCorrMatrix(res$r, res$P)
 
     # Calculate FDR
-    pairs$q.value <- fdrtool::fdrtool(pairs$p.value, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
+    pairs$q.value <- fdrtool::fdrtool(pairs$p, statistic="pvalue", plot=FALSE, verbose=FALSE, cutoff.method=fdr_method)$qval
 
     results <- pairs
-    colnames(results) <- c("Row","Column","cor.coeff","p.value")
+    colnames(results) <- c("Row","Column","cor.coeff","p.value","q.value")
   }
 
   # Format results

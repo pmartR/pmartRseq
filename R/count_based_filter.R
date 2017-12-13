@@ -240,7 +240,7 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
   attr(infrequent_OTUs, "group_DF") <- attr(omicsData, "group_DF")
   attr(infrequent_OTUs, "function") <- fn
 
-  threshold <- quantile(reshape2::melt(infrequent_OTUs)$value, 0.95)
+  threshold <- quantile(reshape2::melt(infrequent_OTUs)$value, 0.95, na.rm=TRUE)
   attr(infrequent_OTUs, "threshold") <- threshold
 
   return(infrequent_OTUs)

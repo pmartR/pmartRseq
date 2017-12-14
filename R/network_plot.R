@@ -91,6 +91,7 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
         title(paste(x," Network",sep=""))
       }
 
+      attr(gN, "group_var") <- attr(netData, "group_var")
       return(gN)
     })
 
@@ -163,6 +164,10 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       title("Network")
     }
   }
+
+  attr(gN, "thresholds") <- list(CorCoeff=coeff, PValue=pval, QValue=qval)
+
+  class(gN) <- c("networkGraph",class(gN))
 
   return(gN)
 

@@ -8,6 +8,7 @@
 #' @param pval Optional, cutoff value to use for p-values
 #' @param qval Optional, cutoff value to use for q-values
 #' @param colour Optional, if desired, can colour vertices by a taxonomic level
+#' @param size Logical, should vertices be scaled by median abundance of taxa
 #' @param legend.show Logical, should a legend be shown
 #' @param legend.pos Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.
 #'
@@ -20,14 +21,14 @@
 #' library(mintJansson)
 #' data(rRNA_data)
 #' mynetwork <- network_calc(omicsData = rRNA_data)
-#' network_plot(mynetwork)
+#' myNetworkPlot <- network_plot(mynetwork)
 #' }
 #'
 #' @author Allison Thompson
 #'
 #' @export
 
-network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, colour="Phylum", legend.show=TRUE, legend.pos="bottomleft"){
+network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, colour="Phylum", size=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
   library(igraph)
 
   #if you want to associate the taxonomy with your taxa import a taxonomy key now
@@ -75,19 +76,40 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       l <- layout_with_fr(gN)
       l <- norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
 
+      if(size){
+        if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
+          samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+        }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
+          samps <- omicsData$f_data[which(omicsData$f_data[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+        }else{
+          stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
+        }
+
+        size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
+        size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
+        size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+
+        v.size <- as.data.frame(as.matrix(V(gN)))
+        v.size$Feature <- rownames(v.size)
+        colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
+        v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+      }else{
+        v.size = 5
+      }
+
       if(!is.null(colour) & length(vgn[,colour]) > 0){
         #Get colors
         cols <- iwanthue(length(levels(vgn[,colour])), random=TRUE)
 
         my_colour <- cols[as.numeric(as.factor(vgn[,colour]))]
 
-        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
+        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=v.size, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
         if(legend.show){
           legend(legend.pos, legend=levels(as.factor(vgn[,colour])), col=cols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.25)
         }
         title(paste(x," Network",sep=""))
       }else{
-        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
+        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=v.size, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
         title(paste(x," Network",sep=""))
       }
 
@@ -107,6 +129,27 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       ivgn <- droplevels(ivgn)
     }
 
+    if(size){
+      if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
+        samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
+        samps <- omicsData$f_data[which(omicsData$f_data[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      }else{
+        stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
+      }
+
+      size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
+      size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
+      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+
+      v.size <- as.data.frame(as.matrix(V(gN)))
+      v.size$Feature <- rownames(v.size)
+      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
+      v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+    }else{
+      v.size = 5
+    }
+
     if(!is.null(colour) & length(ivgn[,colour]) > 0){
       #Get colors
       icols <- iwanthue(length(levels(ivgn[,colour])), random=TRUE)
@@ -114,13 +157,13 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       imy_colour <- icols[as.numeric(as.factor(ivgn[,colour]))]
 
 
-      plot(g_intersection, vertex.color=imy_colour, vertex.label=NA, vertex.size=5)
+      plot(g_intersection, vertex.color=imy_colour, vertex.label=NA, vertex.size=v.size)
       if(legend.show){
         legend(legend.pos, legend=levels(as.factor(ivgn[,colour])), col=icols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.5)
       }
       title("Graph Intersection")
     }else{
-      plot(g_intersection, vertex.label=NA, vertex.size=5)
+      plot(g_intersection, vertex.label=NA, vertex.size=v.size)
       title("Graph Intersection")
     }
 
@@ -140,6 +183,20 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       vgn <- droplevels(vgn)
     }
 
+    if(size){
+
+      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
+      size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
+      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+
+      v.size <- as.data.frame(as.matrix(V(gN)))
+      v.size$Feature <- rownames(v.size)
+      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
+      v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+    }else{
+      v.size = 5
+    }
+
     #In our graph we will base the color and thickness of lines on edge attributes, here we add these based on the stregth of the correlation and pos/neg
     E(gN)$strength <- abs(tmp$cor.coeff)*0.6
     E(gN)$dirct <- tmp$cor.coeff
@@ -155,13 +212,13 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
 
       my_colour <- cols[as.numeric(as.factor(vgn[,colour]))]
 
-      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
+      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=v.size, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
       if(legend.show){
         legend(legend.pos, legend=levels(as.factor(vgn[,colour])), col=cols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.25)
       }
       title("Network")
     }else{
-      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
+      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=v.size, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
       title("Network")
     }
   }

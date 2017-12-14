@@ -3,10 +3,7 @@
 #' This function generates a network plot for the network data.
 #'
 #' @param omicsData an object of the class 'seqData' usually created by \code{\link{as.seqData}}.
-#' @param netData an object of class 'netData', created by \code{link{network_calc}}
-#' @param coeff Optional, cutoff value to use for the correlation coefficient
-#' @param pval Optional, cutoff value to use for p-values
-#' @param qval Optional, cutoff value to use for q-values
+#' @param netGraph an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}
 #' @param colour Optional, if desired, can colour vertices by a taxonomic level
 #' @param vsize Logical, should vertices be scaled by median abundance of taxa
 #' @param legend.show Logical, should a legend be shown
@@ -28,33 +25,20 @@
 #'
 #' @export
 
-network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
+network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
   library(igraph)
 
   #if you want to associate the taxonomy with your taxa import a taxonomy key now
   taxa <- omicsData$e_meta
 
-  net <- netData
+  net <- netGraph
 
-  # Correlation Coefficient cutoff
-  if(!is.null(coeff)){
-    net <- subset(net, abs(cor.coeff) >= coeff)
-  }
-  # p value cutoff
-  if(!is.null(pval)){
-    net <- subset(net, p.value <= pval)
-  }
-  # q value cutoff
-  if(!is.null(qval)){
-    net <- subset(net, q.value <= qval)
-  }
+  if(!is.null(attr(netGraph, "group_var"))){
 
-  if(!is.null(attr(netData, "group_var"))){
+    gN <- lapply(names(netGraph), function(x){
+      gN <- netGraph[[x]]
 
-    gN <- lapply(unique(net$Group), function(x){
-      tmp <- subset(net, Group == x)
-
-      gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
+      #gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
       if(!is.null(taxa)){
         #make taxonomy as vertex attribute
@@ -67,20 +51,16 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
         vgn <- NULL
       }
 
-      #In our graph we will base the color and thickness of lines on edge attributes, here we add these based on the stregth of the correlation and pos/neg
-      E(gN)$strength <- abs(tmp$cor.coeff)
-      E(gN)$dirct <- tmp$cor.coeff
-
       #you can alter the layout algorithm to create a more visually appealling plot- Fruchterman-Reingold & Kamada-Kawai layouts are common ones to try
       #Fruchterman-Reingold layout and edit the size
       l <- layout_with_fr(gN)
       l <- norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
 
       if(vsize){
-        if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
-          samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
-        }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
-          samps <- omicsData$f_data[which(omicsData$f_data[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+        if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
+          samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+        }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
+          samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
         }else{
           stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
         }
@@ -134,15 +114,15 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
     }
 
     if(vsize){
-      if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
-        samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
-      }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
-        samps <- omicsData$f_data[which(omicsData$f_data[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
-      }else{
-        stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
-      }
+      # if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
+      #   samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      # }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
+      #   samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      # }else{
+      #   stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
+      # }
 
-      size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
+      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
       size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
       colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
@@ -175,12 +155,10 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       title("Graph Intersection")
     }
 
-    attr(gN, "group_var") <- attr(netData, "group_var")
-
   }else{
-    tmp <- net
+    gN <- net
 
-    gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
+    #gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
     if(!is.null(taxa)){
       #make taxonomy as vertex attribute
@@ -209,10 +187,6 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       v.size = 5
     }
 
-    #In our graph we will base the color and thickness of lines on edge attributes, here we add these based on the stregth of the correlation and pos/neg
-    E(gN)$strength <- abs(tmp$cor.coeff)*0.6
-    E(gN)$dirct <- tmp$cor.coeff
-
     #you can alter the layout algorithm to create a more visually appealling plot- Fruchterman-Reingold & Kamada-Kawai layouts are common ones to try
     #Fruchterman-Reingold layout and edit the size
     l <- layout_with_fr(gN)
@@ -235,11 +209,7 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
     }
   }
 
-  attr(gN, "thresholds") <- list(CorCoeff=coeff, PValue=pval, QValue=qval)
-
-  class(gN) <- c("networkGraph",class(gN))
-
-  return(gN)
+  return(NULL)
 
 }
 

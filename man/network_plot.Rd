@@ -4,20 +4,13 @@
 \alias{network_plot}
 \title{Generate Network Plot}
 \usage{
-network_plot(omicsData, netData, coeff = NULL, pval = NULL, qval = NULL,
-  colour = "Phylum", vsize = FALSE, legend.show = TRUE,
-  legend.pos = "bottomleft")
+network_plot(omicsData, netGraph, colour = "Phylum", vsize = FALSE,
+  legend.show = TRUE, legend.pos = "bottomleft")
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' usually created by \code{\link{as.seqData}}.}
 
-\item{netData}{an object of class 'netData', created by \code{link{network_calc}}}
-
-\item{coeff}{Optional, cutoff value to use for the correlation coefficient}
-
-\item{pval}{Optional, cutoff value to use for p-values}
-
-\item{qval}{Optional, cutoff value to use for q-values}
+\item{netGraph}{an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}}
 
 \item{colour}{Optional, if desired, can colour vertices by a taxonomic level}
 

@@ -91,7 +91,6 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
         title(paste(x," Network",sep=""))
       }
 
-      attr(gN, "group_var") <- attr(netData, "group_var")
       return(gN)
     })
 
@@ -124,6 +123,8 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       plot(g_intersection, vertex.label=NA, vertex.size=5)
       title("Graph Intersection")
     }
+
+    attr(gN, "group_var") <- attr(netData, "group_var")
 
   }else{
     tmp <- net

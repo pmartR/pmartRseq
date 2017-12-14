@@ -5,7 +5,7 @@
 \title{Generate Network Plot}
 \usage{
 network_plot(omicsData, netData, coeff = NULL, pval = NULL, qval = NULL,
-  colour = "Phylum", size = FALSE, legend.show = TRUE,
+  colour = "Phylum", vsize = FALSE, legend.show = TRUE,
   legend.pos = "bottomleft")
 }
 \arguments{
@@ -21,7 +21,7 @@ network_plot(omicsData, netData, coeff = NULL, pval = NULL, qval = NULL,
 
 \item{colour}{Optional, if desired, can colour vertices by a taxonomic level}
 
-\item{size}{Logical, should vertices be scaled by median abundance of taxa}
+\item{vsize}{Logical, should vertices be scaled by median abundance of taxa}
 
 \item{legend.show}{Logical, should a legend be shown}
 

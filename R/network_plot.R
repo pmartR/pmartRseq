@@ -8,7 +8,7 @@
 #' @param pval Optional, cutoff value to use for p-values
 #' @param qval Optional, cutoff value to use for q-values
 #' @param colour Optional, if desired, can colour vertices by a taxonomic level
-#' @param size Logical, should vertices be scaled by median abundance of taxa
+#' @param vsize Logical, should vertices be scaled by median abundance of taxa
 #' @param legend.show Logical, should a legend be shown
 #' @param legend.pos Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.
 #'
@@ -28,7 +28,7 @@
 #'
 #' @export
 
-network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, colour="Phylum", size=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
+network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
   library(igraph)
 
   #if you want to associate the taxonomy with your taxa import a taxonomy key now
@@ -76,7 +76,7 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       l <- layout_with_fr(gN)
       l <- norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
 
-      if(size){
+      if(vsize){
         if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
           samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
         }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
@@ -88,11 +88,15 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
         size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
         size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
         size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+        colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
 
         v.size <- as.data.frame(as.matrix(V(gN)))
         v.size$Feature <- rownames(v.size)
         colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
         v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+        v.size <- v.size[match(names(V(gN)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+        sizex <- max(v.size, na.rm=TRUE)/20
+        v.size <- v.size/sizex
       }else{
         v.size = 5
       }
@@ -129,7 +133,7 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       ivgn <- droplevels(ivgn)
     }
 
-    if(size){
+    if(vsize){
       if(attr(netData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
         samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netData, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
       }else if(attr(netData, "group_var") %in% colnames(omicsData$f_data)){
@@ -141,11 +145,15 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
       size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+      colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
 
-      v.size <- as.data.frame(as.matrix(V(gN)))
+      v.size <- as.data.frame(as.matrix(V(g_intersection)))
       v.size$Feature <- rownames(v.size)
       colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
       v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+      v.size <- v.size[match(names(V(g_intersection)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+      sizex <- max(v.size, na.rm=TRUE)/20
+      v.size <- v.size/sizex
     }else{
       v.size = 5
     }
@@ -183,16 +191,20 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
       vgn <- droplevels(vgn)
     }
 
-    if(size){
+    if(vsize){
 
       size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
       size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
+      colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
 
       v.size <- as.data.frame(as.matrix(V(gN)))
       v.size$Feature <- rownames(v.size)
       colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
       v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
+      v.size <- v.size[match(names(V(gN)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+      sizex <- max(v.size, na.rm=TRUE)/20
+      v.size <- v.size/sizex
     }else{
       v.size = 5
     }

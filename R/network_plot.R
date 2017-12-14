@@ -81,13 +81,13 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
 
         my_colour <- cols[as.numeric(as.factor(vgn[,colour]))]
 
-        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "blue", "red3"))
+        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
         if(legend.show){
           legend(legend.pos, legend=levels(as.factor(vgn[,colour])), col=cols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.25)
         }
         title(paste(x," Network",sep=""))
       }else{
-        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "blue", "red3"))
+        plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
         title(paste(x," Network",sep=""))
       }
 
@@ -153,16 +153,18 @@ network_plot <- function(omicsData, netData, coeff=NULL, pval=NULL, qval=NULL, c
 
       my_colour <- cols[as.numeric(as.factor(vgn[,colour]))]
 
-      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "blue", "red3"))
+      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
       if(legend.show){
         legend(legend.pos, legend=levels(as.factor(vgn[,colour])), col=cols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.25)
       }
       title("Network")
     }else{
-      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "blue", "red3"))
+      plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.label=NA, vertex.size=5, edge.width=(E(gN)$strength)*6, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
       title("Network")
     }
   }
+
+  return(gN)
 
 }
 

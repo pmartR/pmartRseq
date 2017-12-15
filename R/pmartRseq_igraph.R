@@ -77,6 +77,7 @@ pmartRseq_igraph <- function(netData, coeff=NULL, pval=NULL, qval=NULL){
   # Attach thresholds as attribute
   attr(gN, "thresholds") <- list(CorCoeff=coeff, PValue=pval, QValue=qval)
   attr(gN, "cnames") <- attr(netData, "cnames")
+  attr(gN, "e_meta") <- attr(netData, "e_meta")
 
   # Make class networkGraph
   class(gN) <- c("networkGraph",class(gN))

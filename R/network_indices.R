@@ -27,6 +27,14 @@ network_indices <- function(netGraph){
 
   library(igraph)
 
+  ### Initial Checks ###
+
+  if(class(netGraph) != "networkGraph"){
+    stop("netGraph must be an object of class 'networkGraph'.")
+  }
+
+  ### End Initial Checks ###
+
   if(!is.null(attr(netGraph, "group_var"))){
     indices <- lapply(names(netGraph), function(x){
 

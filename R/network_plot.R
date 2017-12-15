@@ -4,7 +4,7 @@
 #'
 #' @param omicsData an object of the class 'seqData' usually created by \code{\link{as.seqData}}.
 #' @param netGraph an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}
-#' @param colour Optional, if desired, can colour vertices by a taxonomic level
+#' @param colour Optional, if desired, can colour vertices by a taxonomic level. Use 'NULL' if no colour is desired.
 #' @param vsize Logical, should vertices be scaled by median abundance of taxa
 #' @param legend.show Logical, should a legend be shown
 #' @param legend.pos Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.
@@ -28,6 +28,34 @@
 
 network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
   library(igraph)
+
+  ### Initial Checks ###
+
+  if(class(omicsData) != "seqData"){
+    stop("omicsData must be an object of class 'seqData'")
+  }
+
+  if(class(netGraph) != "networkGraph"){
+    stop("netGraph must be an object of class 'networkGraph'.")
+  }
+
+  if(!(colour %in% c(colnames(omicsData$e_meta))) | is.null(omicsData$e_meta)){
+    stop("colour must be a column name in omicsData$e_meta.")
+  }
+
+  if(!(legend.pos %in% c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right","center"))){
+    stop("legend.pos must be one of 'bottomright', 'bottom', 'bottomleft', 'left', 'topleft', 'top', 'topright', 'right', 'center'")
+  }
+
+  if(!is.logical(vsize)){
+    stop("vsize must be one of TRUE or FALSE")
+  }
+
+  if(!is.logical(legend.show)){
+    stop("legend.show must be one of TRUE or FALSE")
+  }
+
+  ### End Initial Checks ###
 
   #if you want to associate the taxonomy with your taxa import a taxonomy key now
   taxa <- omicsData$e_meta

@@ -28,6 +28,18 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
 
   library(igraph)
 
+  ### Initial Checks ###
+
+  if(cutoff < 0 | length(cutoff) > 1 | !is.numeric(cutoff)){
+    stop("cutoff must be a non-negative integer of length 1.")
+  }
+
+  if(class(netGraph) != "networkGraph"){
+    stop("netGraph must be an object of class 'networkGraph'.")
+  }
+
+  ### End Initial Checks ###
+
   if(!is.null(attr(netGraph, "group_var"))){
 
     membs <- lapply(names(netGraph), function(x){

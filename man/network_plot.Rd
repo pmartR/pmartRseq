@@ -12,7 +12,7 @@ network_plot(omicsData, netGraph, colour = "Phylum", vsize = FALSE,
 
 \item{netGraph}{an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}}
 
-\item{colour}{Optional, if desired, can colour vertices by a taxonomic level}
+\item{colour}{Optional, if desired, can colour vertices by a taxonomic level. Use 'NULL' if no colour is desired.}
 
 \item{vsize}{Logical, should vertices be scaled by median abundance of taxa}
 

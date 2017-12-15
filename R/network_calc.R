@@ -31,6 +31,34 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
  library(Hmisc)
  library(fdrtool)
 
+  ### Initial Checks ###
+
+  if(class(omicsData) != "seqData"){
+    stop("omicsData must be an object of class 'seqData'")
+  }
+
+  if(!(type %in% c("spearman","pearson"))){
+    stop("type must be one of 'spearman' or 'pearson'.")
+  }
+
+  if(!(fdr_method %in% c("fndr","pot0","locfdr"))){
+    stop("fdr_method must be one of 'fndr', 'pot0', or 'locfdr'.")
+  }
+
+  if(missing_val != 0 & !is.na(missing_val)){
+    stop("missing_val must be one of 0 or NA.")
+  }
+
+  if(!is.logical(group)){
+    stop("group must be TRUE or FALSE")
+  }
+
+  if(!(group_var %in% c(colnames(attr(omicsData, "group_DF")), colnames(omicsData$f_data)))){
+    stop("group_var must be a column name found in either omicsData$f_data or attr(omicsData, 'group_DF')")
+  }
+
+  ### End Initial Checks ###
+
   # Extract data
   cordata <- omicsData$e_data
 

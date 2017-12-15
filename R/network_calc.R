@@ -133,6 +133,7 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
   attr(results,"type") <- type
   attr(results, "group_DF") <- attr(omicsData, "group_DF")
   attr(results, "cnames") <- attr(omicsData, "cnames")
+  attr(results, "e_meta") <- omicsData$e_meta
   class(results) <- c("corrRes", class(results))
 
   return(results)

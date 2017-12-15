@@ -25,6 +25,8 @@
 
 network_indices <- function(netGraph){
 
+  library(igraph)
+
   if(!is.null(attr(netGraph, "group_var"))){
     indices <- lapply(names(netGraph), function(x){
 
@@ -160,6 +162,7 @@ network_indices <- function(netGraph){
 
   attr(indices, "cnames") <- attr(netGraph, "cnames")
   attr(indices, "thresholds") <- attr(netGraph, "thresholds")
+  attr(indices, "e_meta") <- attr(netGraph, "e_meta")
 
   class(indices) <- c("netIndices",class(indices))
 

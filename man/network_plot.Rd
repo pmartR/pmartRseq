@@ -34,7 +34,8 @@ A network graph is created for the network(s) that were generated.
 library(mintJansson)
 data(rRNA_data)
 mynetwork <- network_calc(omicsData = rRNA_data)
-myNetworkPlot <- network_plot(mynetwork)
+mygraph <- pmartRseq_igraph(netData = mynetwork, coeff=0.6, pval=NULL, qval=0.05)
+network_plot(omicsData = rRNA_data, netGraph = mygraph, colour = "Phylum", vsize = TRUE, legend.show = TRUE, legend.pos = "bottomleft")
 }
 
 }

@@ -66,21 +66,21 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
       }
 
       membs <- membership(mods)
-      membs <- data.frame(Features=names(membs), Group=as.matrix(membs))
+      membs <- data.frame(Features=names(membs), Module=as.matrix(membs))
 
-      if(any(table(membs$Group) <= cutoff)){
-        ids <- table(membs$Group)
+      if(any(table(membs$Module) <= cutoff)){
+        ids <- table(membs$Module)
         ids <- names(ids)[which(ids <= cutoff)]
-        other <- subset(membs, Group %in% ids)
+        other <- subset(membs, Module %in% ids)
 
         membs <- membs[-which(membs$Features %in% other$Features),]
 
-        other$Group <- "Non-Modular"
+        other$Module <- "Non-Modular"
 
         membs <- rbind(membs, other)
       }
 
-      colnames(membs) <- c(attr(netGraph, "cnames")$edata_cname, "Group")
+      colnames(membs) <- c(attr(netGraph, "cnames")$edata_cname, "Module")
 
       attr(membs, "modularity") <- modularity(mods)
       attr(membs, "sizes") <- sizes(mods)
@@ -115,21 +115,21 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
     }
 
     membs <- membership(mods)
-    membs <- data.frame(Features=names(membs), Group=as.matrix(membs))
+    membs <- data.frame(Features=names(membs), Module=as.matrix(membs))
 
-    if(any(table(membs$Group) <= cutoff)){
-      ids <- table(membs$Group)
+    if(any(table(membs$Module) <= cutoff)){
+      ids <- table(membs$Module)
       ids <- names(ids)[which(ids <= cutoff)]
-      other <- subset(membs, Group %in% ids)
+      other <- subset(membs, Module %in% ids)
 
       membs <- membs[-which(membs$Features %in% other$Features),]
 
-      other$Group <- "Non-Modular"
+      other$Module <- "Non-Modular"
 
       membs <- rbind(membs, other)
     }
 
-    colnames(membs) <- c(attr(netGraph, "cnames")$edata_cname, "Group")
+    colnames(membs) <- c(attr(netGraph, "cnames")$edata_cname, "Module")
 
     attr(membs, "modularity") <- modularity(mods)
     attr(membs, "sizes") <- sizes(mods)

@@ -4,15 +4,18 @@
 \alias{network_plot}
 \title{Generate Network Plot}
 \usage{
-network_plot(omicsData, netGraph, colour = "Phylum", vsize = FALSE,
-  legend.show = TRUE, legend.pos = "bottomleft")
+network_plot(netGraph, omicsData = NULL, modData = NULL,
+  colour = "Phylum", vsize = FALSE, legend.show = TRUE,
+  legend.pos = "bottomleft")
 }
 \arguments{
-\item{omicsData}{an object of the class 'seqData' usually created by \code{\link{as.seqData}}.}
+\item{netGraph}{an object of class 'networkGraph', created by \code{\link{pmartRseq_igraph}}}
 
-\item{netGraph}{an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}}
+\item{omicsData}{Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, fi want to colour by taxonomy and/or scale vertices by abundance}
 
-\item{colour}{Optional, if desired, can colour vertices by a taxonomic level. Use 'NULL' if no colour is desired.}
+\item{modData}{Optional, an object of class 'modData', created by \code{\link{detect_modules}}, if want to colour by modules.}
+
+\item{colour}{Optional, if desired, can colour vertices by a taxonomic level or 'Module' for module. Use 'NULL' if no colour is desired.}
 
 \item{vsize}{Logical, should vertices be scaled by median abundance of taxa}
 

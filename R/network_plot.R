@@ -2,9 +2,10 @@
 #'
 #' This function generates a network plot for the network data.
 #'
-#' @param omicsData an object of the class 'seqData' usually created by \code{\link{as.seqData}}.
-#' @param netGraph an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}
-#' @param colour Optional, if desired, can colour vertices by a taxonomic level. Use 'NULL' if no colour is desired.
+#' @param netGraph an object of class 'networkGraph', created by \code{\link{pmartRseq_igraph}}
+#' @param omicsData Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, fi want to colour by taxonomy and/or scale vertices by abundance
+#' @param modData Optional, an object of class 'modData', created by \code{\link{detect_modules}}, if want to colour by modules.
+#' @param colour Optional, if desired, can colour vertices by a taxonomic level or 'Module' for module. Use 'NULL' if no colour is desired.
 #' @param vsize Logical, should vertices be scaled by median abundance of taxa
 #' @param legend.show Logical, should a legend be shown
 #' @param legend.pos Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.
@@ -26,21 +27,25 @@
 #'
 #' @export
 
-network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
+network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum", vsize=FALSE, legend.show=TRUE, legend.pos="bottomleft"){
   library(igraph)
 
   ### Initial Checks ###
 
-  if(class(omicsData) != "seqData"){
+  if(!is.null(omicsData) & class(omicsData) != "seqData"){
     stop("omicsData must be an object of class 'seqData'")
+  }
+
+  if(!is.null(modData) & class(modData) != "modData"){
+    stop("modData must be an object of class 'modData'")
   }
 
   if(class(netGraph) != "networkGraph"){
     stop("netGraph must be an object of class 'networkGraph'.")
   }
 
-  if(!(colour %in% c(colnames(omicsData$e_meta))) | is.null(omicsData$e_meta)){
-    stop("colour must be a column name in omicsData$e_meta.")
+  if(!(colour %in% c(colnames(omicsData$e_meta), "Module"))){
+    stop("colour must be either a column name in omicsData$e_meta or 'Module' if coloring by module.")
   }
 
   if(!(legend.pos %in% c("bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right","center"))){
@@ -49,6 +54,10 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
 
   if(!is.logical(vsize)){
     stop("vsize must be one of TRUE or FALSE")
+  }
+
+  if(vsize & is.null(omicsData)){
+    stop("omicsData must be provided in order to scale vertices by abundance")
   }
 
   if(!is.logical(legend.show)){
@@ -69,13 +78,25 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
 
       #gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
-      if(!is.null(taxa)){
+
+      if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
         #make taxonomy as vertex attribute
         vgn <- as.data.frame(as.matrix(V(gN)))
         vgn$Feature <- rownames(vgn)
-        colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-        vgn <- merge(vgn, taxa, by=attr(omicsData, "cnames")$edata_cname)
+        colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+        vgn <- merge(vgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
         vgn <- droplevels(vgn)
+        vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+      }else if(!is.null(modData) & (colour == "Module")){
+        vgn <- as.data.frame(as.matrix(V(gN)))
+        vgn$Feature <- rownames(vgn)
+        colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+        vgn <- merge(vgn, mods[[x]], by=attr(netGraph, "cnames")$edata_cname)
+        vgn$Module <- as.factor(vgn$Module)
+        vgn <- droplevels(vgn)
+        vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
       }else{
         vgn <- NULL
       }
@@ -87,23 +108,23 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
 
       if(vsize){
         if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
-          samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+          samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
         }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
-          samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+          samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
         }else{
           stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
         }
 
         size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
         size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
-        size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
-        colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
+        size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
+        colnames(size)[which(colnames(size) == "Features")] <- attr(netGraph, "cnames")$edata_cname
 
         v.size <- as.data.frame(as.matrix(V(gN)))
         v.size$Feature <- rownames(v.size)
-        colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-        v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
-        v.size <- v.size[match(names(V(gN)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+        colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+        v.size <- merge(v.size, size, by=attr(netGraph, "cnames")$edata_cname)
+        v.size <- v.size[match(names(V(gN)), v.size[,attr(netGraph, "cnames")$edata_cname]), "Median"]
         sizex <- max(v.size, na.rm=TRUE)/20
         v.size <- v.size/sizex
       }else{
@@ -117,6 +138,7 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
         my_colour <- cols[as.numeric(as.factor(vgn[,colour]))]
 
         plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.label=NA, vertex.size=v.size, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
+        #plot(gN, rescale = FALSE, ylim=c(-1,1),xlim=c(-1,1), asp = 0, rescale=T, layout=l, vertex.color=my_colour, vertex.size=v.size, edge.width=(E(gN)$strength)*4, edge.color= ifelse(E(gN)$dirct > 0, "black", "red3"))
         if(legend.show){
           legend(legend.pos, legend=levels(as.factor(vgn[,colour])), col=cols, bty="n", pch=20, pt.cex=3, cex=0.5, horiz=FALSE, ncol=2, text.width=.1, x.intersp=.25)
         }
@@ -133,34 +155,47 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
     #Preliminary code to look at consistencies between networks- note that this won't run currently as we've only made gN1 in the code above. The graph.intersection function will keep only the edges that occur in both (all) graphs
     g_intersection <- Reduce(function(x, y) graph.intersection(x, y, byname=TRUE, keep.all.vertices=FALSE), gN)
 
-    if(!is.null(taxa)){
+    if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
       #make taxonomy as vertex attribute
       ivgn <- as.data.frame(as.matrix(V(g_intersection)))
       ivgn$Feature <- rownames(ivgn)
-      colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-      ivgn <- merge(ivgn, taxa, by=attr(omicsData, "cnames")$edata_cname)
+      colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+      ivgn <- merge(ivgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
       ivgn <- droplevels(ivgn)
+      ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
+    }else if(!is.null(modData) & (colour == "Module")){
+      ivgn <- as.data.frame(as.matrix(V(g_intersection)))
+      ivgn$Feature <- rownames(ivgn)
+      colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+      ivgn <- merge(ivgn, do.call(rbind, mods), by=attr(netGraph, "cnames")$edata_cname)
+      ivgn$Module <- as.factor(ivgn$Module)
+      ivgn <- droplevels(ivgn)
+      ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
+    }else{
+      ivgn <- NULL
     }
 
     if(vsize){
       # if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
-      #   samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      #   samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
       # }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
-      #   samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(omicsData, "cnames")$fdata_cname]
+      #   samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
       # }else{
       #   stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
       # }
 
-      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
+      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
-      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
-      colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
+      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
+      colnames(size)[which(colnames(size) == "Features")] <- attr(netGraph, "cnames")$edata_cname
 
       v.size <- as.data.frame(as.matrix(V(g_intersection)))
       v.size$Feature <- rownames(v.size)
-      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-      v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
-      v.size <- v.size[match(names(V(g_intersection)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+      v.size <- merge(v.size, size, by=attr(netGraph, "cnames")$edata_cname)
+      v.size <- v.size[match(names(V(g_intersection)), v.size[,attr(netGraph, "cnames")$edata_cname]), "Median"]
       sizex <- max(v.size, na.rm=TRUE)/20
       v.size <- v.size/sizex
     }else{
@@ -189,27 +224,40 @@ network_plot <- function(omicsData, netGraph, colour="Phylum", vsize=FALSE, lege
 
     #gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
-    if(!is.null(taxa)){
+    if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
       #make taxonomy as vertex attribute
       vgn <- as.data.frame(as.matrix(V(gN)))
       vgn$Feature <- rownames(vgn)
-      colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-      vgn <- merge(vgn, taxa, by=attr(omicsData, "cnames")$edata_cname)
+      colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+      vgn <- merge(vgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
       vgn <- droplevels(vgn)
+      vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+    }else if(!is.null(modData) & (colour == "Module")){
+      vgn <- as.data.frame(as.matrix(V(gN)))
+      vgn$Feature <- rownames(vgn)
+      colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+
+      vgn <- merge(vgn, mods, by=attr(netGraph, "cnames")$edata_cname)
+      vgn$Module <- as.factor(vgn$Module)
+      vgn <- droplevels(vgn)
+      vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+    }else{
+      vgn <- NULL
     }
 
     if(vsize){
 
-      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
+      size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
-      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)], Median=size)
-      colnames(size)[which(colnames(size) == "Features")] <- attr(omicsData, "cnames")$edata_cname
+      size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
+      colnames(size)[which(colnames(size) == "Features")] <- attr(netGraph, "cnames")$edata_cname
 
       v.size <- as.data.frame(as.matrix(V(gN)))
       v.size$Feature <- rownames(v.size)
-      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(omicsData, "cnames")$edata_cname
-      v.size <- merge(v.size, size, by=attr(omicsData, "cnames")$edata_cname)
-      v.size <- v.size[match(names(V(gN)), v.size[,attr(omicsData, "cnames")$edata_cname]), "Median"]
+      colnames(v.size)[which(colnames(v.size) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
+      v.size <- merge(v.size, size, by=attr(netGraph, "cnames")$edata_cname)
+      v.size <- v.size[match(names(V(gN)), v.size[,attr(netGraph, "cnames")$edata_cname]), "Median"]
       sizex <- max(v.size, na.rm=TRUE)/20
       v.size <- v.size/sizex
     }else{

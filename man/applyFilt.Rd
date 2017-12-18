@@ -11,7 +11,7 @@
 applyFilt(filter_object, omicsData, ...)
 
 \method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2,
-  num_samps = NULL)
+  num_samps = NULL, group = FALSE)
 
 \method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2,
   samps_to_remove = NULL)

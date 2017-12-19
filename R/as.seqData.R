@@ -103,7 +103,7 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
                          location_param=NULL, scale_param=NULL,
                          seq_type=NULL, db=NULL, db_version=NULL, ...){
   # initial checks #
-  browser()
+  #browser()
 
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #

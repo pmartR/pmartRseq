@@ -19,7 +19,7 @@ network_plot(netGraph, omicsData = NULL, modData = NULL,
 
 \item{vsize}{Logical, should vertices be scaled by median abundance of taxa}
 
-\item{legend.show}{Logical, should a legend be shown}
+\item{legend.show}{Logical, should a legend be shown. Default is TRUE.}
 
 \item{legend.pos}{Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.}
 }

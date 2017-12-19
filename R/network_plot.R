@@ -7,7 +7,7 @@
 #' @param modData Optional, an object of class 'modData', created by \code{\link{detect_modules}}, if want to colour by modules.
 #' @param colour Optional, if desired, can colour vertices by a taxonomic level or 'Module' for module. Use 'NULL' if no colour is desired.
 #' @param vsize Logical, should vertices be scaled by median abundance of taxa
-#' @param legend.show Logical, should a legend be shown
+#' @param legend.show Logical, should a legend be shown. Default is TRUE.
 #' @param legend.pos Optional, if legend==TRUE, where to position the legend. Default is 'bottomleft'.
 #'
 #' @details A network graph is created for the network(s) that were generated.
@@ -88,6 +88,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
         vgn <- merge(vgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
         vgn <- droplevels(vgn)
         vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+        vgn[,colour] <- as.factor(vgn[,colour])
       }else if(!is.null(modData) & (colour == "Module")){
         vgn <- as.data.frame(as.matrix(V(gN)))
         vgn$Feature <- rownames(vgn)
@@ -97,6 +98,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
         vgn$Module <- as.factor(vgn$Module)
         vgn <- droplevels(vgn)
         vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+        vgn[,colour] <- as.factor(vgn[,colour])
       }else{
         vgn <- NULL
       }
@@ -164,6 +166,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       ivgn <- merge(ivgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
       ivgn <- droplevels(ivgn)
       ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
+      ivgn[,colour] <- as.factor(ivgn[,colour])
     }else if(!is.null(modData) & (colour == "Module")){
       ivgn <- as.data.frame(as.matrix(V(g_intersection)))
       ivgn$Feature <- rownames(ivgn)
@@ -173,6 +176,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       ivgn$Module <- as.factor(ivgn$Module)
       ivgn <- droplevels(ivgn)
       ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
+      ivgn[,colour] <- as.factor(ivgn[,colour])
     }else{
       ivgn <- NULL
     }
@@ -233,6 +237,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       vgn <- merge(vgn, taxa, by=attr(netGraph, "cnames")$edata_cname)
       vgn <- droplevels(vgn)
       vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+      vgn[,colour] <- as.factor(vgn[,colour])
     }else if(!is.null(modData) & (colour == "Module")){
       vgn <- as.data.frame(as.matrix(V(gN)))
       vgn$Feature <- rownames(vgn)
@@ -242,6 +247,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       vgn$Module <- as.factor(vgn$Module)
       vgn <- droplevels(vgn)
       vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
+      vgn[,colour] <- as.factor(vgn[,colour])
     }else{
       vgn <- NULL
     }

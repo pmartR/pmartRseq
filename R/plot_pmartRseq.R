@@ -35,6 +35,9 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
   if(!is.null(y_lab)){
     if(!is.character(y_lab)){ stop("y_lab must be a character vector")}
   }
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){ stop("leglab must be a character vector")}
+  }
   if(!is.null(test)){
     if(!is.character(test)){ stop("test must be a character vector")}
   }
@@ -395,6 +398,11 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
     }
   }
 
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
+    }
+  }
 
   results_object2 <- cbind(rownames(results_object), results_object)
   plot.data <- reshape2::melt(results_object2)
@@ -522,6 +530,12 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
     }
   }
 
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
+    }
+  }
+
   results_object2 <- cbind(rownames(results_object), results_object)
   plot.data <- reshape2::melt(results_object2)
   names(plot.data)[1] <- "Test"
@@ -629,6 +643,12 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   if(!is.null(y_lab)){
     if(!is.character(y_lab)){
       stop("y_lab must be a character vector")
+    }
+  }
+
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
     }
   }
 
@@ -1221,6 +1241,12 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
     }
   }
 
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
+    }
+  }
+
   if(is.null(abun)){
     results_object2 <- cbind(rownames(results_object), results_object)
     plot.data <- reshape2::melt(results_object2)
@@ -1381,6 +1407,12 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
   if(!is.null(y_lab)){
     if(!is.character(y_lab)){
       stop("y_lab must be a character vector")
+    }
+  }
+
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
     }
   }
 
@@ -1547,6 +1579,12 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
     }
   }
 
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){
+      stop("leglab must be a character vector")
+    }
+  }
+
 
   results_object2 <- cbind(rownames(results_object), results_object)
   plot.data <- reshape2::melt(results_object2)
@@ -1622,6 +1660,9 @@ plot.indspRes <- function(results_object, type="pvals", ...){
   }
   if(!is.null(y_lab)){
     if(!is.character(y_lab)){ stop("y_lab must be a character vector")}
+  }
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){ stop("leglab must be a character vector")}
   }
   if(!is.null(type)){
     if(!is.character(type)){ stop("type must be a character vector")}
@@ -1795,6 +1836,9 @@ plot.paRes <- function(results_object, type="pvals", ...){
   if(!is.null(y_lab)){
     if(!is.character(y_lab)){ stop("y_lab must be a character vector")}
   }
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){ stop("leglab must be a character vector")}
+  }
   if(!is.null(type)){
     if(!is.character(type)){ stop("type must be a character vector")}
     if(any(!(type %in% c("pvals","flag")))){ stop("type must be at least one of 'pvals' or 'flag'")}
@@ -1901,5 +1945,163 @@ plot.paRes <- function(results_object, type="pvals", ...){
 
     print(p2)
   }
+
+}
+
+
+#' @export
+#' @rdname plot_pmartRseq
+#' @name plot_pmartRseq
+#' @param resultsObject an object of class 'modEnv', created by \code{\link{mod_env}}
+#' @param pval.thresh A numeric value used to brighten colour shading where p-values are less than or equal to pval.thresh. Default is 0.05.
+#' @param max.size The maximum size of the bubble. Default is 20.
+#' @param plot_title Optional, a character vector to use as the plot title
+#' @param leglab Optional, a character vector to use as the legend label
+#' @param x_lab Optional, a character vector to use as the x-axis label
+#' @param y_lab Optional, a character vector to use as the y-axis label
+plot.modEnv <- function(results_object, ...){
+  .plot.modEnv(results_object, ...)
+}
+
+.plot.modEnv <- function(results_object, pval.thresh=0.05, max.size=20, x_lab=NULL, y_lab=NULL, plot_title=NULL, leglab=NULL){
+  library(ggplot2)
+
+  ### Initial Checks ###
+
+  if(!is.null(results_object) & class(results_object)[1] != "modEnv"){
+    stop("results_object must be an object of class 'modEnv'")
+  }
+
+  if(!is.numeric(pval.thresh) | pval.thresh < 0 | pval.thresh > 1 | length(pval.thresh) > 1){
+    stop("pval.thresh must be one numeric value between 0 and 1.")
+  }
+
+  if(!is.numeric(max.size) | length(max.size) > 1){
+    stop("max.size must be one numeric value")
+  }
+
+  if(!is.null(plot_title)){
+    if(!is.character(plot_title)){ stop("plot_title must be a character vector")}
+  }
+
+  if(!is.null(x_lab)){
+    if(!is.character(x_lab)){ stop("x_lab must be a character vector")}
+  }
+
+  if(!is.null(y_lab)){
+    if(!is.character(y_lab)){ stop("y_lab must be a character vector")}
+  }
+
+  if(!is.null(leglab)){
+    if(!is.character(leglab)){ stop("leglab must be a character vector")}
+  }
+
+  ### End Initial Checks ###
+
+
+  if(!is.null(attr(results_object, "group_var"))){
+
+    lapply(names(results_object), function(x){
+
+      data <- results_object[[x]]$corr
+      data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NotSignificant", "Significant"))
+      data$alpha <- sapply(c(1:nrow(data)), function(y) ifelse(data$p.value[y] < pval.thresh, "Significant", "NotSignificant"))
+
+      sz <- max(abs(data$CorrCoeff)) / max.size
+
+      p1 <- ggplot2::ggplot(data, aes(x=EnvVar, y=Module, fill=colour, alpha=alpha))+
+        ggplot2::geom_point(aes(size=abs(CorrCoeff)/sz), pch=21)+
+        ggplot2::geom_text(aes(label=round(CorrCoeff, digits=3),size=4), alpha=1)+
+        ggplot2::scale_size_identity()+
+        ggplot2::scale_fill_manual(values=c("Significant"="green","NotSignificant"="red"))+
+        ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3), guide=FALSE)+
+        theme(panel.grid = ggplot2::element_blank(),
+              panel.border = ggplot2::element_blank(),
+              panel.background = ggplot2::element_blank(),
+              axis.text.x = ggplot2::element_text(colour="grey20",size=14,angle=30,hjust=.5,vjust=.7,face="plain"),
+              axis.text.y = ggplot2::element_text(colour="grey20",size=14,angle=0,hjust=1,vjust=0,face="plain"),
+              axis.title.x = ggplot2::element_text(colour="grey20",size=18,angle=0,hjust=.5,vjust=0,face="plain"),
+              axis.title.y = ggplot2::element_text(colour="grey20",size=18,angle=90,hjust=.5,vjust=.5,face="plain"),
+              axis.ticks = ggplot2::element_blank(),
+              plot.title = ggplot2::element_text(hjust = 0.5, size=18, face="bold"))
+
+      if(!is.null(x_lab)){
+        p1 <- p1 + ggplot2::labs(x=x_lab)
+      }else{
+        p1 <- p1 + ggplot2::labs(x="Environmental Variables")
+      }
+
+      if(!is.null(y_lab)){
+        p1 <- p1 + ggplot2::labs(y=y_lab)
+      }else{
+        p1 <- p1 + ggplot2::labs(y="Module PCs")
+      }
+
+      if(!is.null(plot_title)){
+        p1 <- p1 + ggplot2::ggtitle(plot_title)
+      }else{
+        p1 <- p1 + ggplot2::ggtitle(x)
+      }
+
+      if(!is.null(leglab)){
+        p1 <- p1 + ggplot2::guides(fill=guide_legend(title=leglab))
+      }else{
+        p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Significance"))
+      }
+
+      print(p1)
+    })
+
+
+  }else{
+
+    data <- results_object$corr
+    data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NotSignificant", "Significant"))
+    data$alpha <- sapply(c(1:nrow(data)), function(y) ifelse(data$p.value[y] < pval.thresh, "Significant", "NotSignificant"))
+
+    sz <- max(abs(data$CorrCoeff)) / max.size
+
+    ggplot2::ggplot(data, aes(x=EnvVar, y=Module, fill=colour, alpha=alpha))+
+      ggplot2::geom_point(aes(size=abs(CorrCoeff)/sz), pch=21)+
+      ggplot2::geom_text(aes(label=round(CorrCoeff, digits=3),size=4), alpha=1)+
+      ggplot2::scale_size_identity()+
+      ggplot2::scale_fill_manual(values=c("Significant"="green","NotSignificant"="red"))+
+      ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3), guide=FALSE)+
+      theme(panel.grid = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank(),
+            panel.background = ggplot2::element_blank(),
+            axis.text.x = ggplot2::element_text(colour="grey20",size=14,angle=30,hjust=.5,vjust=.7,face="plain"),
+            axis.text.y = ggplot2::element_text(colour="grey20",size=14,angle=0,hjust=1,vjust=0,face="plain"),
+            axis.title.x = ggplot2::element_text(colour="grey20",size=18,angle=0,hjust=.5,vjust=0,face="plain"),
+            axis.title.y = ggplot2::element_text(colour="grey20",size=18,angle=90,hjust=.5,vjust=.5,face="plain"),
+            axis.ticks = ggplot2::element_blank(),
+            plot.title = ggplot2::element_text(hjust = 0.5, size=18, face="bold"))
+
+    if(!is.null(x_lab)){
+      p1 <- p1 + ggplot2::labs(x=x_lab)
+    }else{
+      p1 <- p1 + ggplot2::labs(x="Environmental Variables")
+    }
+
+    if(!is.null(y_lab)){
+      p1 <- p1 + ggplot2::labs(y=y_lab)
+    }else{
+      p1 <- p1 + ggplot2::labs(y="Module PCs")
+    }
+
+    if(!is.null(plot_title)){
+      p1 <- p1 + ggplot2::ggtitle(plot_title)
+    }
+
+    if(!is.null(leglab)){
+      p1 <- p1 + ggplot2::guides(fill=guide_legend(title=leglab))
+    }else{
+      p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Significance"))
+    }
+
+    print(p1)
+  }
+
+  return(NULL)
 
 }

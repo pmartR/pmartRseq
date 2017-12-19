@@ -84,12 +84,12 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
 
       attr(membs, "modularity") <- modularity(mods)
       attr(membs, "sizes") <- sizes(mods)
-      attr(membs, "group_var") <- attr(netGraph, "group_var")
 
       return(membs)
 
     })
 
+    attr(membs, "group_var") <- attr(netGraph, "group_var")
     names(membs) <- names(netGraph)
 
   }else{

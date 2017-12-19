@@ -29,7 +29,7 @@ network_indices <- function(netGraph){
 
   ### Initial Checks ###
 
-  if(class(netGraph) != "networkGraph"){
+  if(class(netGraph)[1] != "networkGraph"){
     stop("netGraph must be an object of class 'networkGraph'.")
   }
 

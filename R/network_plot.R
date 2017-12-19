@@ -32,15 +32,15 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
 
   ### Initial Checks ###
 
-  if(!is.null(omicsData) & class(omicsData) != "seqData"){
+  if(!is.null(omicsData) & class(omicsData)[1] != "seqData"){
     stop("omicsData must be an object of class 'seqData'")
   }
 
-  if(!is.null(modData) & class(modData) != "modData"){
+  if(!is.null(modData) & class(modData)[1] != "modData"){
     stop("modData must be an object of class 'modData'")
   }
 
-  if(class(netGraph) != "networkGraph"){
+  if(class(netGraph)[1] != "networkGraph"){
     stop("netGraph must be an object of class 'networkGraph'.")
   }
 

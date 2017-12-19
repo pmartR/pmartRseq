@@ -38,11 +38,11 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
 
   ### Initial Checks ###
 
-  if(!is.null(omicsData) & class(omicsData) != "seqData"){
+  if(!is.null(omicsData) & class(omicsData)[1] != "seqData"){
     stop("omicsData must be an object of class 'seqData'")
   }
 
-  if(!is.null(modData) & class(modData) != "modData"){
+  if(!is.null(modData) & class(modData)[1] != "modData"){
     stop("modData must be an object of class 'modData'")
   }
 

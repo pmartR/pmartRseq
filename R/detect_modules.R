@@ -34,7 +34,7 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
     stop("cutoff must be a non-negative integer of length 1.")
   }
 
-  if(class(netGraph) != "networkGraph"){
+  if(class(netGraph)[1] != "networkGraph"){
     stop("netGraph must be an object of class 'networkGraph'.")
   }
 

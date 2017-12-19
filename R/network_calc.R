@@ -33,7 +33,7 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
 
   ### Initial Checks ###
 
-  if(class(omicsData) != "seqData"){
+  if(class(omicsData)[1] != "seqData"){
     stop("omicsData must be an object of class 'seqData'")
   }
 

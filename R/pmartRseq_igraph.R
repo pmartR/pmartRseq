@@ -28,7 +28,7 @@ pmartRseq_igraph <- function(netData, coeff=NULL, pval=NULL, qval=NULL){
 
   ### Initial Checks ###
 
-  if(class(netData) != "corrRes"){
+  if(class(netData)[1] != "corrRes"){
     stop("netGraph must be an object of class 'corrRes'.")
   }
 

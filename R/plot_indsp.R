@@ -92,6 +92,11 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
   sig <- unique(alldata[which(alldata$indsp == 1),attr(omicsData,"cnames")$edata_cname])
   alldata <- alldata[which(alldata[,attr(omicsData,"cnames")$edata_cname] %in% sig),]
 
+  if(nrow(alldata) == 0){
+    cat("No indicator species at specified p-value")
+    return(NULL)
+  }
+
   # order the important variables
   alldata[,group] <- as.factor(alldata[,group])
   alldata <- alldata[order(alldata[,group]),]

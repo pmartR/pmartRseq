@@ -201,11 +201,11 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 #' @param  upper_lim Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.
 #' @param samps_to_remove Sample names selected to remove based on sample metadata criteria
 applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_to_remove = NULL) {
-
   # check that upper_lim is numeric and >=1 #
   if (!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
   # check that upper_lim is of length 1 #
   if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
+  if (is.null(samps_to_remove)) stop("samps_to_remove must contain at least one sample to remove")
   # if sample names are given, make sure they exist in the data
   if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
   if (!is.null(samps_to_remove) & length(samps_to_remove) == 0) stop("samps_to_remove must contain at least one sample to remove")

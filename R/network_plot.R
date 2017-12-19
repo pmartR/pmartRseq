@@ -3,7 +3,7 @@
 #' This function generates a network plot for the network data.
 #'
 #' @param netGraph an object of class 'networkGraph', created by \code{\link{pmartRseq_igraph}}
-#' @param omicsData Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, fi want to colour by taxonomy and/or scale vertices by abundance
+#' @param omicsData Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, if want to colour by taxonomy and/or scale vertices by abundance
 #' @param modData Optional, an object of class 'modData', created by \code{\link{detect_modules}}, if want to colour by modules.
 #' @param colour Optional, if desired, can colour vertices by a taxonomic level or 'Module' for module. Use 'NULL' if no colour is desired.
 #' @param vsize Logical, should vertices be scaled by median abundance of taxa

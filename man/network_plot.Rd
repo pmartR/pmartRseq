@@ -11,7 +11,7 @@ network_plot(netGraph, omicsData = NULL, modData = NULL,
 \arguments{
 \item{netGraph}{an object of class 'networkGraph', created by \code{\link{pmartRseq_igraph}}}
 
-\item{omicsData}{Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, fi want to colour by taxonomy and/or scale vertices by abundance}
+\item{omicsData}{Optional, an object of the class 'seqData' usually created by \code{\link{as.seqData}}, if want to colour by taxonomy and/or scale vertices by abundance}
 
 \item{modData}{Optional, an object of class 'modData', created by \code{\link{detect_modules}}, if want to colour by modules.}
 

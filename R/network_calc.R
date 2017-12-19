@@ -102,6 +102,10 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
       samps <- samps[-which(sapply(samps, length) < 4)]
     }
 
+    if(length(samps) < 1){
+      stop("No groups remaining, each group must have at least 4 samples and there must be at least one group.")
+    }
+
     # Run correlation calculation within each group
     res <- lapply(c(1:length(samps)), function(x){
       # Get group

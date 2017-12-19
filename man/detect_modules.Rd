@@ -9,7 +9,7 @@ detect_modules(netGraph, cluster = "louvain", cutoff = 5)
 \arguments{
 \item{netGraph}{an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}}
 
-\item{cluster}{which clustering method to use. Must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'.}
+\item{cluster}{which clustering method to use. Must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'. Default is 'louvain'.}
 
 \item{cutoff}{Any modules which come back with a total of less than this number of members will all be grouped together.}
 }

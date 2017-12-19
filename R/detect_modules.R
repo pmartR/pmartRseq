@@ -3,7 +3,7 @@
 #' This function detects modules for a network.
 #'
 #' @param netGraph an object of class 'networkGraph', created by \code{link{pmartRseq_igraph}}
-#' @param cluster which clustering method to use. Must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'.
+#' @param cluster which clustering method to use. Must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'. Default is 'louvain'.
 #' @param cutoff Any modules which come back with a total of less than this number of members will all be grouped together.
 #'
 #' @details A network graph is created for the network(s) that were generated.

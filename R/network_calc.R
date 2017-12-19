@@ -97,6 +97,11 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
       }
     }
 
+    if(any(sapply(samps, length) < 4)){
+      warning("Grouping leads to a network with less than 4 samples - cannot have less than 4 samples - will remove this group")
+      samps <- samps[-which(sapply(samps, length) < 4)]
+    }
+
     # Run correlation calculation within each group
     res <- lapply(c(1:length(samps)), function(x){
       # Get group

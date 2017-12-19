@@ -73,6 +73,8 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
 
   if(!is.null(attr(netGraph, "group_var"))){
 
+    par(mfrow=c(ceiling((length(names(netGraph))+1)/2),ceiling((length(names(netGraph))+1)/2)))
+
     gN <- lapply(names(netGraph), function(x){
       gN <- netGraph[[x]]
 
@@ -94,7 +96,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
         vgn$Feature <- rownames(vgn)
         colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
 
-        vgn <- merge(vgn, mods[[x]], by=attr(netGraph, "cnames")$edata_cname)
+        vgn <- merge(vgn, modData[[x]], by=attr(netGraph, "cnames")$edata_cname)
         vgn$Module <- as.factor(vgn$Module)
         vgn <- droplevels(vgn)
         vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
@@ -172,7 +174,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       ivgn$Feature <- rownames(ivgn)
       colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
 
-      ivgn <- merge(ivgn, do.call(rbind, mods), by=attr(netGraph, "cnames")$edata_cname)
+      ivgn <- merge(ivgn, do.call(rbind, modData), by=attr(netGraph, "cnames")$edata_cname)
       ivgn$Module <- as.factor(ivgn$Module)
       ivgn <- droplevels(ivgn)
       ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
@@ -223,6 +225,8 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       title("Graph Intersection")
     }
 
+    #dev.off()
+
   }else{
     gN <- net
 
@@ -243,7 +247,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       vgn$Feature <- rownames(vgn)
       colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
 
-      vgn <- merge(vgn, mods, by=attr(netGraph, "cnames")$edata_cname)
+      vgn <- merge(vgn, modData, by=attr(netGraph, "cnames")$edata_cname)
       vgn$Module <- as.factor(vgn$Module)
       vgn <- droplevels(vgn)
       vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]

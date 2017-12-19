@@ -111,6 +111,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   }
 
   filter_object_new = list(edata_filt = filter.edata, emeta_filt = NULL, samples_filt = NULL)
+  attr(filter_object_new, "group_var") <- attr(filter_object, "group_var")
 
   # call the function that does the filter application
   results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)

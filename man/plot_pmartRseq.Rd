@@ -105,7 +105,7 @@ plot.modEnv(results_object, ...)
 
 \item{max_count}{Optional, a number specifying the maximum count number to show on the graph. Default is NULL.}
 
-\item{min_num}{Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL.}
+\item{min_num}{Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.}
 
 \item{min_samp}{Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.}
 

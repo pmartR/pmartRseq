@@ -211,7 +211,7 @@ summary.effspRes <- function(pmartRseq_results){
 #' @export
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
-#' @param min_num An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis.
+#' @param min_num An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis. If fn="percent", give the decimal number, not the percentage.
 summary.countFilter <- function(pmartRseq_results, min_num=NULL){
 
   if(!is.null(min_num)){

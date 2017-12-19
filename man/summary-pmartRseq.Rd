@@ -52,7 +52,7 @@
 
 \item{omicsDataFilter}{an optional filter object for the respective \code{omicsData} class.}
 
-\item{min_num}{An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis.}
+\item{min_num}{An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis. If fn="percent", give the decimal number, not the percentage.}
 }
 \value{
 a list of elements

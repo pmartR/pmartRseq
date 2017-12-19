@@ -50,7 +50,7 @@ applyFilt <- function(filter_object, omicsData, ...) {
 
   if (!is.null(filter_object$filter_samples) & is.null(fdata_cname)) warning("Sample identifier column specified in filter_object is not present in omicsData. Specified samples cannot be filtered from data.")
 
-  if(!is.null(attr(filter_object, "group_var"))){group=TRUE}
+  #if(!is.null(attr(filter_object, "group_var"))){group=TRUE}
 
   UseMethod("applyFilt")
 }
@@ -62,8 +62,8 @@ applyFilt <- function(filter_object, omicsData, ...) {
 #' @name applyFilt
 #' @rdname applyFilt
 #' @param num_samps for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features
-#' @param  upper_lim OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.
-applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL, group=FALSE) {
+#' @param  upper_lim OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.
+applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL) {
 
   # Check if k/a fn
   if (attr(filter_object, "function") == "ka") {
@@ -89,9 +89,9 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   edata_cname <- attributes(omicsData)$cnames$edata_cname
   fn <- attr(filter_object, "function")
 
-  if (fn == "percent") {
-    upper_lim = upper_lim / 100
-  }
+  # if (fn == "percent") {
+  #   upper_lim = upper_lim / 100
+  # }
 
   if (fn == "ka") {
     num_obs <- filter_object[,paste("NumSamples",num_samps,sep="_")]
@@ -104,7 +104,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 
   if (length(inds) < 1) {
     filter.edata <- NULL
-  }else if(group){
+  }else if(!is.null(attr(filter_object, "group_var"))){
     filter.edata <- filter_object[inds,]
   }else{
     filter.edata <- omicsData$e_data[, which(names(omicsData$e_data) == edata_cname)][inds]
@@ -113,7 +113,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   filter_object_new = list(edata_filt = filter.edata, emeta_filt = NULL, samples_filt = NULL)
 
   # call the function that does the filter application
-  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new, group=group)
+  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
 
   # return filtered data object #
   results <- omicsData
@@ -324,7 +324,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 #' @return list similar to as.omicsData object
 #' @author Kelly Stratton, Lisa Bramer, Allison Thompson
 #'
-applyFilt_worker <- function(filter_object, omicsData, group) {
+applyFilt_worker <- function(filter_object, omicsData) {
   # pull column names from omicR_data attributes #
   col_nms = attr(omicsData, "cnames")
   fdata_cname = col_nms$fdata_cname
@@ -345,7 +345,7 @@ applyFilt_worker <- function(filter_object, omicsData, group) {
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      if(group){
+      if(!is.null(attr(filter_object, "group_var"))){
 
         temp.dat = omicsData$e_data
 
@@ -411,7 +411,7 @@ applyFilt_worker <- function(filter_object, omicsData, group) {
     ## remove entries in edata ##
     if (!is.null(filter_object$edata_filt) & !is.null(edata_cname)) {
 
-      if(group){
+      if(!is.null(attr(filter_object, "group_var"))){
 
         temp.dat = omicsData$e_data
 

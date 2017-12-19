@@ -730,7 +730,7 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
 #'@name plot_pmartRseq
 #'@param breaks Required, a number specifying the number of breaks to have in the cumulative graph. Default is 100.
 #'@param max_count Optional, a number specifying the maximum count number to show on the graph. Default is NULL.
-#'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL.
+#'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.
 #'@param min_samp Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param x_lab Optional, a character vector to use as the x-axis label
@@ -798,9 +798,9 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
 
   # limit data, no need to look at all of it #
   if(!is.null(max_count)){
-    if(fn == "percent"){
-      max_count <- max_count / 100
-    }
+    # if(fn == "percent"){
+    #   max_count <- max_count / 100
+    # }
     res_ob <- res_ob[which(res_ob[,paste(fn,"OTUs",sep="")] < max_count),]
   }else{
     if(fn != "ka"){
@@ -862,9 +862,9 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
 
     if(!is.null(min_num)) {
       # mark on graph where min_num is #
-      if(fn == "percent"){
-        min_num = min_num / 100
-      }
+      # if(fn == "percent"){
+      #   min_num = min_num / 100
+      # }
       num_tested <- lapply(unique(res_ob$Group), function(x){
         tmp <- res_ob[which(res_ob$Group == x),]
         ymax <- length(which(tmp[,paste(fn,"OTUs",sep="")] <= min_num))

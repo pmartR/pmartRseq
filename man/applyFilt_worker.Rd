@@ -4,7 +4,7 @@
 \alias{applyFilt_worker}
 \title{Remove items that need to be filtered out}
 \usage{
-applyFilt_worker(filter_object, omicsData, group)
+applyFilt_worker(filter_object, omicsData)
 }
 \arguments{
 \item{filter_object}{a list created by the functions above}

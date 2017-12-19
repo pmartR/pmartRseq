@@ -32,16 +32,22 @@ pmartRseq_igraph <- function(netData, coeff=NULL, pval=NULL, qval=NULL){
     stop("netGraph must be an object of class 'corrRes'.")
   }
 
-  if(!is.null(coeff) & !is.numeric(coeff)){
-    stop("coeff must be a numeric value")
+  if(!is.null(coeff)){
+    if(!is.numeric(coeff)){
+      stop("coeff must be a numeric value")
+    }
   }
 
-  if(!is.null(pval) & (pval < 0 | pval > 1 | !is.numeric(pval))){
-    stop("pval must be a numeric value between 0 and 1.")
+  if(!is.null(pval)){
+    if((pval < 0 | pval > 1 | !is.numeric(pval))){
+      stop("pval must be a numeric value between 0 and 1.")
+    }
   }
 
-  if(!is.null(qval) & (qval < 0 | qval > 1 | !is.numeric(qval))){
-    stop("qval must be a numeric value between 0 and 1.")
+  if(!is.null(qval)){
+    if((qval < 0 | qval > 1 | !is.numeric(qval))){
+      stop("qval must be a numeric value between 0 and 1.")
+    }
   }
 
   ### End Initial Checks ###

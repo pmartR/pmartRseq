@@ -98,7 +98,7 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
     }
 
     if(any(sapply(samps, length) < 4)){
-      warning("Grouping leads to a network with less than 4 samples - cannot have less than 4 samples - will remove this group")
+      warning(paste("Grouping leads to a network with less than 4 samples - cannot have less than 4 samples - will remove the group(s): ", names(samps[which(sapply(samps, length) < 4)]),sep=""))
       samps <- samps[-which(sapply(samps, length) < 4)]
     }
 

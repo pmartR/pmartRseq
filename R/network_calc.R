@@ -53,8 +53,10 @@ network_calc <- function(omicsData, type="spearman", group=FALSE, group_var=NULL
     stop("group must be TRUE or FALSE")
   }
 
-  if(!(group_var %in% c(colnames(attr(omicsData, "group_DF")), colnames(omicsData$f_data)))){
-    stop("group_var must be a column name found in either omicsData$f_data or attr(omicsData, 'group_DF')")
+  if(!is.null(group_var)){
+    if(!(group_var %in% c(colnames(attr(omicsData, "group_DF")), colnames(omicsData$f_data)))){
+      stop("group_var must be a column name found in either omicsData$f_data or attr(omicsData, 'group_DF')")
+    }
   }
 
   ### End Initial Checks ###

@@ -2061,7 +2061,7 @@ plot.modEnv <- function(results_object, ...){
 
     sz <- max(abs(data$CorrCoeff)) / max.size
 
-    ggplot2::ggplot(data, aes(x=EnvVar, y=Module, fill=colour, alpha=alpha))+
+    p1 <- ggplot2::ggplot(data, aes(x=EnvVar, y=Module, fill=colour, alpha=alpha))+
       ggplot2::geom_point(aes(size=abs(CorrCoeff)/sz), pch=21)+
       ggplot2::geom_text(aes(label=round(CorrCoeff, digits=3),size=4), alpha=1)+
       ggplot2::scale_size_identity()+

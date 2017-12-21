@@ -30,16 +30,19 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         otu_table <- as.matrix(biomformat::biom_data(biom_read))
         # create e_data with OTU identifier
         e_data = data.frame(OTU = rownames(otu_table), otu_table, stringsAsFactors = FALSE, check.names = TRUE)
-        edata_cname <- "OTU"
+        edata_cname <- colnames(e_data)[1]
         # create e_meta with OTU identifier
         otu_meta = biomformat::observation_metadata(biom_read)
         e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE, check.names = TRUE)
+        taxa_cname <- colnames(e_meta)[1]
       }
       # check if .biom is a csv or txt
       if (grepl(pattern = "\\.csv$", x = e_data_filepath) | grepl(pattern = "\\.txt$", x = e_data_filepath)) {
-        otu_table <- data.table::fread(e_data_filepath, data.table = FALSE)
+        e_data <- data.table::fread(e_data_filepath, data.table = FALSE)
+        edata_cname <- colnames(e_data)[1]
         if (!is.null(e_meta_filepath) & inherits(e_meta_filepath, "character")) {
           e_meta <- data.table::fread(e_meta_filepath, data.table = FALSE)
+          taxa_cname <- colnames(e_meta)[1]
         }
         if (is.null(e_meta_filepath)) e_meta <- NULL
       }
@@ -74,6 +77,6 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
     stop("Sample metadata import failed. Incorrect file path or unsupported file format.")
   }
 
-  imported_list <- list(e_data = e_data, e_meta = e_meta, f_data = f_data, guessed_edata_cname = edata_cname, guessed_fdata_cname = fdata_cname)
+  imported_list <- list(e_data = e_data, e_meta = e_meta, f_data = f_data, guessed_edata_cname = edata_cname, guessed_fdata_cname = fdata_cname, guessed_taxa_cname = taxa_cname)
   return(imported_list)
 }

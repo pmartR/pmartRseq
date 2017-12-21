@@ -159,7 +159,7 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
       # Use pca to calculate principal component axes and format
       pca <- pcaMethods::pca(object=t(module), nPcs=2, scale="none", center=FALSE, method=pca.method)
       pca <- data.frame(Samples=rownames(pca@loadings), pca@loadings)
-      colnames(pca) <- c(attr(modData, "cnames")$fdata_cname, paste(colnames(pca)[2],"_Module",y,"_Group",x,sep=""), paste(colnames(pca)[3],"_Module",y,"_Group",x,sep=""))
+      colnames(pca) <- c(attr(modData, "cnames")$fdata_cname, paste(colnames(pca)[2],"_Module",y,sep=""), paste(colnames(pca)[3],"_Module",y,sep=""))
       return(pca)
     })
 
@@ -170,7 +170,6 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
     if(!is.null(envVars)){
       # Format data
       pcas <- merge(pcas, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(attr(omicsData, "cnames")$fdata_cname, envVars))], by=attr(omicsData, "cnames")$fdata_cname)
-      pcas$group_var <- x
 
       # Correlation test of environmental variables with module PCAs
       env.cor <- corr.test(x=pcas[,grep("PC[12]_Module",colnames(pcas))], y=pcas[,which(colnames(pcas) %in% envVars)], method=cor.method, use=use, adjust=padjust)

@@ -879,7 +879,7 @@ plot.countFilter <- function(results_object, breaks=100, max_count=NULL, min_num
     if(!is.null(min_num)) {
       # mark on graph where min_num is #
       if(fn == "percent"){
-        min_num = min_num / 100
+        min_num = min_num
       }
       num_tested <- length(which(res_ob[,paste(fn,"OTUs",sep="")] <= min_num))
       p <- p + ggplot2::annotate(geom = "rect", xmin = min_num - brkpt/2, xmax = min_num + brkpt/2,

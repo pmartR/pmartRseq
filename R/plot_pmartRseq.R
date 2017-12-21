@@ -2004,7 +2004,7 @@ plot.modEnv <- function(results_object, ...){
     lapply(names(results_object), function(x){
 
       data <- results_object[[x]]$corr
-      data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NotSignificant", "Significant"))
+      data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NegativeCorrelation", "PositiveCorrelation"))
       data$alpha <- sapply(c(1:nrow(data)), function(y) ifelse(data$p.value[y] < pval.thresh, "Significant", "NotSignificant"))
 
       sz <- max(abs(data$CorrCoeff)) / max.size
@@ -2013,8 +2013,8 @@ plot.modEnv <- function(results_object, ...){
         ggplot2::geom_point(aes(size=abs(CorrCoeff)/sz), pch=21)+
         ggplot2::geom_text(aes(label=round(CorrCoeff, digits=3),size=4), alpha=1)+
         ggplot2::scale_size_identity()+
-        ggplot2::scale_fill_manual(values=c("Significant"="green","NotSignificant"="red"))+
-        ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3), guide=FALSE)+
+        ggplot2::scale_fill_manual(values=c("PositiveCorrelation"="green","NegativeCorrelation"="red"))+
+        ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3))+
         theme(panel.grid = ggplot2::element_blank(),
               panel.border = ggplot2::element_blank(),
               panel.background = ggplot2::element_blank(),
@@ -2046,7 +2046,8 @@ plot.modEnv <- function(results_object, ...){
       if(!is.null(leglab)){
         p1 <- p1 + ggplot2::guides(fill=guide_legend(title=leglab))
       }else{
-        p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Significance"))
+        p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Correlation"))
+        p1 <- p1 + ggplot2::guides(alpha=guide_legend(title = "Significance"))
       }
 
       print(p1)
@@ -2056,7 +2057,7 @@ plot.modEnv <- function(results_object, ...){
   }else{
 
     data <- results_object$corr
-    data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NotSignificant", "Significant"))
+    data$colour <- sapply(c(1:nrow(data)), function(y) ifelse(data$CorrCoeff[y] < 0, "NegativeCorrelation", "PositiveCorrelation"))
     data$alpha <- sapply(c(1:nrow(data)), function(y) ifelse(data$p.value[y] < pval.thresh, "Significant", "NotSignificant"))
 
     sz <- max(abs(data$CorrCoeff)) / max.size
@@ -2065,8 +2066,8 @@ plot.modEnv <- function(results_object, ...){
       ggplot2::geom_point(aes(size=abs(CorrCoeff)/sz), pch=21)+
       ggplot2::geom_text(aes(label=round(CorrCoeff, digits=3),size=4), alpha=1)+
       ggplot2::scale_size_identity()+
-      ggplot2::scale_fill_manual(values=c("Significant"="green","NotSignificant"="red"))+
-      ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3), guide=FALSE)+
+      ggplot2::scale_fill_manual(values=c("PositiveCorrelation"="green","NegativeCorrelation"="red"))+
+      ggplot2::scale_alpha_manual(values=c("Significant"=1,"NotSignificant"=0.3))+
       theme(panel.grid = ggplot2::element_blank(),
             panel.border = ggplot2::element_blank(),
             panel.background = ggplot2::element_blank(),
@@ -2096,7 +2097,8 @@ plot.modEnv <- function(results_object, ...){
     if(!is.null(leglab)){
       p1 <- p1 + ggplot2::guides(fill=guide_legend(title=leglab))
     }else{
-      p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Significance"))
+      p1 <- p1 + ggplot2::guides(fill=guide_legend(title = "Correlation"))
+      p1 <- p1 + ggplot2::guides(alpha=guide_legend(title = "Significance"))
     }
 
     print(p1)

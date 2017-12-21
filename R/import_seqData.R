@@ -34,7 +34,7 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         # create e_meta with OTU identifier
         otu_meta = biomformat::observation_metadata(biom_read)
         e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE, check.names = TRUE)
-        taxa_cname <- colnames(e_meta)[1]
+        taxa_cname <- colnames(e_meta)[2]
       }
       # check if .biom is a csv or txt
       if (grepl(pattern = "\\.csv$", x = e_data_filepath) | grepl(pattern = "\\.txt$", x = e_data_filepath)) {
@@ -42,7 +42,7 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         edata_cname <- colnames(e_data)[1]
         if (!is.null(e_meta_filepath) & inherits(e_meta_filepath, "character")) {
           e_meta <- data.table::fread(e_meta_filepath, data.table = FALSE)
-          taxa_cname <- colnames(e_meta)[1]
+          taxa_cname <- colnames(e_meta)[2]
         }
         if (is.null(e_meta_filepath)) e_meta <- NULL
       }

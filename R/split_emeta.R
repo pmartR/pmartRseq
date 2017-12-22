@@ -69,16 +69,18 @@ split_emeta <- function(omicsData, cname=NULL, split1=";", numcol=NULL, split2="
   split_data <- as.data.frame(split_data)
   split_data <- apply(split_data, 1:2, as.character)
   split_data[is.na(split_data)] <- "Unknown"
+  split_data <- data.frame(OTU=emeta[,which(colnames(emeta) == cname)], split_data)
+  colnames(split_data)[1] <- cname
 
   res <- omicsData
-  res$e_meta <- cbind(emeta, split_data)
+  res$e_meta <- merge(split_data, emeta, by=cname)
 
   # update column names
   if(is.null(newnames)){
     names.vec <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-    colnames(res$e_meta) <- c(colnames(emeta),names.vec[1:numcol])
+    colnames(res$e_meta) <- c(cname,names.vec[1:numcol],colnames(emeta)[-which(colnames(emeta)==cname)])
   }else{
-    colnames(res$e_meta) <- c(colnames(emeta),newnames)
+    colnames(res$e_meta) <- c(cname,newnames,colnames(emeta)[-which(colnames(emeta)==cname)])
   }
 
   return(res)

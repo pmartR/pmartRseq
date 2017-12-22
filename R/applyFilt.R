@@ -120,7 +120,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   results <- omicsData
   results$e_data <- results_pieces$temp.dat2
   results$f_data <- results_pieces$temp.samp2
-  results$e_meta <- results_pieces$temp.meta1
+  results$e_meta <- results_pieces$temp.meta2
 
   # if group attribute is present, re-run group_designation in case filtering any items impacted the group structure
   if (!is.null(attr(results, "group_DF"))) {
@@ -242,7 +242,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   results <- omicsData
   results$e_data <- results_pieces$temp.dat2
   results$f_data <- results_pieces$temp.samp2
-  results$e_meta <- results_pieces$temp.meta1
+  results$e_meta <- results_pieces$temp.meta2
 
   # if group attribute is present, re-run group_designation in case filtering any items impacted the group structure
   if (!is.null(attr(results, "group_DF"))) {

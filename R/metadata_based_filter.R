@@ -31,10 +31,6 @@ metadata_based_filter <- function(omicsData, criteria) {
     stop("criteria must be a column name in omicsData$e_meta")
   }
 
-  if(!all(tolower(value) %in% tolower(unique(omicsData$e_meta[,criteria])))){
-    stop("value not found in criteria column")
-  }
-
   ## end initial checks ##
 
   emeta <- omicsData$e_meta

@@ -994,6 +994,101 @@ plot.sampleFilter <- function(results_object, breaks=100, max_count=NULL, min_nu
 }
 
 
+#' Can't make this plot work, not sure how best to show it...
+#' #'@export
+#' #'@rdname plot_pmartRseq
+#' #'@name plot_pmartRseq
+#' #'@param breaks Required, a number specifying the number of breaks to have in
+#' #'  the cumulative graph. Default is 100.
+#' #'@param max_count Optional, a number specifying the maximum count number to
+#' #'  show on the graph. Default is NULL.
+#' #'@param min_num Optional, a number specifying the desired cut point in order to
+#' #'  visualize how many Sampless would be lost if that cut point was used.
+#' #'  sample_based_filter uses strictly less than the desired min_num, so this
+#' #'  will show the valus for strictly less than the desired min_num. Default is
+#' #'  NULL.
+#' #'@param plot_title Optional, a character vector to use as the plot title
+#' #'@param x_lab Optional, a character vector to use as the x-axis label
+#' #'@param y_lab Optional, a character vector to use as the y-axis label
+#' plot.metaFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL, ...) {
+#'   .plot.metaFilter(results_object, breaks, max_count, min_num, plot_title, x_lab, y_lab, ...)
+#' }
+#'
+#' .plot.metaFilter <- function(results_object, breaks=100, max_count=NULL, min_num=NULL, plot_title=NULL, x_lab=NULL, y_lab=NULL) {
+#'
+#'   library(ggplot2)
+#'
+#'   ## initial checks ##
+#'
+#'   if(!is.null(plot_title)){
+#'     if(!is.character(plot_title)){
+#'       stop("plot_title must be a character vector")
+#'     }
+#'   }
+#'
+#'   if(!is.null(x_lab)){
+#'     if(!is.character(x_lab)){
+#'       stop("x_lab must be a character vector")
+#'     }
+#'   }
+#'
+#'   if(!is.null(y_lab)){
+#'     if(!is.character(y_lab)){
+#'       stop("y_lab must be a character vector")
+#'     }
+#'   }
+#'
+#'   ## end of initial checks ##
+#'
+#'   # limit data, no need to look at all of it #
+#'   if(!is.null(max_count)){
+#'     results_object <- results_object[which(results_object[,paste(fn,"Samps",sep="")] < max_count),]
+#'   }else{
+#'     results_object <- results_object[which(results_object[,paste(fn,"Samps",sep="")] < attr(results_object, "threshold")),]
+#'   }
+#'
+#'   # get abundance counts #
+#'   brkpt <- max(results_object[,paste(fn,"Samps",sep="")])/breaks
+#'
+#'   break_data <- seq(from=0, to=ifelse(is.null(max_count),max(results_object[,paste(fn,"Samps",sep="")]),max_count), by=brkpt)
+#'
+#'   all_counts <- lapply(break_data, function(x){
+#'     data.frame(point=x, sumcount=length(which(results_object[,paste(fn,"Samps",sep="")] <= x)))
+#'   })
+#'   all_counts <- do.call(rbind, all_counts)
+#'
+#'   fn_lab <- paste(toupper(substring(fn, 1, 1)),substring(fn, 2), sep="", collapse=" ")
+#'   # make labels #
+#'   xlabel <- ifelse(is.null(x_lab), paste(fn_lab," Count of Samples Across All Biomolecules", sep=""), x_lab)
+#'   ylabel <- ifelse(is.null(y_lab), "Cumulative Frequency", y_lab)
+#'   plot_title <- ifelse(is.null(plot_title), paste("Cumulative Frequency of ", fn_lab, " of Sample Biomolecules",sep=""), plot_title)
+#'
+#'   p <- ggplot2::ggplot(all_counts) +
+#'     ggplot2::geom_rect(aes(xmin=point-brkpt/2, xmax=point+brkpt/2,
+#'                            ymin=0, ymax=sumcount), fill="royalblue1", col="black") +
+#'     ggplot2::xlab(xlabel) +
+#'     ggplot2::ylab(ylabel) +
+#'     ggplot2::ggtitle(plot_title) +
+#'     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+#'     ggplot2::theme_bw() +
+#'     ggplot2::theme(axis.line.x = ggplot2::element_line(colour = "black"),
+#'                    axis.line.y = ggplot2::element_line(colour="black"),
+#'                    plot.background = ggplot2::element_blank(),
+#'                    panel.grid.major = ggplot2::element_blank(),
+#'                    panel.grid.minor = ggplot2::element_blank(),
+#'                    panel.border = ggplot2::element_blank())
+#'
+#'   if(!is.null(min_num)) {
+#'     # mark on graph where min_num is #
+#'     num_tested <- length(which(results_object[,paste(fn,"Samps",sep="")] <= min_num))
+#'     p <- p + ggplot2::annotate(geom = "rect", xmin = min_num - brkpt/2, xmax = min_num + brkpt/2,
+#'                                ymin = 0, ymax = num_tested, fill="black", col="black", size=1.5)
+#'   }
+#'
+#'   return(p)
+#'
+#' }
+
 
 #'@export
 #'@rdname plot_pmartRseq

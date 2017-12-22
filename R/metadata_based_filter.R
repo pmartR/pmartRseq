@@ -1,0 +1,55 @@
+#' Metadata filter object
+#'
+#' This function returns a metaFilter object, performing all of the
+#' calculations needed to filter the data based off a specified
+#' e_meta level
+#'
+#' @param omicsData An object of the classes "seqData"
+#'
+#' @param criteria Specify which omicsData$e_meta column name to filter on
+#'
+#' @return An object of class metaFilter (also a data.frame) that contains the
+#'   sample identifier and the values in the criteria column
+#'
+#' @author Allison Thompson and Sarah Reehl
+#'
+#' @examples
+#'
+#' @export
+metadata_based_filter <- function(omicsData, criteria) {
+
+  ## some initial checks ##
+
+  # check that omicsData is of appropriate class #
+  if (!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
+
+  if (attr(omicsData, "data_info")$data_scale!='count') {
+    warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
+  }
+
+  if(!(tolower(criteria) %in% tolower(colnames(omicsData$e_meta)))){
+    stop("criteria must be a column name in omicsData$e_meta")
+  }
+
+  if(!all(tolower(value) %in% tolower(unique(omicsData$e_meta[,criteria])))){
+    stop("value not found in criteria column")
+  }
+
+  ## end initial checks ##
+
+  emeta <- omicsData$e_meta
+  edata_cname <- attr(omicsData, "cnames")$edata_cname
+
+  infrequent_OTUs <- data.frame(emeta[,which(tolower(colnames(emeta)) %in% c(tolower(edata_cname), tolower(criteria)))])
+
+  class(infrequent_OTUs) <- c("metaFilter",class(infrequent_OTUs))
+
+  attr(infrequent_OTUs, "group_DF") <- attr(omicsData, "group_DF")
+  attr(infrequent_OTUs, "criteria") <- criteria
+
+  threshold <- quantile(table(infrequent_OTUs[,2]), 0.95)
+  attr(infrequent_OTUs, "threshold") <- threshold
+
+  return(infrequent_OTUs)
+
+}

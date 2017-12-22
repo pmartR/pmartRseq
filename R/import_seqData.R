@@ -29,19 +29,19 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         biom_read <- biomformat::read_biom(biom_file = e_data_filepath)
         otu_table <- as.matrix(biomformat::biom_data(biom_read))
         # create e_data with OTU identifier
-        e_data = data.frame(OTU = rownames(otu_table), otu_table, stringsAsFactors = FALSE, check.names = TRUE)
+        e_data = data.frame(OTU = rownames(otu_table), otu_table, stringsAsFactors = FALSE, check.names = FALSE)
         edata_cname <- colnames(e_data)[1]
         # create e_meta with OTU identifier
         otu_meta = biomformat::observation_metadata(biom_read)
-        e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE, check.names = TRUE)
+        e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE, check.names = FALSE)
         taxa_cname <- colnames(e_meta)[2]
       }
       # check if .biom is a csv or txt
       if (grepl(pattern = "\\.csv$", x = e_data_filepath) | grepl(pattern = "\\.txt$", x = e_data_filepath)) {
-        e_data <- data.table::fread(e_data_filepath, data.table = FALSE)
+        e_data <- data.table::fread(e_data_filepath, data.table = FALSE, stringsAsFactors = FALSE, check.names = FALSE)
         edata_cname <- colnames(e_data)[1]
         if (!is.null(e_meta_filepath) & inherits(e_meta_filepath, "character")) {
-          e_meta <- data.table::fread(e_meta_filepath, data.table = FALSE)
+          e_meta <- data.table::fread(e_meta_filepath, data.table = FALSE, stringsAsFactors = FALSE, check.names = FALSE)
           taxa_cname <- colnames(e_meta)[2]
         }
         if (is.null(e_meta_filepath)) e_meta <- NULL
@@ -60,14 +60,14 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         f = readLines(f_data_filepath)
         #find the last commented line and assume header info
         skipLines = which.max(grepl("#", x = f[1:length(f)]))
-        f_data <- data.table::fread(input=paste0(f, collapse = "\n"), sep = "\t", header = TRUE, skip = skipLines - 1, data.table = FALSE, check.names = TRUE)
+        f_data <- data.table::fread(input=paste0(f, collapse = "\n"), sep = "\t", header = TRUE, skip = skipLines - 1, data.table = FALSE, check.names = FALSE)
         # choose the sample identifier column (first for now)
         fdata_cname = colnames(f_data)[1]
       }
       # check if f_data is a .csv
       if (grepl(pattern = "\\.csv$", x = f_data_filepath)){
         # normal read assume no comments
-        f_data <- data.table::fread(f_data_filepath, data.table = FALSE, check.names = TRUE)
+        f_data <- data.table::fread(f_data_filepath, data.table = FALSE, check.names = FALSE)
         # choose the sample identifier column (first for now)
         fdata_cname = colnames(f_data)[1]
       }

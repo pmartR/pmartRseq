@@ -57,7 +57,7 @@ applyFilt <- function(filter_object, omicsData, ...) {
 
 
 
-# function for countFilter
+#' function for countFilter
 #' @export
 #' @name applyFilt
 #' @rdname applyFilt
@@ -195,7 +195,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 
 
 
-# function for countFilter
+#' function for countFilter
 #' @export
 #' @name applyFilt
 #' @rdname applyFilt
@@ -311,6 +311,114 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
   attr(results, "filters")$sampleFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing samples that have a ", fn," count less than ", upper_lim, ". A total of ", length(filter.samples)," samples were filtered out of the dataset by this filter.", sep="")
   attr(results, "filters")$sampleFilter$threshold <- upper_lim
   attr(results, "filters")$sampleFilter$filtered <- filter.samples
+
+  return(results)
+}
+
+
+#' function for metaFilter
+#' @export
+#' @name applyFilt
+#' @rdname applyFilt
+#' @param  keep_taxa Character vector specifying which values to keep
+applyFilt.metaFilter <- function(filter_object, omicsData, keep_taxa) {
+  # check that all values are found
+  if(!(all(tolower(keep_taxa) %in% tolower(filter_object[,2])))){
+    stop("Some taxa not found in filter_object, please recheck and try again")
+  }
+
+  edata_cname <- attr(omicsData, "cnames")$edata_cname
+  criteria <- attr(filter_object, "criteria")
+
+  to_remove <- which(!(filter_object[,2] %in% keep_taxa))
+  inds <- filter_object[to_remove, edata_cname]
+
+  if (length(inds) < 1) {
+    filter.meta <- NULL
+  }else{
+    filter.meta <- inds
+    #filter.samples <- omicsData$e_data[,c(which(colnames(omicsData$e_data) == edata_cname), which(colnames(omicsData$e_data) %in% as.character(inds)))]
+    #filter.samples <- omicsData$e_data[, which(names(omicsData$f_data) == fdata_cname)][inds]
+  }
+
+  filter_object_new = list(edata_filt = NULL, emeta_filt = filter.meta, samples_filt = NULL)
+
+  # call the function that does the filter application
+  results_pieces <- applyFilt_worker(omicsData = omicsData, filter_object = filter_object_new)
+
+  # return filtered data object #
+  results <- omicsData
+  results$e_data <- results_pieces$temp.dat2
+  results$f_data <- results_pieces$temp.samp2
+  results$e_meta <- results_pieces$temp.meta2
+
+  # if group attribute is present, re-run group_designation in case filtering any items impacted the group structure
+  if (!is.null(attr(results, "group_DF"))) {
+    results <- group_designation(omicsData = results, main_effects = attr(attr(omicsData, "group_DF"), "main_effects"), covariates = attr(attr(omicsData, "group_DF"), "covariates"), time_course = attr(attr(omicsData, "group_DF"), "time_course"))
+    # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
+    attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
+    attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
+
+    if (!is.null(results$e_meta)) {
+      # number of unique e_meta that map to an identifier in e_data #
+      if (!is.null(taxa_cname)) {
+        num_taxa = length(unique(results$e_meta[which(as.character(results$e_meta[, taxa_cname]) %in% as.character(results$e_data[, edata_cname])), taxa_cname]))
+      }else{num_taxa = NULL}
+      if (!is.null(ec_cname)) {
+        num_ec = length(unique(results$e_meta[which(as.character(results$e_meta[, ec_cname]) %in% as.character(results$e_data[, edata_cname])), ec_cname]))
+      }else{num_ec = NULL}
+      if (!is.null(gene_cname)) {
+        num_gene = length(unique(results$e_meta[which(as.character(results$e_meta[, gene_cname]) %in% as.character(results$e_data[, edata_cname])), gene_cname]))
+      }else{num_gene = NULL}
+    }else{
+      num_taxa = NULL
+      num_ec = NULL
+      num_gene = NULL
+    }
+    attr(results, "data_info")$num_taxa = num_taxa
+    attr(results, "data_info")$num_ec = num_ec
+    attr(results, "data_info")$num_gene = num_gene
+    ## end of update attributes (7/11/2016 by KS)
+  }else{
+    # Update attributes (7/11/2016 by KS) - this is being done already in group_designation
+    attributes(results)$data_info$num_edata = length(unique(results$e_data[, edata_cname]))
+    attributes(results)$data_info$num_na = sum(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$frac_na = mean(is.na(results$e_data[,-which(names(results$e_data)==edata_cname)]))
+    attributes(results)$data_info$num_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)] == 0))
+    attributes(results)$data_info$frac_zero = length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]==0)) / length(which(results$e_data[,-which(names(results$e_data)==edata_cname)]>=0))
+    attributes(results)$data_info$num_samps = ncol(results$e_data) - 1
+
+    if (!is.null(results$e_meta)) {
+      # number of unique e_meta that map to an identifier in e_data #
+      if (!is.null(taxa_cname)) {
+        num_taxa = length(unique(results$e_meta[which(as.character(results$e_meta[, taxa_cname]) %in% as.character(results$e_data[, edata_cname])), taxa_cname]))
+      }else{num_taxa = NULL}
+      if (!is.null(ec_cname)) {
+        num_ec = length(unique(results$e_meta[which(as.character(results$e_meta[, ec_cname]) %in% as.character(results$e_data[, edata_cname])), ec_cname]))
+      }else{num_ec = NULL}
+      if (!is.null(gene_cname)) {
+        num_gene = length(unique(results$e_meta[which(as.character(results$e_meta[, gene_cname]) %in% as.character(results$e_data[, edata_cname])), gene_cname]))
+      }else{num_gene = NULL}
+    }else{
+      num_taxa = NULL
+      num_ec = NULL
+      num_gene = NULL
+    }
+    attr(results, "data_info")$num_taxa = num_taxa
+    attr(results, "data_info")$num_ec = num_ec
+    attr(results, "data_info")$num_gene = num_gene
+    ## end of update attributes (7/11/2016 by KS)
+  }
+
+  # set attributes for which filters were run
+  attr(results, "filters")$metaFilter <- list(report_text = "", threshold = c(), filtered = c())
+  attr(results, "filters")$metaFilter$report_text <- paste("A metadata-based filter was applied to the data, removing features that are not in ", paste(keep_taxa, collapse=", ")," in ", criteria, ". A total of ", length(filter.meta)," features were filtered out of the dataset by this filter.", sep="")
+  attr(results, "filters")$metaFilter$keep_taxa <- keep_taxa
+  attr(results, "filters")$metaFilter$filtered <- filter.meta
 
   return(results)
 }
@@ -486,6 +594,7 @@ applyFilt_worker <- function(filter_object, omicsData) {
 
     ## remove entries in emeta ##
     if (!is.null(filter_object$emeta_filt) & !is.null(taxa_cname)) {
+      taxa_cname <- edata_cname
       # identify which features in data match filter list and remove from e_meta #
       temp.meta = temp.meta1
 
@@ -500,8 +609,9 @@ applyFilt_worker <- function(filter_object, omicsData) {
     }
 
     if (!is.null(filter_object$emeta_filt) & !is.null(ec_cname)) {
+      ec_cname <- edata_cname
       # identify which features in data match filter list and remove from e_meta #
-      temp.meta = temp.meta1
+      temp.meta = temp.meta2
 
       # check that at least one of the features is in e_meta #
       emeta_ids2 = which(temp.meta[,ec_cname] %in% filter_object$emeta_filt)
@@ -510,12 +620,13 @@ applyFilt_worker <- function(filter_object, omicsData) {
         temp.meta2 = temp.meta[-which(temp.meta[,ec_cname] %in% filter_object$emeta_filt),]
       }else{temp.meta2 = temp.meta}
     }else{
-      temp.meta2 = temp.meta1
+      temp.meta2 = temp.meta2
     }
 
     if (!is.null(filter_object$emeta_filt) & !is.null(gene_cname)) {
+      gene_cname <- edata_cname
       # identify which features in data match filter list and remove from e_meta #
-      temp.meta = temp.meta1
+      temp.meta = temp.meta2
 
       # check that at least one of the features is in e_meta #
       emeta_ids2 = which(temp.meta[,gene_cname] %in% filter_object$emeta_filt)
@@ -524,23 +635,23 @@ applyFilt_worker <- function(filter_object, omicsData) {
         temp.meta2 = temp.meta[-which(temp.meta[,gene_cname] %in% filter_object$emeta_filt),]
       }else{temp.meta2 = temp.meta}
     }else{
-      temp.meta2 = temp.meta1
+      temp.meta2 = temp.meta2
     }
 
 
     # check for rogue entries in edata #
-    edat_ids2 = which(!(temp.dat2[,edata_cname] %in% temp.meta1[,edata_cname]))
+    edat_ids2 = which(!(temp.dat2[,edata_cname] %in% temp.meta2[,edata_cname]))
 
     # filter out edata entries which no longer have mappings to emeta entries #
     if (length(edat_ids2) > 0) {
-      temp.dat2 = temp.dat2[-which(!(temp.dat2[,edata_cname] %in% temp.meta1[,edata_cname])),]
+      temp.dat2 = temp.dat2[-which(!(temp.dat2[,edata_cname] %in% temp.meta2[,edata_cname])),]
     }
 
 
 
   }
 
-  output <- list(temp.dat2 = temp.dat2, temp.samp2 = temp.samp2, temp.meta1 = temp.meta2, edata_cname = edata_cname, taxa_cname = taxa_cname, ec_cname = ec_cname, gene_cname = gene_cname, fdata_cname = fdata_cname)
+  output <- list(temp.dat2 = temp.dat2, temp.samp2 = temp.samp2, temp.meta2 = temp.meta2, edata_cname = edata_cname, taxa_cname = taxa_cname, ec_cname = ec_cname, gene_cname = gene_cname, fdata_cname = fdata_cname)
 
   # return the pieces needed to assemble a cDNAdata/gDNAdata/rRNAdata object
   return(output)

@@ -6,6 +6,8 @@
 \alias{applyFilt.countFilter}
 \alias{applyFilt}
 \alias{applyFilt.sampleFilter}
+\alias{applyFilt}
+\alias{applyFilt.metaFilter}
 \title{Apply a filter to an omicsData object}
 \usage{
 applyFilt(filter_object, omicsData, ...)
@@ -15,6 +17,8 @@ applyFilt(filter_object, omicsData, ...)
 
 \method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2,
   samps_to_remove = NULL)
+
+\method{applyFilt}{metaFilter}(filter_object, omicsData, keep_taxa)
 }
 \arguments{
 \item{filter_object}{an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.}
@@ -27,6 +31,8 @@ applyFilt(filter_object, omicsData, ...)
 
 \item{samps_to_remove}{Sample names selected to remove based on sample metadata criteria}
 
+\item{keep_taxa}{Character vector specifying which values to keep}
+
 \item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
@@ -34,6 +40,12 @@ An object of the class \code{seqData}, with specified cname_ids, edata_cnames, t
 }
 \description{
 This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class 'seqData'.
+
+function for countFilter
+
+function for countFilter
+
+function for metaFilter
 }
 \examples{
 \dontrun{

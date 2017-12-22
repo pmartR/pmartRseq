@@ -106,13 +106,26 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
   #browser()
 
   # names checks #
-  colnames(e_data) <- gsub("-","\\.",colnames(e_data))
-  f_data[,fdata_cname] <- gsub("-","\\.",f_data[,fdata_cname])
+  colnames(e_data) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_data))
+  colnames(f_data) <- gsub("[^A-Za-z0-9_]","\\.",colnames(f_data))
+  colnames(e_meta) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_meta))
+
+  colnames(f_data) <- sapply(colnames(f_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
+  colnames(e_data) <- sapply(colnames(e_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
+  colnames(e_meta) <- sapply(colnames(e_meta), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
+
   if(!is.na(as.numeric(substr(fdata_cname, 1, 1)))){
     fdata_cname <- paste("X",fdata_cname,sep="")
   }
-  colnames(f_data) <- gsub("-","\\.",colnames(f_data))
-  colnames(e_meta) <- gsub("-","\\.",colnames(e_meta))
+
+  fdata_cname <- gsub("[^A-Za-z0-9_]","\\.",fdata_cname)
+  edata_cname <- gsub("[^A-Za-z0-9_]","\\.",edata_cname)
+  taxa_cname <- gsub("[^A-Za-z0-9_]","\\.",taxa_cname)
+  ec_cname <- gsub("[^A-Za-z0-9_]","\\.",ec_cname)
+  gene_cname <- gsub("[^A-Za-z0-9_]","\\.",gene_cname)
+
+  f_data[,fdata_cname] <- gsub("[^A-Za-z0-9_]","\\.",f_data[,fdata_cname])
+  f_data[,fdata_cname] <- sapply(f_data[,fdata_cname], function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #
   if (!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.seqData for specifying column names.", sep = ""))

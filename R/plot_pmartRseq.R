@@ -1391,6 +1391,8 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
     abun <- data.frame(Samples=rownames(abun), Abundance=abun$abundance)
 
     data <- merge(rich, abun, by="Samples")
+    colnames(data)[which(colnames(data) == "Samples")] <- attr(results_object, "cnames")$fdata_cname
+
     if(!is.null(attr(results_object, "group_DF"))){
       data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }

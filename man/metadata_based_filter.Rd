@@ -13,7 +13,8 @@ metadata_based_filter(omicsData, criteria)
 }
 \value{
 An object of class metaFilter (also a data.frame) that contains the
-  sample identifier and the values in the criteria column
+  sample identifier, the values in the criteria column, and the corresponding
+  sum abundances.
 }
 \description{
 This function returns a metaFilter object, performing all of the

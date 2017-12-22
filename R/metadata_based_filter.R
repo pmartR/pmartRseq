@@ -9,7 +9,8 @@
 #' @param criteria Specify which omicsData$e_meta column name to filter on
 #'
 #' @return An object of class metaFilter (also a data.frame) that contains the
-#'   sample identifier and the values in the criteria column
+#'   sample identifier, the values in the criteria column, and the corresponding
+#'   sum abundances.
 #'
 #' @author Allison Thompson and Sarah Reehl
 #'
@@ -37,6 +38,10 @@ metadata_based_filter <- function(omicsData, criteria) {
   edata_cname <- attr(omicsData, "cnames")$edata_cname
 
   infrequent_OTUs <- data.frame(emeta[,which(tolower(colnames(emeta)) %in% c(tolower(edata_cname), tolower(criteria)))])
+
+  sums <- data.frame(OTU=omicsData$e_data[,which(colnames(omicsData$e_data) == edata_cname)], Sum=apply(omicsData$e_data[,-which(colnames(omicsData$e_data) == edata_cname)], 1, function(x) sum(x, na.rm=TRUE)))
+
+  infrequent_OTUs <- merge(infrequent_OTUs, sums, by=edata_cname)
 
   class(infrequent_OTUs) <- c("metaFilter",class(infrequent_OTUs))
 

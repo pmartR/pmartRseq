@@ -111,6 +111,8 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
   if(!is.na(as.numeric(substr(fdata_cname, 1, 1)))){
     fdata_cname <- paste("X",fdata_cname,sep="")
   }
+  colnames(f_data) <- gsub("-","\\.",colnames(f_data))
+  colnames(e_meta) <- gsub("-","\\.",colnames(e_meta))
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #
   if (!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.seqData for specifying column names.", sep = ""))

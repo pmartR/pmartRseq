@@ -33,7 +33,7 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
 
   library(ggplot2)
 
-  NMDS <- data.frame(SampleID=rownames(scores(res)),scores(res))
+  NMDS <- data.frame(SampleID=rownames(vegan::scores(res)),vegan::scores(res))
   colnames(NMDS)[1] <- attr(omicsData, "cnames")$fdata_cname
   NMDS <- merge(NMDS, attr(omicsData, "group_DF"), by=attr(omicsData, "cnames")$fdata_cname)
 

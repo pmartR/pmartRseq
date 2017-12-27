@@ -120,9 +120,9 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
 
   fdata_cname <- gsub("[^A-Za-z0-9_]","\\.",fdata_cname)
   edata_cname <- gsub("[^A-Za-z0-9_]","\\.",edata_cname)
-  taxa_cname <- gsub("[^A-Za-z0-9_]","\\.",taxa_cname)
-  ec_cname <- gsub("[^A-Za-z0-9_]","\\.",ec_cname)
-  gene_cname <- gsub("[^A-Za-z0-9_]","\\.",gene_cname)
+  taxa_cname <- if(!is.null(taxa_cname)) gsub("[^A-Za-z0-9_]","\\.",taxa_cname)
+  ec_cname <- if(!is.null(ec_cname)) gsub("[^A-Za-z0-9_]","\\.",ec_cname)
+  gene_cname <- if(!is.null(gene_cname)) gsub("[^A-Za-z0-9_]","\\.",gene_cname)
 
   f_data[,fdata_cname] <- gsub("[^A-Za-z0-9_]","\\.",f_data[,fdata_cname])
   f_data[,fdata_cname] <- sapply(f_data[,fdata_cname], function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))

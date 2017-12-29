@@ -71,8 +71,10 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
 
   net <- netGraph
 
+  # if networks were created in groups, create graphs in groups
   if(!is.null(attr(netGraph, "group_var"))){
 
+    # put multiple plots on the same page
     par(mfrow=c(ceiling((length(names(netGraph))+1)/2),ceiling((length(names(netGraph))+1)/2)))
 
     gN <- lapply(names(netGraph), function(x){
@@ -82,7 +84,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
 
 
       if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
-        #make taxonomy as vertex attribute
+        # make taxonomy as vertex attribute
         vgn <- as.data.frame(as.matrix(V(gN)))
         vgn$Feature <- rownames(vgn)
         colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -92,6 +94,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
         vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
         vgn[,colour] <- as.factor(vgn[,colour])
       }else if(!is.null(modData) & (colour == "Module")){
+        # or make module as vertex attribute
         vgn <- as.data.frame(as.matrix(V(gN)))
         vgn$Feature <- rownames(vgn)
         colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -107,10 +110,12 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
 
       #you can alter the layout algorithm to create a more visually appealling plot- Fruchterman-Reingold & Kamada-Kawai layouts are common ones to try
       #Fruchterman-Reingold layout and edit the size
-      l <- layout_with_fr(gN)
-      l <- norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
+      l <- igraph::layout_with_fr(gN)
+      l <- igraph::norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
 
+      # scale vertex size by abundance?
       if(vsize){
+        # if scaling, need to get samples for each group
         if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
           samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
         }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
@@ -119,6 +124,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
           stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
         }
 
+        # calculate median abundance across groups
         size <- omicsData$e_data[,which(colnames(omicsData$e_data) %in% samps)]
         size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
         size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
@@ -156,11 +162,11 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
     })
 
 
-    #Preliminary code to look at consistencies between networks- note that this won't run currently as we've only made gN1 in the code above. The graph.intersection function will keep only the edges that occur in both (all) graphs
+    # Code to look at consistencies between networks. The graph.intersection function will keep only the edges that occur in both (all) graphs
     g_intersection <- Reduce(function(x, y) graph.intersection(x, y, byname=TRUE, keep.all.vertices=FALSE), gN)
 
     if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
-      #make taxonomy as vertex attribute
+      # make taxonomy as vertex attribute
       ivgn <- as.data.frame(as.matrix(V(g_intersection)))
       ivgn$Feature <- rownames(ivgn)
       colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -170,6 +176,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       ivgn <- ivgn[match(names(V(g_intersection)), ivgn[,attr(netGraph, "cnames")$edata_cname]),]
       ivgn[,colour] <- as.factor(ivgn[,colour])
     }else if(!is.null(modData) & (colour == "Module")){
+      # or make modules as vertex attribute
       ivgn <- as.data.frame(as.matrix(V(g_intersection)))
       ivgn$Feature <- rownames(ivgn)
       colnames(ivgn)[which(colnames(ivgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -183,15 +190,10 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       ivgn <- NULL
     }
 
+    # if want to change vertex size
     if(vsize){
-      # if(attr(netGraph, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
-      #   samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
-      # }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
-      #   samps <- omicsData$f_data[which(omicsData$f_data[,attr(netGraph, "group_var")] == x), attr(netGraph, "cnames")$fdata_cname]
-      # }else{
-      #   stop("Something went wrong, please double check group var in network data, group_DF in omics data, and f_data in omics data.")
-      # }
 
+      # calculate median abundance across samples
       size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
       size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
@@ -233,7 +235,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
     #gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
     if(!is.null(taxa) & (colour %in% colnames(omicsData$e_meta))){
-      #make taxonomy as vertex attribute
+      # make taxonomy as vertex attribute
       vgn <- as.data.frame(as.matrix(V(gN)))
       vgn$Feature <- rownames(vgn)
       colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -243,6 +245,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       vgn <- vgn[match(names(V(gN)), vgn[,attr(netGraph, "cnames")$edata_cname]),]
       vgn[,colour] <- as.factor(vgn[,colour])
     }else if(!is.null(modData) & (colour == "Module")){
+      # or make module as vertex attribute
       vgn <- as.data.frame(as.matrix(V(gN)))
       vgn$Feature <- rownames(vgn)
       colnames(vgn)[which(colnames(vgn) == "Feature")] <- attr(netGraph, "cnames")$edata_cname
@@ -256,8 +259,10 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       vgn <- NULL
     }
 
+    # if want to scale vertex size by a factor
     if(vsize){
 
+      # calculate median abundance across all samples
       size <- omicsData$e_data[,-which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)]
       size <- apply(size, 1, function(x) median(x, na.rm=TRUE))
       size <- data.frame(Features=omicsData$e_data[,which(colnames(omicsData$e_data) == attr(netGraph, "cnames")$edata_cname)], Median=size)
@@ -274,10 +279,10 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
       v.size = 5
     }
 
-    #you can alter the layout algorithm to create a more visually appealling plot- Fruchterman-Reingold & Kamada-Kawai layouts are common ones to try
+    # Alter the layout algorithm to create a more visually appealling plot- Fruchterman-Reingold & Kamada-Kawai layouts are common ones to try
     #Fruchterman-Reingold layout and edit the size
-    l <- layout_with_fr(gN)
-    l <- norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
+    l <- igraph::layout_with_fr(gN)
+    l <- igraph::norm_coords(l, ymin= -1, ymax= 1, xmin=-1, xmax=1)
 
     if(!is.null(colour) & length(vgn[,colour]) > 0){
       #Get colors

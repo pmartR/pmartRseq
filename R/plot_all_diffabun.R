@@ -34,8 +34,11 @@
 plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", scales="fixed",
                                 x_lab=NULL, y_lab=NULL, leglab=NULL, plot_title=NULL){
 
+  library(RColorBrewer)
   library(ggplot2)
   library(reshape2)
+
+  # initial checks #
 
   if(is.null(x_axis)){
     stop("x_axis cannot be NULL")
@@ -69,11 +72,12 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", sca
     }
   }
 
+  # end initial checks #
+
   # Extract differential expression results
   data <- countSTAT_results$allResults
 
-  library(RColorBrewer)
-  myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+  myPalette <- RColorBrewer::colorRampPalette(rev(brewer.pal(11, "Spectral")))
 
   # Create a new plot for every test that was run
  lapply(attr(countSTAT_results, "Tests")$Test, function(t){
@@ -104,7 +108,7 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", sca
     plot.data <- merge(plot.data, omicsData$e_meta, by=attr(omicsData, "cnames")$edata_cname)
 
     lapply(attr(countSTAT_results, "comparisons")$comparison, function(c){
-      map <- aes_string(x=x_axis, y="logFC", colour="padj")
+      map <- ggplot2::aes_string(x=x_axis, y="logFC", colour="padj")
       p <- ggplot2::ggplot(subset(plot.data, Comparison==c), map) +
         ggplot2::geom_point(size=ifelse(subset(plot.data, Comparison==c)$padj <= 0.1, 3, 1))+
         ggplot2::scale_colour_gradientn(colours=rev(myPalette(100)), limits=c(0,0.1), name="P-value\n")+

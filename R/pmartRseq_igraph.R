@@ -75,7 +75,7 @@ pmartRseq_igraph <- function(netData, coeff=NULL, pval=NULL, qval=NULL){
     gN <- lapply(unique(net$Group), function(x){
       tmp <- subset(net, Group == x)
 
-      gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
+      gN <- igraph::simplify(igraph::graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
       #In our graph, carry through correlation coefficients
       E(gN)$strength <- abs(tmp$cor.coeff)
@@ -92,7 +92,7 @@ pmartRseq_igraph <- function(netData, coeff=NULL, pval=NULL, qval=NULL){
     # Otherwise, create object over all data.
     tmp <- net
 
-    gN <- simplify(graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
+    gN <- igraph::simplify(igraph::graph.edgelist(as.matrix(tmp[,c("Row","Column")]), directed = FALSE))
 
     #In our graph, carry through correlation coefficients
     E(gN)$strength <- abs(tmp$cor.coeff)

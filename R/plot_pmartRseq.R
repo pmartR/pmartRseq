@@ -1,8 +1,8 @@
 #' Produce a plot of an omicsData Object
 #'
-#' This function will proivde a plot for a \code{omicsData} or \code{omicsData_results} object.
+#' This function will provide a plot for a \code{omicsData} or \code{omicsData_results} object.
 #'
-#' @param results_object is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), seqData (\code{\link{as.seqData}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).
+#' @param results_object is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaRes (\code{\link{alphaDiv_calc}}), evenRes (\code{\link{even_calc}}), jaccardRes (\code{\link{jaccard_calc}}), countFilter (\code{\link{count_based_filter}}), sampleFilter (\code{\link{sample_based_filter}}), seqData (\code{\link{as.seqData}}), richRes (\code{\link{richness_calc}}), abunRes (\code{\link{abundance_calc}}), effspRes (\code{\link{effsp_calc}}), indspRes (\code{\link{indsp_calc}}), paRes (\code{\link{pmartRseq_aldex2}}), or modEnv (\code{\link{mod_env}})
 
 
 #' @export
@@ -730,7 +730,7 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
 #'@name plot_pmartRseq
 #'@param breaks Required, a number specifying the number of breaks to have in the cumulative graph. Default is 100.
 #'@param max_count Optional, a number specifying the maximum count number to show on the graph. Default is NULL.
-#'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.
+#'@param min_num Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the values for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.
 #'@param min_samp Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param x_lab Optional, a character vector to use as the x-axis label
@@ -1261,7 +1261,7 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
 #'@export
 #'@rdname plot_pmartRseq
 #'@name plot_pmartRseq
-#'@param abun Optional, an object of class 'abundance', used for plotting richness vs abundance
+#'@param abun Optional, an object of class 'abunRes', used for plotting richness vs abundance
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param scales Optional, a character vector specifying if any/both of the axes be free. Default is "free_y", for a free y-axis.
@@ -1439,7 +1439,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
 #'@export
 #'@rdname plot_pmartRseq
 #'@name plot_pmartRseq
-#'@param rich Optional, an object of class 'richness', used for plotting richness vs abundance
+#'@param rich Optional, an object of class 'richRes', used for plotting richness vs abundance
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
@@ -1907,7 +1907,7 @@ plot.indspRes <- function(results_object, type="pvals", ...){
 #' @export
 #' @rdname plot_pmartRseq
 #' @name plot_pmartRseq
-#' @param type Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of indicated species in each group, at the previously specified threshold. The default is "pvals".
+#' @param type Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of significantly expressed biomolecules for each term, at the previously specified threshold. The default is "pvals".
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label

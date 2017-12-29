@@ -40,34 +40,38 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
 
   ### End Initial Checks ###
 
+  # if per group, detect modules per group
   if(!is.null(attr(netGraph, "group_var"))){
 
+    # use appropriate clustering method
     membs <- lapply(names(netGraph), function(x){
       if(cluster == "edge_betweenness"){
-        mods <- cluster_edge_betweenness(netGraph[[x]])
+        mods <- igraph::cluster_edge_betweenness(netGraph[[x]])
       }else if(cluster == "fast_greedy"){
-        mods <- cluster_fast_greedy(netGraph[[x]])
+        mods <- igraph::cluster_fast_greedy(netGraph[[x]])
       }else if(cluster == "infomap"){
-        mods <- cluster_infomap(netGraph[[x]])
+        mods <- igraph::cluster_infomap(netGraph[[x]])
       }else if(cluster == "label_prop"){
-        mods <- cluster_label_prop(netGraph[[x]])
+        mods <- igraph::cluster_label_prop(netGraph[[x]])
       }else if(cluster == "leading_eigen"){
-        mods <- cluster_leading_eigen(netGraph[[x]])
+        mods <- igraph::cluster_leading_eigen(netGraph[[x]])
       }else if(cluster == "louvain"){
-        mods <- cluster_louvain(netGraph[[x]])
+        mods <- igraph::cluster_louvain(netGraph[[x]])
       }else if(cluster == "optimal"){
-        mods <- cluster_optimal(netGraph[[x]])
+        mods <- igraph::cluster_optimal(netGraph[[x]])
       }else if(cluster == "spinglass"){
-        mods <- cluster_spinglass(netGraph[[x]])
+        mods <- igraph::cluster_spinglass(netGraph[[x]])
       }else if(cluster == "walktrap"){
-        mods <- cluster_walktrap(netGraph[[x]])
+        mods <- igraph::cluster_walktrap(netGraph[[x]])
       }else{
         stop("cluster must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'.")
       }
 
-      membs <- membership(mods)
+      # calculate membership of each module
+      membs <- igraph::membership(mods)
       membs <- data.frame(Features=names(membs), Module=as.matrix(membs))
 
+      # change modules which have less than cutoff members
       if(any(table(membs$Module) <= cutoff)){
         ids <- table(membs$Module)
         ids <- names(ids)[which(ids <= cutoff)]
@@ -93,31 +97,34 @@ detect_modules <- function(netGraph, cluster="louvain", cutoff=5){
     names(membs) <- names(netGraph)
 
   }else{
+    # use appropriate clustering method
     if(cluster == "edge_betweenness"){
-      mods <- cluster_edge_betweenness(netGraph)
+      mods <- igraph::cluster_edge_betweenness(netGraph)
     }else if(cluster == "fast_greedy"){
-      mods <- cluster_fast_greedy(netGraph)
+      mods <- igraph::cluster_fast_greedy(netGraph)
     }else if(cluster == "infomap"){
-      mods <- cluster_infomap(netGraph)
+      mods <- igraph::cluster_infomap(netGraph)
     }else if(cluster == "label_prop"){
-      mods <- cluster_label_prop(netGraph)
+      mods <- igraph::cluster_label_prop(netGraph)
     }else if(cluster == "leading_eigen"){
-      mods <- cluster_leading_eigen(netGraph)
+      mods <- igraph::cluster_leading_eigen(netGraph)
     }else if(cluster == "louvain"){
-      mods <- cluster_louvain(netGraph)
+      mods <- igraph::cluster_louvain(netGraph)
     }else if(cluster == "optimal"){
-      mods <- cluster_optimal(netGraph)
+      mods <- igraph::cluster_optimal(netGraph)
     }else if(cluster == "spinglass"){
-      mods <- cluster_spinglass(netGraph)
+      mods <- igraph::cluster_spinglass(netGraph)
     }else if(cluster == "walktrap"){
-      mods <- cluster_walktrap(netGraph)
+      mods <- igraph::cluster_walktrap(netGraph)
     }else{
       stop("cluster must be one of 'edge_betweenness', 'fast_greedy', 'infomap', 'label_prop', 'leading_eigen', 'louvain', 'optimal', 'spinglass', or 'walktrap'.")
     }
 
+    # calculate membership of each module
     membs <- membership(mods)
     membs <- data.frame(Features=names(membs), Module=as.matrix(membs))
 
+    # change modules which have less than cutoff members
     if(any(table(membs$Module) <= cutoff)){
       ids <- table(membs$Module)
       ids <- names(ids)[which(ids <= cutoff)]

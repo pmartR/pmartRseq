@@ -31,18 +31,21 @@
 #' @export
 pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2", ellipses=TRUE){
 
+  library(vegan)
   library(ggplot2)
 
+  # Extract data and format
   NMDS <- data.frame(SampleID=rownames(vegan::scores(res)),vegan::scores(res))
   colnames(NMDS)[1] <- attr(omicsData, "cnames")$fdata_cname
   NMDS <- merge(NMDS, attr(omicsData, "group_DF"), by=attr(omicsData, "cnames")$fdata_cname)
 
-  testgrp <- table(NMDS[,grp])
-  if(any(testgrp < 3)){
-    names <- names(which(testgrp < 3))
-    NMDS <- NMDS[-which(NMDS[,grp] %in% names),]
-    NMDS[,grp] <- droplevels(NMDS[,grp])
-  }
+  # # Need at least 3 samples in each group
+  # testgrp <- table(NMDS[,grp])
+  # if(any(testgrp < 3)){
+  #   names <- names(which(testgrp < 3))
+  #   NMDS <- NMDS[-which(NMDS[,grp] %in% names),]
+  #   NMDS[,grp] <- droplevels(NMDS[,grp])
+  # }
 
   # Format treatment, "group"
   if(any(levels(NMDS[,grp]) == "")){
@@ -58,6 +61,7 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
       t(center + scale * t(Circle %*% chol(cov)))
     }
 
+    # data frame of ellipse points
     df_ell <- data.frame()
     for(g in levels(NMDS[,grp])){
       df_ell <- rbind(df_ell,

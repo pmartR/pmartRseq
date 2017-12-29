@@ -108,7 +108,7 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
   # names checks #
   colnames(e_data) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_data))
   colnames(f_data) <- gsub("[^A-Za-z0-9_]","\\.",colnames(f_data))
-  colnames(e_meta) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_meta))
+  if(!is.null(e_meta)) colnames(e_meta) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_meta))
 
   colnames(f_data) <- sapply(colnames(f_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
   colnames(e_data) <- sapply(colnames(e_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))

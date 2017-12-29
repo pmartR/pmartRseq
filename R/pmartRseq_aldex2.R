@@ -103,7 +103,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     prior <- 0.5
 
     # This extracts the set of features to be used in the geometric mean computation
-    feature.subset <- aldex.set.mode(reads, groups, denom)
+    feature.subset <- ALDEx2::aldex.set.mode(reads, groups, denom)
 
     reads <- reads + prior
 
@@ -133,7 +133,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     #else{
     p <- lapply( reads ,
                  function(col) {
-                   q <- t( rdirichlet( mc.samples, col ) ) ;
+                   q <- t( gtools::rdirichlet( mc.samples, col ) ) ;
                    rownames(q) <- rn ; q } )
     #}
 
@@ -246,10 +246,10 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     # }
 
     # get dimensions, names, etc from the input data
-    smpl.ids <- getSampleIDs(clr)
-    feature.number <- numFeatures(clr)
-    mc.instances <- numMCInstances(clr)
-    feature.names <- getFeatureNames(clr)
+    smpl.ids <- ALDEx2::getSampleIDs(clr)
+    feature.number <- ALDEx2::numFeatures(clr)
+    mc.instances <- ALDEx2::numMCInstances(clr)
+    feature.names <- ALDEx2::getFeatureNames(clr)
 
     #conditions <- as.factor( conditions )
     #levels     <- levels( conditions )
@@ -266,7 +266,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     # levels.crop <- levels(crop)
     # levels.agg <- levels(agg)
 
-    invisible(apply(conditions, 2, function(x) if(length(x) != numConditions(clr)) stop("mismatch between conds and names(clr)")))
+    invisible(apply(conditions, 2, function(x) if(length(x) != ALDEx2::numConditions(clr)) stop("mismatch between conds and names(clr)")))
 
     # if ( length( site ) !=  numConditions(clr) )  stop("mismatch btw 'length(site)' and 'length(names(clr))'")
     # if ( length( crop ) !=  numConditions(clr) )  stop("mismatch btw 'length(crop)' and 'length(names(clr))'")
@@ -315,7 +315,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
       #print(mc.i)
 
       #generate a matrix of each Monte-Carlo instance, columns are samples, rows are features
-      t.input <- sapply(getMonteCarloInstances(clr), function(y){y[,mc.i]})
+      t.input <- sapply(ALDEx2::getMonteCarloInstances(clr), function(y){y[,mc.i]})
 
       # do glms on each feature
       # make a list of glm outputs
@@ -326,7 +326,9 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
       x <- apply(t.input, 1, function(yy) {
 
+        # If there is a random effect
         if(!is.null(randomEffect)){
+          # Format data
           tmp <- data.frame(Samples=names(yy), yy=yy)
           colnames(tmp)[1] <- attr(omicsData, "cnames")$fdata_cname
           tmp <- merge(tmp, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(mainEffects, randomEffect, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
@@ -335,14 +337,16 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
           tmp$yy <- as.numeric(tmp$yy)
 
+          # If interactions are wanted, set up formula to include interactions
           if(interactions){
             form <- as.formula(paste("yy ~ ", paste(colnames(tmp)[-which(colnames(tmp) %in% c("yy",randomEffect))], collapse="*"), "+ (1|",randomEffect,")", sep=""))
-            lmer(form, data=tmp, control=lmerControl(optimizer='Nelder_Mead'))
+            lme4::lmer(form, data=tmp, control=lmerControl(optimizer='Nelder_Mead'))
           }else{
             form <- as.formula(paste("yy ~ ", paste(colnames(tmp)[-which(colnames(tmp) %in% c("yy",randomEffect))], collapse="+"), "+ (1|",randomEffect,")", sep=""))
-            lmer(form, data=tmp, control=lmerControl(optimizer='Nelder_Mead'))
+            lme4::lmer(form, data=tmp, control=lmerControl(optimizer='Nelder_Mead'))
           }
         }else{
+          # Format data with no random effects
           tmp <- data.frame(Samples=names(yy), yy=yy)
           colnames(tmp)[1] <- attr(omicsData, "cnames")$fdata_cname
           tmp <- merge(tmp, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(mainEffects, attr(omicsData,"cnames")$fdata_cname))], by=attr(omicsData, "cnames")$fdata_cname)
@@ -350,6 +354,8 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
           tmp <- tmp[,-which(colnames(tmp) == attr(omicsData, "cnames")$fdata_cname)]
 
           tmp$yy <- as.numeric(tmp$yy)
+
+          # If interactions are wanted, set up formula to include interactions
           if(interactions){
             form <- as.formula(paste("yy ~ ", paste(colnames(tmp)[-which(colnames(tmp) %in% c("yy"))], collapse="*"), sep=""))
             lm(form, data=tmp)
@@ -389,8 +395,10 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
         # cropp <- lapply(x, function(x) Anova(x)[3,4])
         # aggp <- lapply(x, function(x) Anova(x)[4,4])
         # interp <- lapply(x, function(x) Anova(x)[5,4])
+
+      # Extract model results and format
         glm.p <- lapply(c(1:length(x)), function(y){
-          temp <- broom::tidy(Anova(x[[y]], type="III"))
+          temp <- broom::tidy(car::Anova(x[[y]], type="III"))
           temp <- data.frame(Feature=rownames(t.input)[y], temp)
           colnames(temp)[3:5] <- paste(colnames(temp)[3:5], mc.i, sep=".")
           return(temp)
@@ -408,7 +416,9 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
       # glm.matrix.siteBH[,mc.i] = unlist(site.ests)
       # glm.matrix.cropBH[,mc.i] = unlist(crop.ests)
 
+      # put all results together
       glm.matrices[[mc.i]] <- do.call(rbind, glm.p)
+
       # cat(mc.i,"\n")
       # # Kruskal Wallis
       # kw.p.matrix[, mc.i] <- t(apply(t.input, 1, function(yy){
@@ -418,15 +428,20 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
     }
 
+    # put all results together
     glm.res <- Reduce(function(x, y) merge(x, y, by=c("Feature", "term")), glm.matrices)
 
+    # format results with and without random effect
     if(!is.null(randomEffect)){
+      # get median value across all mc samples
       glm.p.res <- apply(glm.res[,grep("p.value",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
       glm.s.res <- apply(glm.res[,grep("statistic",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
       glm.df.res <- apply(glm.res[,grep("df",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
 
+      # combine results
       glm.tot <- data.frame(glm.res[,c(1,2)], p.value=glm.p.res, statistic=glm.s.res, df=glm.df.res)
 
+      # remove Residuals from results
       if(length(grep("Residuals", glm.tot$term)) > 0){
         glm.tot <- glm.tot[-which(glm.tot$term == "Residuals"),]
       }
@@ -434,13 +449,16 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
       rownames(glm.tot) <- c(1:nrow(glm.tot))
 
     }else{
+      # get median value across all mc samples
       glm.p.res <- apply(glm.res[,grep("p.value",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
       glm.s.res <- apply(glm.res[,grep("statistic",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
       glm.df.res <- apply(glm.res[,grep("df",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
       glm.sumsq.res <- apply(glm.res[,grep("sumsq",colnames(glm.res))], 1, function(x) quantile(x, 0.5, na.rm=TRUE))
 
+      # combine results
       glm.tot <- data.frame(glm.res[,c(1,2)], p.value=glm.p.res, statistic=glm.s.res, df=glm.df.res, sumsq=glm.sumsq.res)
 
+      # remove Residuals from results
       if(length(grep("Residuals", glm.tot$term)) > 0){
         glm.tot <- glm.tot[-which(glm.tot$term == "Residuals"),]
       }
@@ -452,8 +470,10 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
   }
 
+  # get clr instances
   aldexclr <- pmartRseq.aldex.clr.function(omicsData=omicsData, mc.samples=mc.samples, denom=denom, verbose=verbose)
 
+  # formt inputs
   if(is.null(mainEffects)){
     mainEffects <- attr(attr(omicsData, "group_DF"), "main_effects")
   }
@@ -462,8 +482,10 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     stop("Main effects were not given and cannot be found from the group data frame. Please run group designation function with desired main effects.")
   }
 
+  # run glm
   aldexres <- pmartRseq.aldex.glm(clr=aldexclr, mainEffects=mainEffects, interactions=interactions, randomEffect=randomEffect)
 
+  # format results
   results <- list(clr=aldexclr, results=aldexres)
 
   attr(results, "effects") <- list(mainEffects=mainEffects, interactions=ifelse(interactions, "All", "None"), randomEffect=randomEffect)

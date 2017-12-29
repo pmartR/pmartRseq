@@ -25,7 +25,7 @@
 \alias{summary.paRes}
 \title{Produce a basic summary of an pmartRseq S3 Object}
 \usage{
-\method{summary}{seqData}(omicsData, omicsDataFilter = NULL)
+\method{summary}{seqData}(omicsData)
 
 \method{summary}{countSTAT_results}(pmartRseq_results)
 
@@ -49,8 +49,6 @@
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}}
-
-\item{omicsDataFilter}{an optional filter object for the respective \code{omicsData} class.}
 
 \item{min_num}{An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis. If fn="percent", give the decimal number, not the percentage.}
 }

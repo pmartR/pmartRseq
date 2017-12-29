@@ -3,7 +3,6 @@
 #' This function will provide basic summary statistics about an object of the class \code{seqData}.
 #'
 #' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}
-#' @param omicsDataFilter an optional filter object for the respective \code{omicsData} class.
 #'
 #' @return a list of elements
 #' \itemize{
@@ -31,40 +30,26 @@
 #'@export
 #'@rdname summary-pmartRseq
 #'@name summary-pmartRseq
-summary.seqData <- function(omicsData, omicsDataFilter = NULL){
-  # if no filter is provided, just pull info from the pepdata object #
-  #if(is.null(omicsDataFilter)){
-    res = list(num_samps = attr(omicsData, "data_info")$num_samps,
-               num_edata = attr(omicsData, "data_info")$num_edata,
-               num_taxa = attr(omicsData, "data_info")$num_taxa,
-               num_na = attr(omicsData, "data_info")$num_na,
-               frac_na = attr(omicsData, "data_info")$frac_na,
-               num_zero = attr(omicsData, "data_info")$num_zero,
-               frac_zero = attr(omicsData, "data_info")$frac_zero)
+summary.seqData <- function(omicsData){
+  # extract summary information
+  res = list(num_samps = attr(omicsData, "data_info")$num_samps,
+             num_edata = attr(omicsData, "data_info")$num_edata,
+             num_taxa = attr(omicsData, "data_info")$num_taxa,
+             num_na = attr(omicsData, "data_info")$num_na,
+             frac_na = attr(omicsData, "data_info")$frac_na,
+             num_zero = attr(omicsData, "data_info")$num_zero,
+             frac_zero = attr(omicsData, "data_info")$frac_zero)
 
-    # construct output #
-    newres <- lapply(res, function(x) ifelse(is.null(x), "NA", as.character(x)))
-    catmat <- data.frame(unlist(newres, use.names=FALSE))
-    colnames(catmat) <- NULL
-    rownames(catmat) <- c("Samples ", "Rows (e_data) ", "Rows (taxa) ", "Missing Observations (NA) ", "Fraction Missing (NA) ", "Missing Observations (0) ", "Fraction Missing (0) ")
+  # construct output #
+  newres <- lapply(res, function(x) ifelse(is.null(x), "NA", as.character(x)))
+  catmat <- data.frame(unlist(newres, use.names=FALSE))
+  colnames(catmat) <- NULL
+  rownames(catmat) <- c("Samples ", "Rows (e_data) ", "Rows (taxa) ", "Missing Observations (NA) ", "Fraction Missing (NA) ", "Missing Observations (0) ", "Fraction Missing (0) ")
 
-    cat("\nSummary of 'seqData' Object\n----------------------------")
-    cat(capture.output(catmat), sep="\n")
-    cat("\n")
-    return(invisible(res))
-  # }else{
-  #   # implement filter to get counts after application #
-  #   temp_data = pmartRseq_filter(omicsData, omicsDataFilter)
-  #
-  #   res = list(num_samps = attr(temp_data, "data_info")$num_samps,
-  #              num_edata = attr(temp_data, "data_info")$num_edata,
-  #              num_emeta = attr(temp_data, "data_info")$num_emeta,
-  #              num_miss_obs = attr(temp_data, "data_info")$num_miss_obs,
-  #              frac_missing = attr(temp_data, "data_info")$num_miss_obs/(nrow(temp_data$e_data)*ncol(temp_data$e_data)))
-  #
-  # }
-  #
-  # return(res)
+  cat("\nSummary of 'seqData' Object\n----------------------------")
+  cat(capture.output(catmat), sep="\n")
+  cat("\n")
+  return(invisible(res))
 }
 
 
@@ -73,28 +58,34 @@ summary.seqData <- function(omicsData, omicsDataFilter = NULL){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.countSTAT_results <- function(pmartRseq_results){
+  # extract relevant results columns
   fidx <- grep("Flag",colnames(pmartRseq_results$allResults))
+
+  # extract data from relevant results columns
   if(length(fidx) > 1){
     num_sig <- apply(pmartRseq_results$allResults[,fidx], 2, function(x) length(which(x != 0)))
   }else{
     num_sig <- length(which(pmartRseq_results$allResults[,fidx] != 0))
   }
+
   num_sig <- as.data.frame(num_sig)
   res = list()
 
+  # first part of output, overall summaries about tests
   res[[1]] <- rbind(PValue_Threshold=attr(pmartRseq_results,"Threshold"),
                     Tests = paste(attr(pmartRseq_results, "Tests")$Test,collapse="; "),
                     Adjustment = attr(pmartRseq_results, "Adjustment"))
   res[[1]] <- as.data.frame(res[[1]])
   colnames(res[[1]]) <- NULL
 
+  # second part of output, summary of each test/comparison run
   res[[2]] <- num_sig
   res[[2]] <- rbind("NumSig",res[[2]])
   rownames(res[[2]])[1] <- "Comparison"
   rownames(res[[2]])[-1] <- unlist(lapply(colnames(pmartRseq_results$allResults)[fidx], function(x) gsub("Flag_","",x)))
   colnames(res[[2]]) <- NULL
-  #res <- rbind(res[[1]], res[[2]])
 
+  # output results
   cat("\nSummary of 'countSTAT' Object\n-----------------------------")
   cat(capture.output(res[[1]]), sep="\n")
   cat(capture.output(res[[2]]), sep="\n")
@@ -107,10 +98,12 @@ summary.countSTAT_results <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.alphaRes <- function(pmartRseq_results){
+  # calculate statistics for each index
    res <- t(do.call(rbind,apply(pmartRseq_results, 1, function(x){
      data.frame(Min=min(x), Median=median(x), Mean=mean(x), Max=max(x))
    })))
 
+   # construct output
    res <- as.data.frame(rbind(t(data.frame(Test=colnames(res))),res))
    colnames(res) <- NULL
    cat("\nSummary of 'alphaDiversity' Object\n-----------------------------------")
@@ -125,10 +118,12 @@ summary.alphaRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.evenRes <- function(pmartRseq_results){
+  # calculate statistics for each index
   res <- t(do.call(rbind,apply(pmartRseq_results, 1, function(x){
     data.frame(Min=min(x), Median=median(x), Mean=mean(x), Max=max(x))
   })))
 
+  # construct output
   res <- as.data.frame(rbind(t(data.frame(Test=colnames(res))),res))
   colnames(res) <- NULL
   cat("\nSummary of 'evenness' Object\n-----------------------------")
@@ -142,10 +137,12 @@ summary.evenRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.richRes <- function(pmartRseq_results){
+  # calculate statistics for each index
   res <- t(do.call(rbind,apply(pmartRseq_results, 1, function(x){
     data.frame(Min=min(x), Median=median(x), Mean=mean(x), Max=max(x))
   })))
 
+  # construct output
   res <- as.data.frame(rbind(t(data.frame(Test=colnames(res))),res))
   colnames(res) <- NULL
   cat("\nSummary of 'richness' Object\n-----------------------------------")
@@ -159,9 +156,11 @@ summary.richRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.abunRes <- function(pmartRseq_results){
+  # calculate statistics
   res <- data.frame(Min=min(pmartRseq_results$abundance), Median=median(pmartRseq_results$abundance),
                     Mean=mean(pmartRseq_results$abundance), Max=max(pmartRseq_results$abundance))
 
+  # construct output
   res <- t(res)
   colnames(res) <- "Abundance"
   cat("\nSummary of 'abundance' Object\n-----------------------------\n")
@@ -175,16 +174,14 @@ summary.abunRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.jaccardRes <- function(pmartRseq_results){
+  # calculate statistics
   res <- apply(pmartRseq_results[,-c(1:2)], 2, function(x){
     data.frame(Min=min(x, na.rm=TRUE), Median=median(x, na.rm=TRUE),
                Mean=mean(x, na.rm=TRUE), Max=max(x, na.rm=TRUE))
   })
   res <- do.call(rbind, res)
-  #res <- rbind(colnames(res),res)
-  #rownames(res)[1] <- "Statistic"
 
-  #colnames(res) <- NULL
-
+  # construct output
   cat("\nSummary of 'jaccard' Object\n----------------------------\n")
   cat(capture.output(as.data.frame(t(res))), sep="\n")
   cat("\n")
@@ -195,9 +192,11 @@ summary.jaccardRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.effspRes <- function(pmartRseq_results){
+  # calculate statistics
   res <- data.frame(Min=min(pmartRseq_results$effectiveSpecies), Median=median(pmartRseq_results$effectiveSpecies),
                     Mean=mean(pmartRseq_results$effectiveSpecies), Max=max(pmartRseq_results$effectiveSpecies))
 
+  # construct output
   res <- t(res)
   colnames(res) <- "EffectiveSpecies"
   cat("\nSummary of 'effectiveSpecies' Object\n-------------------------------------\n")
@@ -227,6 +226,7 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
 
     if(!is.null(min_num)){
       res <- lapply(unique(pmartRseq_results$Group), function(x){
+        # subset data to specified group
         temp <- pmartRseq_results[which(pmartRseq_results$Group == x),]
 
         # get number molecules tested
@@ -234,12 +234,15 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
         # get number molecules not tested
         num_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] > min_num))
 
+        # format return
         data.frame(Group=x, Num.Not.Filtered=num_tested, Num.Filtered=num_not_tested)
       })
 
+      # combine results
       res <- do.call(rbind, res)
 
     }else{
+      # if no min_num given, no need to calculate results
       num_tested = "NULL"
       num_not_tested = "NULL"
       min_num = "NULL"
@@ -265,6 +268,7 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
       num_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] > min_num))
 
     }else{
+      # if no min_num given, no need to calculate results
       num_tested = "NULL"
       num_not_tested = "NULL"
       min_num = "NULL"
@@ -287,22 +291,23 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 summary.indspRes <- function(pmartRseq_results){
+  # extract relevant results columns
   fidx <- grep("Flag",colnames(pmartRseq_results))
   if(length(fidx) > 1){
+    # extract data from relevant results columns
     num_sig <- apply(pmartRseq_results[,fidx], 2, function(x) length(which(x != 0)))
+    # format comparisons and num sig
     num_sig <- data.frame(Comparison=unlist(lapply(names(num_sig),function(x) strsplit(x,"Flag_")[[1]][2])),as.data.frame(num_sig))
   }else{
+    # format num sig
     num_sig <- length(which(pmartRseq_results[,fidx] != 0))
   }
-  res = list(pval_threshold = attr(pmartRseq_results,"Threshold"),
-             num_sig = num_sig
-  )
 
+  # format output
   res <- data.frame(pval_threshold=attr(pmartRseq_results,"Threshold"), num_sig)
   #res <- rbind(colnames(res), res)
   rownames(res) <- NULL
 
-  #colnames(res) <- NULL
   cat("\nSummary of 'indicatorSpecies' Object\n-------------------------------------\n")
   cat(capture.output(res), sep="\n")
   cat("\n")
@@ -317,30 +322,10 @@ summary.indspRes <- function(pmartRseq_results){
 summary.paRes <- function(pmartRseq_results){
   library(dplyr)
 
+  # calculate num sig for each term
   num_sig <- pmartRseq_results$results %>% dplyr::group_by(term) %>% dplyr::summarise(NumSig=length(which(p.value <= attr(pmartRseq_results, "pval_thresh")$pval_thresh)))
-  #
-  # fidx <- grep("Flag",colnames(pmartRseq_results$allResults))
-  # if(length(fidx) > 1){
-  #   num_sig <- apply(pmartRseq_results$allResults[,fidx], 2, function(x) length(which(x != 0)))
-  # }else{
-  #   num_sig <- length(which(pmartRseq_results$allResults[,fidx] != 0))
-  # }
-  # num_sig <- as.data.frame(num_sig)
-  # res = list()
-  #
-  # res[[1]] <- rbind(PValue_Threshold=attr(pmartRseq_results,"Threshold"),
-  #                   Tests = paste(attr(pmartRseq_results, "Tests")$Test,collapse="; "),
-  #                   Adjustment = attr(pmartRseq_results, "Adjustment"))
-  # res[[1]] <- as.data.frame(res[[1]])
-  # colnames(res[[1]]) <- NULL
-  #
-  # res[[2]] <- num_sig
-  # res[[2]] <- rbind("NumSig",res[[2]])
-  # rownames(res[[2]])[1] <- "Comparison"
-  # rownames(res[[2]])[-1] <- unlist(lapply(colnames(pmartRseq_results$allResults)[fidx], function(x) gsub("Flag_","",x)))
-  # colnames(res[[2]]) <- NULL
-  # #res <- rbind(res[[1]], res[[2]])
 
+  # create output
   cat("\nSummary of 'paRes' Object\n-----------------------------\n")
   cat(capture.output(as.data.frame(num_sig)), sep="\n")
   cat("\n")

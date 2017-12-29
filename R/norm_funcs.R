@@ -38,14 +38,13 @@ CSS_Norm <- function(e_data, edata_id, q=0.75, qg="median"){
   }else{
     stop("Invalid value for qg")
   }
-  #g.q = 1000
-  #g.q = median(col.q, na.rm=TRUE)
 
   # normalize omics_data data by q quantile and transform back to count data #
   for(i in 1:ncol(e_data_norm)){
     e_data_norm[,i] = (e_data_norm[,i] / col.q[i]) * g.q
   }
 
+  # put it all back together
   e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
   colnames(e_data)[1] <- edata_id
   return(list(normed_data=e_data, location_param=NULL, scale_param=col.q/g.q))
@@ -190,6 +189,7 @@ Quant_Norm <- function(e_data, edata_id, q=0.75){
     e_data_norm[,i] = (e_data_norm[,i] / col.q[i]) * g.q
   }
 
+  # put it all back together #
   e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
   colnames(e_data)[1] <- edata_id
 
@@ -231,7 +231,7 @@ Rarefy <- function(e_data, edata_id, size=NULL){
     size <- size
   }
 
-  # if input library size is larger than any library size for any sample, discard that sample, check group designations first  #
+  # if input library size is larger than any library size for any sample, discard that sample #
   samples <- NA
   if(any(colSums(e_data_norm,na.rm=TRUE) < size)){
     samples <- names(which(colSums(e_data_norm,na.rm=TRUE) < size))
@@ -240,7 +240,7 @@ Rarefy <- function(e_data, edata_id, size=NULL){
   }
 
   # Change NA to 0 in order to extract features
-  e_data_norm[is.na(e_data_norm)]<- 0
+  e_data_norm[is.na(e_data_norm)] <- 0
 
   # Create a temporary empty matrix to fill with rarefied data
   temp <- matrix(nrow=nrow(e_data_norm),ncol=ncol(e_data_norm))
@@ -279,10 +279,11 @@ Rarefy <- function(e_data, edata_id, size=NULL){
   # Replace e_data with rarefied counts
   e_data <- temp
 
+  # add fake scale param for later use
   scale_param <- rep(1, ncol(e_data[,-which(colnames(e_data) == edata_id)]))
   names(scale_param) <- colnames(e_data)[-which(colnames(e_data) == edata_id)]
 
-  return(list(normed_data=e_data, location_param=size, scale_param=size))
+  return(list(normed_data=e_data, location_param=size, scale_param=scale_param))
 
 }
 
@@ -319,14 +320,20 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
   if(is.null(reference)){
     # determine which sample has the least amount of missing data
     ref = which(apply(e_data_norm, 2, function(x) length(which(is.na(x)))) == min(apply(e_data_norm, 2,function(x) length(which(is.na(x))))))
+    # if more than one sample can be the reference with equal amounts of missing data, choose the one with the max mean
     if(length(ref) > 1){
       ref = which(apply(e_data_norm[,ref],2,function(x) mean(x,na.rm=TRUE)) == max(apply(e_data_norm[,ref],2,function(x) mean(x,na.rm=TRUE))))
     }
+    # if still more than one, choose the one with the largest total abundance
     if(length(ref) > 1){
       ref = which(colSums(e_data_norm[,ref], na.rm=TRUE) == max(colSums(e_data_norm[,ref], na.rm=TRUE)))
     }
+    # if still more than one, just pick the first one
+    if(length(ref) > 1){
+      ref = ref[1]
+    }
   }else{
-    0 = reference
+    ref = reference
   }
 
   # remove genes where the reference has a value of NA
@@ -365,7 +372,6 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
       Ygk[g] = trimmed.data[g,k]
 
       # calculate M and A for each gene and each sample
-      #Mgkr[g,1] = log2(Ygk[g]/Nk) / log2(Ygr[g]/Nr)
       Mgkr[g,1] = log2((Ygk[g]/Nk) / (Ygr[g]/Nr))
       Agkr[g,1] = 1/2 * log2(Ygk[g]/Nk * Ygr[g]/Nr)
     }
@@ -394,11 +400,11 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
     l2TMM[k] = sum(wgkr*Mgkr) / sum(wgkr)
 
     # normalize sample by log2(TMM)
-    #e_data_norm[,k] <- log2(e_data_norm[,k]) - l2TMM[k]
     TMM[k] <- 2^l2TMM[k]
     e_data_norm[,k] <- e_data_norm[,k] / TMM[k]
   }
 
+  # put data back together
   e_data <- data.frame(e_data[,edata_id],e_data_norm)
   names(e_data)[1] <- edata_id
 
@@ -438,6 +444,7 @@ TSS_Norm <- function(e_data, edata_id){
   scale_param <- colSums(e_data_norm, na.rm=T)
   e_data_norm <- apply(e_data_norm, 2, function(x) x / sum(x, na.rm = TRUE))
 
+  # put data back together
   e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
   colnames(e_data)[1] <- edata_id
 

@@ -39,24 +39,24 @@ network_indices <- function(netGraph){
     indices <- lapply(names(netGraph), function(x){
 
       # vertices
-      btwn <- betweenness(netGraph[[x]])
-      dgr <- degree(netGraph[[x]])
+      btwn <- igraph::betweenness(netGraph[[x]])
+      dgr <- igraph::degree(netGraph[[x]])
       vertices <- data.frame(Betweenness=btwn, Degree=dgr)
       vertices <- data.frame(Features=rownames(vertices), vertices)
       colnames(vertices)[which(colnames(vertices) == "Features")] = attr(netGraph, "cnames")$edata_cname
 
       # degree
-      dgr_dist <- degree_distribution(netGraph[[x]])
+      dgr_dist <- igraph::degree_distribution(netGraph[[x]])
 
       # edge
-      edge_btwn <- edge_betweenness(netGraph[[x]])
+      edge_btwn <- igraph::edge_betweenness(netGraph[[x]])
       edge_btwn <- data.frame(EdgeVertices=attr(E(netGraph[[x]]),"vnames"), EdgeBetweenness=edge_btwn)
 
       # Transitivity
-      trans <- transitivity(netGraph[[x]])
+      trans <- igraph::transitivity(netGraph[[x]])
 
       # Network wide metrics
-      meandist <- mean_distance(netGraph[[x]])
+      meandist <- igraph::mean_distance(netGraph[[x]])
 
       # Other metrics
       other <- list(DegreeDistribution=dgr_dist, Transitivity=trans, MeanDistance=meandist)
@@ -69,25 +69,25 @@ network_indices <- function(netGraph){
       #Makes a single random network of same size as real data set- has to be set manually-
       v <- length(V(netGraph[[x]]))   #number of vertices
       e <- length(E(netGraph[[x]]))  #number of edges
-      rand <- erdos.renyi.game(v, e, type="gnm")
+      rand <- igraph::erdos.renyi.game(v, e, type="gnm")
 
       #Vetrex metrics - betweenness and degree
-      rand_btwn <- betweenness(rand)
-      rand_dgr <- degree(rand)
+      rand_btwn <- igraph::betweenness(rand)
+      rand_dgr <- igraph::degree(rand)
       rand_vertices <- data.frame(Betweenness=rand_btwn, Degree=rand_dgr)
 
       # Can also look at the distribution of degree in network
-      rand_dgr_dist <- degree_distribution(rand)
+      rand_dgr_dist <- igraph::degree_distribution(rand)
 
       # edge
-      rand_edge_btwn <- edge_betweenness(rand)
+      rand_edge_btwn <- igraph::edge_betweenness(rand)
       rand_edge_btwn <- data.frame(EdgeBetweenness=rand_edge_btwn)
 
       # Transitivity
-      rand_trans <- transitivity(rand)
+      rand_trans <- igraph::transitivity(rand)
 
       # Network wide metrics
-      rand_meandist <- mean_distance(rand)
+      rand_meandist <- igraph::mean_distance(rand)
 
       # Other metrics
       rand_other <- list(DegreeDistribution=rand_dgr_dist, Transitivity=rand_trans, MeanDistance=rand_meandist)
@@ -106,24 +106,24 @@ network_indices <- function(netGraph){
 
   }else{
     # vertices
-    btwn <- betweenness(netGraph)
-    dgr <- degree(netGraph)
+    btwn <- igraph::betweenness(netGraph)
+    dgr <- igraph::degree(netGraph)
     vertices <- data.frame(Betweenness=btwn, Degree=dgr)
     vertices <- data.frame(Features=rownames(vertices), vertices)
     colnames(vertices)[which(colnames(vertices) == "Features")] = attr(netGraph, "cnames")$edata_cname
 
     # degree
-    dgr_dist <- degree_distribution(netGraph)
+    dgr_dist <- igraph::degree_distribution(netGraph)
 
     # edge
-    edge_btwn <- edge_betweenness(netGraph)
+    edge_btwn <- igraph::edge_betweenness(netGraph)
     edge_btwn <- data.frame(EdgeVertices=attr(E(netGraph),"vnames"), EdgeBetweenness=edge_btwn)
 
     # Transitivity
-    trans <- transitivity(netGraph)
+    trans <- igraph::transitivity(netGraph)
 
     # Network wide metrics
-    meandist <- mean_distance(netGraph)
+    meandist <- igraph::mean_distance(netGraph)
 
     # Other metrics
     other <- list(DegreeDistribution=dgr_dist, Transitivity=trans, MeanDistance=meandist)
@@ -136,25 +136,25 @@ network_indices <- function(netGraph){
     #Makes a single random network of same size as real data set- has to be set manually-
     v <- length(V(netGraph))   #number of vertices
     e <- length(E(netGraph))  #number of edges
-    rand <- erdos.renyi.game(v, e, type="gnm")
+    rand <- igraph::erdos.renyi.game(v, e, type="gnm")
 
     #Vetrex metrics - betweenness and degree
-    rand_btwn <- betweenness(rand)
-    rand_dgr <- degree(rand)
+    rand_btwn <- igraph::betweenness(rand)
+    rand_dgr <- igraph::degree(rand)
     rand_vertices <- data.frame(Betweenness=rand_btwn, Degree=rand_dgr)
 
     # Can also look at the distribution of degree in network
-    rand_dgr_dist <- degree_distribution(rand)
+    rand_dgr_dist <- igraph::degree_distribution(rand)
 
     # edge
-    rand_edge_btwn <- edge_betweenness(rand)
+    rand_edge_btwn <- igraph::edge_betweenness(rand)
     rand_edge_btwn <- data.frame(EdgeBetweenness=rand_edge_btwn)
 
     # Transitivity
-    rand_trans <- transitivity(rand)
+    rand_trans <- igraph::transitivity(rand)
 
     # Network wide metrics
-    rand_meandist <- mean_distance(rand)
+    rand_meandist <- igraph::mean_distance(rand)
 
     # Other metrics
     rand_other <- list(DegreeDistribution=rand_dgr_dist, Transitivity=rand_trans, MeanDistance=rand_meandist)

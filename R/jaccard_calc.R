@@ -72,7 +72,7 @@ jaccard_calc <- function(omicsData, sim=TRUE){
 
   all_res <- do.call(rbind, jac)
 
-  # Median Jaccard score for each sample
+  # Calculate Jaccard stats for each sample
   results <- lapply(colnames(edata), function(x){
     rep <- subset(all_res, Sample1==x | Sample2==x)
     med <- median(rep$Jaccard, na.rm=TRUE)
@@ -82,6 +82,7 @@ jaccard_calc <- function(omicsData, sim=TRUE){
     data.frame(Group=unique(rep$Group), Sample=x, Median=med, InterQuartileRange=iqr, Average=avg, StdDev=sd)
   })
 
+  # Combine results for each group
   jac_res <- do.call(rbind, results)
   colnames(jac_res)[which(colnames(jac_res) == "Sample")] <- attr(omicsData,"cnames")$fdata_cname
 

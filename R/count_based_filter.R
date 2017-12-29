@@ -82,21 +82,27 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
   # check that omicsData is of appropriate class #
   if(!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
+  # check that this is count data #
   if(attr(omicsData, "data_info")$data_scale!='count'){
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
   }
 
+  # check that function makes sense #
   if(!(tolower(fn) %in% c("mean","percent","max","sum","nonmiss", "ka"))){
     stop("fn must only be 'mean', 'percent', 'max', 'sum', 'nonmiss', or 'ka'.")
   }
 
   ## end initial checks ##
 
+  # if want to filter by group #
   if(group){
+    # extract relevant pieces
     edata <- omicsData$e_data
     edata_cname <- attr(omicsData, "cnames")$edata_cname
     fdata_cname <- attr(omicsData, "cnames")$fdata_cname
 
+    # figure out what to use for grouping
+    # extract samples in each group
     if(is.null(group_var) & is.null(attr(omicsData, "group_DF"))){
       stop("In order to filter across groups, must provide a grouping variable.")
     }else if(is.null(group_var) & !is.null(attr(omicsData, "group_DF"))){
@@ -116,11 +122,13 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
       }
     }
 
+    # if not more than one group, why use groupings?
     if(length(groupings) < 2){
       stop("Grouping variable must contain at least two groups.")
     }
 
     infrequent_OTUs <- lapply(c(1:length(samps)), function(y){
+      # subset e_data down to samples in group
       x <- samps[[y]]
       ndata <- edata[,which(colnames(edata) %in% c(edata_cname, x))]
 
@@ -162,6 +170,7 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
         ka_edata <- as.matrix(ka_edata)
         ka_edata[which(is.na(ka_edata))] <- 0
 
+        # calculate the k and a for every OTU and every possible number of samples
         ka_OTUs <- lapply(c(1:nrow(ka_edata)), function(x) as.vector(ka_edata[x,])[order(as.vector(ka_edata[x,]),decreasing=TRUE)])
         ka_OTUs <- lapply(ka_OTUs, unname)
         ka_OTUs <- do.call(rbind, ka_OTUs)
@@ -172,11 +181,13 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
 
       }
 
+      # attach group information to filtered data
       infrequent_OTUs$Group <- names(samps)[y]
       return(infrequent_OTUs)
 
     })
 
+    # put filtered samples back together
     infrequent_OTUs <- do.call(plyr::rbind.fill, infrequent_OTUs)
     attr(infrequent_OTUs, "samps_in_grps") <- samps
     attr(infrequent_OTUs, "group_var") <- group_var
@@ -223,6 +234,7 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
       ka_edata <- as.matrix(ka_edata)
       ka_edata[which(is.na(ka_edata))] <- 0
 
+      # calculate the k and a for every OTU and every possible number of samples
       ka_OTUs <- lapply(c(1:nrow(ka_edata)), function(x) as.vector(ka_edata[x,])[order(as.vector(ka_edata[x,]),decreasing=TRUE)])
       ka_OTUs <- lapply(ka_OTUs, unname)
       ka_OTUs <- do.call(rbind, ka_OTUs)

@@ -31,16 +31,21 @@ split_emeta <- function(omicsData, cname=NULL, split1=";", numcol=NULL, split2="
   library(stringr)
 
   ## inital checks ##
+
   if(is.null(omicsData$e_meta)){
     stop("e_meta must contain data")
   }
 
+  ## end initial checks ##
+
+  # pull out relevant information
   emeta <- omicsData$e_meta
 
   if(is.null(cname)){
     cname <- attr(omicsData,"cnames")$taxa_cname
   }
 
+  # calculate number of taxonomy columns
   if(!is.null(split1)){
     if(is.null(numcol)){
       numcol <- max(unlist(lapply(lapply(emeta[,which(colnames(emeta)==cname)], function(x){
@@ -54,24 +59,26 @@ split_emeta <- function(omicsData, cname=NULL, split1=";", numcol=NULL, split2="
     numcol <- ncol(emeta) - 1
   }
 
-
+  # split taxonomy column into calculated number of columns
   if(!is.null(split1)){
     split_data <- stringr::str_split_fixed(emeta[,cname], split1, numcol)
   }else{
     split_data <- emeta[,-which(colnames(emeta)==cname)]
   }
 
-  # if necessary, can split again on another character, this time will remove other part
+  # if necessary, can split again on another character, this time will remove other part (eg k__)
   if(!is.null(split2)){
     split_data <- apply(split_data, 1:2, function(x) strsplit(as.character(x), split2)[[1]][num])
   }
 
+  # put the split data back together
   split_data <- as.data.frame(split_data)
   split_data <- apply(split_data, 1:2, as.character)
   split_data[is.na(split_data)] <- "Unknown"
   split_data <- data.frame(OTU=emeta[,which(colnames(emeta) == cname)], split_data)
   colnames(split_data)[1] <- cname
 
+  # add split data to e_meta
   res <- omicsData
   res$e_meta <- merge(split_data, emeta, by=cname)
 

@@ -33,9 +33,12 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
 
   library(DESeq2)
 
+  # initial checks #
   if(!(class(omicsData) %in% c("seqData"))){
     stop("Data must be of class 'seqData'")
   }
+
+  # end initial checks #
 
   # Make features be rownames and remove that column from the data, so the data is all numeric
   rownames(omicsData$e_data) <- omicsData$e_data[,attr(omicsData,"cnames")$edata_cname]
@@ -71,7 +74,7 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
     # check that normalization (size) factors are present for every sample
     if(all(colnames(omicsData$e_data) %in% names(norm_factors))){
       norm_factors <- norm_factors[match(colnames(omicsData$e_data), names(norm_factors))]
-      sizeFactors(DESeq_data_set_object) <- norm_factors
+      DESeq2::sizeFactors(DESeq_data_set_object) <- norm_factors
     }else{
       stop("Must have a normalization (size) factor for every sample in the data")
     }
@@ -79,6 +82,7 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
 
   # DESeq2 analysis
   if(tolower(test)=="wald"){
+    # run Wald DESeq2 test
     DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, test="Wald", quiet=TRUE)
     # extract results for each pairwise comparison
     res <- apply(pairs, 2, function(x){
@@ -94,6 +98,7 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
     # combine results from all pairwise comparisons
     res2 <- do.call(cbind, res)
   }else if(tolower(test)=="lrt"){
+    # run lrt DESeq2 test
     DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, test="LRT", quiet=TRUE, reduced = ~ 1)
     # extract results for each pairwise comparison
     res <- apply(pairs, 2, function(x){
@@ -109,6 +114,7 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
     # combine results from all pairwise comparisons
     res2 <- do.call(cbind, res)
   }else if(test=="paired"){
+    # run paired DESeq2 test
     paired <- paste("~",pairs[2],"+",pairs[1],sep="")
     design(DESeq_data_set_object) <- formula(paired)
     DESeq_data_set_object <- DESeq2::DESeq(DESeq_data_set_object, quiet=TRUE)
@@ -130,11 +136,6 @@ pmartRseq_DESeq2 <- function(omicsData, norm_factors=NULL, test="wald", pairs, a
   }
   # Wald Test - uses the estimated standard error of a log2 fold change to test if it is equal to zero, this is the default in DESeq2
   # LRT - examines both a full model and a reduced model (where some terms in full model are removed and determines if the increased likelihood of the data using the extra terms in the full model is more than expected if those extra terms are truly zero - more useful for testing multiple terms at once, e.g. 3 or more levels of a factor at once or all interactiosn between two variables. The LRT for count data is conceptually similar to an analysis of variance (ANOVA) calculation in linear regression, except that in the case of the Negative Binomial GLM, we use an analysis of deviance (ANODEV), where the deviance captures the difference in likelihood between a full and a reduced model.
-  # Example - DESeq(dds, test="LRT", reduced=~1)
-  # Example - DESeq(dds, test="LRT", reduced=~batch)
-
-#   DESeq_data_set_object <- estimateDispersions(DESeq_data_set_object, quiet=TRUE)
-#   DESeq_data_set_object <- nbinomWaldTest(DESeq_data_set_object, quiet=TRUE)
 
   return(res2)
 }

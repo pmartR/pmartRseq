@@ -34,13 +34,17 @@ metadata_based_filter <- function(omicsData, criteria) {
 
   ## end initial checks ##
 
+  # extract relevant data
   emeta <- omicsData$e_meta
   edata_cname <- attr(omicsData, "cnames")$edata_cname
 
+  # get feature data
   infrequent_OTUs <- data.frame(emeta[,which(tolower(colnames(emeta)) %in% c(tolower(edata_cname), tolower(criteria)))])
 
+  # get count of each feature
   sums <- data.frame(OTU=omicsData$e_data[,which(colnames(omicsData$e_data) == edata_cname)], Sum=apply(omicsData$e_data[,-which(colnames(omicsData$e_data) == edata_cname)], 1, function(x) sum(x, na.rm=TRUE)))
 
+  # format output
   infrequent_OTUs <- merge(infrequent_OTUs, sums, by=edata_cname)
 
   class(infrequent_OTUs) <- c("metaFilter",class(infrequent_OTUs))

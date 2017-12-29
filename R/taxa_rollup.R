@@ -28,6 +28,8 @@
 #' @export
 taxa_rollup <- function(omicsData, level, taxa_levels=NULL){
 
+  ## initial checks ##
+
   # Must have emeta to map to
   if(is.null(omicsData$e_meta)){
     stop("e_meta must not be NULL")
@@ -50,14 +52,17 @@ taxa_rollup <- function(omicsData, level, taxa_levels=NULL){
       stop("taxa_levels must be a character vector")
     }
   }
+
+  ## end initial checks ##
+
   numlevel <- which(taxa_levels %in% tolower(level))
 
-  # Make new taxonomy column
-  #idx <- which(colnames(omicsData$e_meta) == attr(omicsData, "cnames")$edata_cname)
+  # Format data
   e_meta <- omicsData$e_meta
   e_meta <- e_meta[,c(1:which(colnames(e_meta)==level))]
   e_meta <- apply(e_meta, 1:2, function(x) as.character(x))
 
+  # Make a new taxonomy column
   newTaxa_data <- e_meta[,which(tolower(colnames(e_meta)) %in% taxa_levels)]
   newTaxa <- data.frame(ID=omicsData$e_meta[,attr(omicsData,"cnames")$edata_cname],
                         newTaxa=unlist(lapply(c(1:nrow(newTaxa_data)), function(y) paste(newTaxa_data[y,1:numlevel], collapse=";"))))

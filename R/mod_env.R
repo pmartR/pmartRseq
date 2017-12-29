@@ -116,12 +116,12 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
         pcas$group_var <- x
 
         # Correlation test of environmental variables with module PCAs
-        env.cor <- corr.test(x=pcas[,grep("PC[12]_Module",colnames(pcas))], y=pcas[,which(colnames(pcas) %in% envVars)], method=cor.method, use=use, adjust=padjust)
+        env.cor <- psych::corr.test(x=pcas[,grep("PC[12]_Module",colnames(pcas))], y=pcas[,which(colnames(pcas) %in% envVars)], method=cor.method, use=use, adjust=padjust)
 
         # Format correlation coefficient and p-value results
-        env.r <- melt(env.cor$r)
+        env.r <- reshape2::melt(env.cor$r)
         colnames(env.r) <- c("Module","EnvVar","CorrCoeff")
-        env.p <- melt(env.cor$p)
+        env.p <- reshape2::melt(env.cor$p)
         colnames(env.p) <- c("Module","EnvVar","p.value")
         env.cor <- merge(env.r, env.p, by=c("Module","EnvVar"))
 
@@ -172,12 +172,12 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
       pcas <- merge(pcas, omicsData$f_data[,which(colnames(omicsData$f_data) %in% c(attr(omicsData, "cnames")$fdata_cname, envVars))], by=attr(omicsData, "cnames")$fdata_cname)
 
       # Correlation test of environmental variables with module PCAs
-      env.cor <- corr.test(x=pcas[,grep("PC[12]_Module",colnames(pcas))], y=pcas[,which(colnames(pcas) %in% envVars)], method=cor.method, use=use, adjust=padjust)
+      env.cor <- psych::corr.test(x=pcas[,grep("PC[12]_Module",colnames(pcas))], y=pcas[,which(colnames(pcas) %in% envVars)], method=cor.method, use=use, adjust=padjust)
 
       # Format correlation coefficient and p-value results
-      env.r <- melt(env.cor$r)
+      env.r <- reshape2::melt(env.cor$r)
       colnames(env.r) <- c("Module","EnvVar","CorrCoeff")
-      env.p <- melt(env.cor$p)
+      env.p <- reshape2::melt(env.cor$p)
       colnames(env.p) <- c("Module","EnvVar","p.value")
       env.cor <- merge(env.r, env.p, by=c("Module","EnvVar"))
 

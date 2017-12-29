@@ -36,10 +36,12 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         e_meta = data.frame(OTU = row.names(otu_meta), otu_meta, stringsAsFactors = FALSE, check.names = FALSE)
         taxa_cname <- colnames(e_meta)[2]
       }
-      # check if .biom is a csv or txt
+      # check if e_data is a csv or txt
       if (grepl(pattern = "\\.csv$", x = e_data_filepath) | grepl(pattern = "\\.txt$", x = e_data_filepath)) {
+        # create e_data
         e_data <- data.table::fread(e_data_filepath, data.table = FALSE, stringsAsFactors = FALSE, check.names = FALSE)
         edata_cname <- colnames(e_data)[1]
+        # create e_meta
         if (!is.null(e_meta_filepath) & inherits(e_meta_filepath, "character")) {
           e_meta <- data.table::fread(e_meta_filepath, data.table = FALSE, stringsAsFactors = FALSE, check.names = FALSE)
           taxa_cname <- colnames(e_meta)[2]

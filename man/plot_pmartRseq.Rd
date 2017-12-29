@@ -75,7 +75,7 @@ plot.paRes(results_object, type = "pvals", ...)
 plot.modEnv(results_object, ...)
 }
 \arguments{
-\item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaDiversity (\code{\link{alphaDiversity}}), evenness (\code{\link{evenness}}), jaccard (\code{\link{mint_jaccard}}), countFilter (\code{\link{count_based_filter}}), seqData (\code{\link{as.seqData}}), richness (\code{\link{richness}}), abundance (\code{\link{abundance}}), effectiveSpecies (\code{\link{effectiveSpecies}}), or indicatorSpecies (\code{\link{indicatorSpecies}}).}
+\item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaRes (\code{\link{alphaDiv_calc}}), evenRes (\code{\link{even_calc}}), jaccardRes (\code{\link{jaccard_calc}}), countFilter (\code{\link{count_based_filter}}), sampleFilter (\code{\link{sample_based_filter}}), seqData (\code{\link{as.seqData}}), richRes (\code{\link{richness_calc}}), abunRes (\code{\link{abundance_calc}}), effspRes (\code{\link{effsp_calc}}), indspRes (\code{\link{indsp_calc}}), paRes (\code{\link{pmartRseq_aldex2}}), or modEnv (\code{\link{mod_env}})}
 
 \item{type}{Character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds, "flag" for a bar plot showing the number of significantly expressed biomolecules at the previously specified threshold, "logfc" for a heatmap showing the log2 fold changes of the significantly expressed biomolecules, and/or "volcano" for a volcano plot showing the log2 fold changes versus -log10(pvalue). The default is "pvals".}
 
@@ -105,7 +105,7 @@ plot.modEnv(results_object, ...)
 
 \item{max_count}{Optional, a number specifying the maximum count number to show on the graph. Default is NULL.}
 
-\item{min_num}{Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the valus for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.}
+\item{min_num}{Optional, a number specifying the desired cut point in order to visualize how many OTUs would be lost if that cut point was used. sum_based_filter uses strictly less than the desired min_num, so this will show the values for strictly less than the desired min_num. Default is NULL. If fn="percent", give the decimal number, not the percentage.}
 
 \item{min_samp}{Optional, for k/a filtering, a number specifying that OTUs must be seen in at least this many samples. Default is 2 for ka filters and NULL for everything else.}
 
@@ -117,9 +117,9 @@ plot.modEnv(results_object, ...)
 
 \item{subset_val}{Optional, which values to include in the subset.}
 
-\item{abun}{Optional, an object of class 'abundance', used for plotting richness vs abundance}
+\item{abun}{Optional, an object of class 'abunRes', used for plotting richness vs abundance}
 
-\item{rich}{Optional, an object of class 'richness', used for plotting richness vs abundance}
+\item{rich}{Optional, an object of class 'richRes', used for plotting richness vs abundance}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 
@@ -247,7 +247,7 @@ NULL.}
 
 \item{y_lab}{Optional, a character vector to use as the y-axis label}
 
-\item{type}{Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of indicated species in each group, at the previously specified threshold. The default is "pvals".}
+\item{type}{Required, a character vector specifying which type of plot to create. "pvals" for a line plot showing the number of significantly expresed biomolecules at different p-value thresholds; or "flag" for a bar plot showing the number of significantly expressed biomolecules for each term, at the previously specified threshold. The default is "pvals".}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 
@@ -272,5 +272,5 @@ NULL.}
 \item{y_lab}{Optional, a character vector to use as the y-axis label}
 }
 \description{
-This function will proivde a plot for a \code{omicsData} or \code{omicsData_results} object.
+This function will provide a plot for a \code{omicsData} or \code{omicsData_results} object.
 }

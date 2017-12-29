@@ -34,7 +34,6 @@
 
 pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, adj, thresh){
   library(edgeR)
-  library(dplyr)
 
   if(!(class(omicsData) %in% c("seqData"))){
     stop("Data must be of class 'seqData'")
@@ -92,6 +91,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       eres <- edgeR::topTags(exactTest(y, pair=c(x[2],x[1])), n=nrow(omicsData$e_data), adjust.method=adj)
     })
 
+    # add a column for easy formatting later
     if(adj == "none"){
       results <- lapply(results, function(x){
         x@.Data[[1]]$FDR=x@.Data[[1]]$PValue
@@ -109,6 +109,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       return(res)
     })
 
+    # combine results #
     res2 <- do.call(cbind, res)
 
   }else if(test == "lrt"){
@@ -130,6 +131,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       return(results)
     })
 
+    # add a column for easy formatting later
     if(adj == "none"){
       results <- lapply(results, function(x){
         x@.Data[[1]]$FDR=x@.Data[[1]]$PValue
@@ -150,6 +152,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       return(res)
     })
 
+    # combine results
     res2 <- do.call(cbind, res)
 
   }else if(test == "qlftest"){
@@ -171,6 +174,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       return(results)
     })
 
+    # add a column for easy formatting later
     if(adj == "none"){
       results <- lapply(results, function(x){
         x@.Data[[1]]$FDR=x@.Data[[1]]$PValue
@@ -191,6 +195,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
       return(res)
     })
 
+    # combine results
     res2 <- do.call(cbind, res)
 
   }else if(test == "paired"){
@@ -205,6 +210,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
 
     results <- edgeR::topTags(lrt, n=nrow(omicsData$e_data), adjust.method=adj)
 
+    # add a column for easy formatting later
     if(adj == "none"){
       results@.Data[[1]]$FDR = results@.Data[[1]]$PValue
 #       results <- lapply(results, function(x){
@@ -213,6 +219,7 @@ pmartRseq_edgeR <- function(omicsData, norm_factors=NULL, test="qcml", pairs, ad
 #       })
     }
 
+    # format results
     res <- as.data.frame(results@.Data[[1]])
     res$Flag <- ifelse(res$FDR <= thresh, 1, 0)
     res$Flag[which(res$logFC < 0)] <- res$Flag[which(res$logFC < 0)] * -1

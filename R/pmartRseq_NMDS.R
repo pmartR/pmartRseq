@@ -40,12 +40,13 @@ pmartRseq_NMDS <- function(res, omicsData, grp, k, x_axis="NMDS1", y_axis="NMDS2
   NMDS <- merge(NMDS, attr(omicsData, "group_DF"), by=attr(omicsData, "cnames")$fdata_cname)
 
   # # Need at least 3 samples in each group
-  # testgrp <- table(NMDS[,grp])
-  # if(any(testgrp < 3)){
-  #   names <- names(which(testgrp < 3))
-  #   NMDS <- NMDS[-which(NMDS[,grp] %in% names),]
-  #   NMDS[,grp] <- droplevels(NMDS[,grp])
-  # }
+  testgrp <- table(NMDS[,grp])
+  if(any(testgrp < 3)){
+    names <- names(which(testgrp < 3))
+    warning("Must have at least 3 replicates per group for plot, removing groups ", paste(names, collapse=", "), " as they don't have enough replicates.")
+    NMDS <- NMDS[-which(NMDS[,grp] %in% names),]
+    NMDS[,grp] <- droplevels(NMDS[,grp])
+  }
 
   # Format treatment, "group"
   if(any(levels(NMDS[,grp]) == "")){

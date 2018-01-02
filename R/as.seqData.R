@@ -110,11 +110,11 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
   colnames(f_data) <- gsub("[^A-Za-z0-9_]","\\.",colnames(f_data))
   if(!is.null(e_meta)) colnames(e_meta) <- gsub("[^A-Za-z0-9_]","\\.",colnames(e_meta))
 
-  colnames(f_data) <- sapply(colnames(f_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
-  colnames(e_data) <- sapply(colnames(e_data), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
-  colnames(e_meta) <- sapply(colnames(e_meta), function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
+  colnames(f_data) <- sapply(colnames(f_data), function(x) ifelse(!is.na(suppressWarnings(as.numeric(substr(x,1,1)))), paste("X",x,sep=""),x))
+  colnames(e_data) <- sapply(colnames(e_data), function(x) ifelse(!is.na(suppressWarnings(as.numeric(substr(x,1,1)))), paste("X",x,sep=""),x))
+  colnames(e_meta) <- sapply(colnames(e_meta), function(x) ifelse(!is.na(suppressWarnings(as.numeric(substr(x,1,1)))), paste("X",x,sep=""),x))
 
-  if(!is.na(as.numeric(substr(fdata_cname, 1, 1)))){
+  if(!is.na(suppressWarnings(as.numeric(substr(fdata_cname, 1, 1))))){
     fdata_cname <- paste("X",fdata_cname,sep="")
   }
 

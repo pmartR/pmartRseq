@@ -77,7 +77,7 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", sca
   # Extract differential expression results
   data <- countSTAT_results$allResults
 
-  myPalette <- RColorBrewer::colorRampPalette(rev(brewer.pal(11, "Spectral")))
+  myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
 
   # Create a new plot for every test that was run
  lapply(attr(countSTAT_results, "Tests")$Test, function(t){

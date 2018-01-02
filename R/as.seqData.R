@@ -125,7 +125,7 @@ as.seqData <- function(e_data, f_data, e_meta=NULL, edata_cname, fdata_cname, da
   gene_cname <- if(!is.null(gene_cname)) gsub("[^A-Za-z0-9_]","\\.",gene_cname)
 
   f_data[,fdata_cname] <- gsub("[^A-Za-z0-9_]","\\.",f_data[,fdata_cname])
-  f_data[,fdata_cname] <- sapply(f_data[,fdata_cname], function(x) ifelse(!is.na(as.numeric(substr(x,1,1))), paste("X",x,sep=""),x))
+  f_data[,fdata_cname] <- sapply(f_data[,fdata_cname], function(x) ifelse(!is.na(suppressWarnings(as.numeric(substr(x,1,1)))), paste("X",x,sep=""),x))
 
   # check that the OTU column exists in e_data and e_meta (if applicable) #
   if (!(edata_cname %in% names(e_data))) stop(paste("OTU column ", edata_cname," not found in e_data. See details of as.seqData for specifying column names.", sep = ""))

@@ -64,7 +64,12 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
         skipLines = which.max(grepl("#", x = f[1:length(f)]))
         f_data <- data.table::fread(input=paste0(f, collapse = "\n"), sep = "\t", header = TRUE, skip = skipLines - 1, data.table = FALSE, check.names = FALSE)
         # choose the sample identifier column (first for now)
-        fdata_cname = colnames(f_data)[1]
+        #fdata_cname = colnames(f_data)[1]
+        # choose the sample identifier column by matching column names in e_data with a row in f_data
+        ids <- table(do.call(rbind, lapply(colnames(e_data)[-which(colnames(e_data)==edata_cname)], function(x) which(f_data == x, arr.ind=TRUE)))[,2])
+        ids <- ids[which(ids == max(ids))]
+        ids <- names(ids)[1]
+        fdata_cname <- colnames(f_data)[as.numeric(ids)]
       }
       # check if f_data is a .csv
       if (grepl(pattern = "\\.csv$", x = f_data_filepath)){

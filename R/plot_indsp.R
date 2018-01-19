@@ -38,7 +38,7 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
 
   # format normalized data
   attr(omicsData, "group_DF")$Group <- gsub("-","\\.",attr(omicsData, "group_DF")$Group)
-  groupDF <- unique(attr(omicsData, "group_DF")[,-which(colnames(attr(omicsData, "group_DF")) == attr(omicsData,"cnames")$fdata_cname)])
+  groupDF <- unique(attr(omicsData, "group_DF"))#[,-which(colnames(attr(omicsData, "group_DF")) == attr(omicsData,"cnames")$fdata_cname)])
   normdata <- omicsData$e_data
   normdata <- reshape2::melt(normdata)
   normdata <- merge(normdata, attr(omicsData,"group_DF"), by.x="variable", by.y=attr(omicsData,"cnames")$fdata_cname)

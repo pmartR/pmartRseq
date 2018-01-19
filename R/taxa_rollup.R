@@ -115,10 +115,10 @@ taxa_rollup <- function(omicsData, level, taxa_levels=NULL){
       attr(data,"group_DF") <- attr(omicsData, "group_DF")
     }
 
-    attr(data, "rollup")$text = paste("Data was rolled up to the ", level, " level", sep="")
-    attr(data, "rollup")$level = level
-
   }
+
+  attr(data, "rollup")$text = paste("Data was rolled up to the ", level, " level", sep="")
+  attr(data, "rollup")$level = level
 
   data$e_data[is.na(data$e_data)] <- 0
 

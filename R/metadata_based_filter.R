@@ -43,6 +43,7 @@ metadata_based_filter <- function(omicsData, criteria) {
 
   # get count of each feature
   sums <- data.frame(OTU=omicsData$e_data[,which(colnames(omicsData$e_data) == edata_cname)], Sum=apply(omicsData$e_data[,-which(colnames(omicsData$e_data) == edata_cname)], 1, function(x) sum(x, na.rm=TRUE)))
+  colnames(sums)[1] <- edata_cname
 
   # format output
   infrequent_OTUs <- merge(infrequent_OTUs, sums, by=edata_cname)

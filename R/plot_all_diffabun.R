@@ -108,6 +108,7 @@ plot_all_diffabun <- function(countSTAT_results, omicsData, x_axis="Phylum", sca
     plot.data <- merge(plot.data, omicsData$e_meta, by=attr(omicsData, "cnames")$edata_cname)
 
     lapply(attr(countSTAT_results, "comparisons")$comparison, function(c){
+      c <- gsub("[^A-Za-z0-9_]","\\.",c)
       map <- ggplot2::aes_string(x=x_axis, y="logFC", colour="padj")
       p <- ggplot2::ggplot(subset(plot.data, Comparison==c), map) +
         ggplot2::geom_point(size=ifelse(subset(plot.data, Comparison==c)$padj <= 0.1, 3, 1))+

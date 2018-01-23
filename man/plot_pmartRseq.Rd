@@ -29,50 +29,50 @@
 \alias{plot.modEnv}
 \title{Produce a plot of an omicsData Object}
 \usage{
-plot.countSTAT_results(results_object, type = "pvals", test = NULL,
-  x_lab = NULL, y_lab = NULL, plot_title = NULL, leglab = NULL,
-  FCThresh = log2(1.5), comparison = NULL, ...)
+\method{plot}{countSTAT_results}(results_object, type = "pvals",
+  test = NULL, x_lab = NULL, y_lab = NULL, plot_title = NULL,
+  leglab = NULL, FCThresh = log2(1.5), comparison = NULL, ...)
 
-plot.alphaRes(results_object, x_axis = "Group", color = "Group",
-  shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
-  y_lab = NULL, leglab = NULL, ...)
+\method{plot}{alphaRes}(results_object, x_axis = "Group", color = "Group",
+  shape = NULL, samplabel = NULL, plot_title = NULL, scales = "free_y",
+  x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
-plot.evenRes(results_object, x_axis = "Group", color = "Group",
-  shape = NULL, plot_title = NULL, scales = "free_y", x_lab = NULL,
-  y_lab = NULL, leglab = NULL, ...)
+\method{plot}{evenRes}(results_object, x_axis = "Group", color = "Group",
+  shape = NULL, samplabel = NULL, plot_title = NULL, scales = "free_y",
+  x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
-plot.jaccardRes(results_object, variable = "Median", x_axis = "Group",
-  color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
-  y_lab = NULL, leglab = NULL, ...)
+\method{plot}{jaccardRes}(results_object, variable = "Median",
+  x_axis = "Group", color = "Group", shape = NULL, samplabel = NULL,
+  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
-plot.countFilter(results_object, breaks = 100, max_count = NULL,
+\method{plot}{countFilter}(results_object, breaks = 100, max_count = NULL,
   min_num = NULL, min_samp = NULL, plot_title = NULL, x_lab = NULL,
   y_lab = NULL, ...)
 
-plot.sampleFilter(results_object, breaks = 100, max_count = NULL,
+\method{plot}{sampleFilter}(results_object, breaks = 100, max_count = NULL,
   min_num = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL, ...)
 
-plot.seqData(results_object, x_axis = "Group", class = "Phylum",
+\method{plot}{seqData}(results_object, x_axis = "Group", class = "Phylum",
   grp_fn = "median", subset_by = NULL, subset_val = NULL,
   plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
-plot.richRes(results_object, abun = NULL, x_axis = "Group",
-  color = "Group", scales = "free_y", shape = NULL, plot_title = NULL,
+\method{plot}{richRes}(results_object, abun = NULL, x_axis = "Group",
+  color = "Group", scales = "free_y", shape = NULL, samplabel = NULL,
+  plot_title = NULL, x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
+
+\method{plot}{abunRes}(results_object, rich = NULL, x_axis = "Group",
+  color = "Group", shape = NULL, samplabel = NULL, plot_title = NULL,
   x_lab = NULL, y_lab = NULL, leglab = NULL, ...)
 
-plot.abunRes(results_object, rich = NULL, x_axis = "Group",
-  color = "Group", shape = NULL, plot_title = NULL, x_lab = NULL,
+\method{plot}{effspRes}(results_object, x_axis = "Group", color = "Group",
+  shape = NULL, samplabel = NULL, plot_title = NULL, x_lab = NULL,
   y_lab = NULL, leglab = NULL, ...)
 
-plot.effspRes(results_object, x_axis = "Group", color = "Group",
-  shape = NULL, plot_title = NULL, x_lab = NULL, y_lab = NULL,
-  leglab = NULL, ...)
+\method{plot}{indspRes}(results_object, type = "pvals", ...)
 
-plot.indspRes(results_object, type = "pvals", ...)
+\method{plot}{paRes}(results_object, type = "pvals", ...)
 
-plot.paRes(results_object, type = "pvals", ...)
-
-plot.modEnv(results_object, ...)
+\method{plot}{modEnv}(results_object, ...)
 }
 \arguments{
 \item{results_object}{is an object of class countSTAT_results (\code{\link{countSTAT}}), alphaRes (\code{\link{alphaDiv_calc}}), evenRes (\code{\link{even_calc}}), jaccardRes (\code{\link{jaccard_calc}}), countFilter (\code{\link{count_based_filter}}), sampleFilter (\code{\link{sample_based_filter}}), seqData (\code{\link{as.seqData}}), richRes (\code{\link{richness_calc}}), abunRes (\code{\link{abundance_calc}}), effspRes (\code{\link{effsp_calc}}), indspRes (\code{\link{indsp_calc}}), paRes (\code{\link{pmartRseq_aldex2}}), or modEnv (\code{\link{mod_env}})}
@@ -96,6 +96,8 @@ plot.modEnv(results_object, ...)
 \item{color}{Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
+
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
 
 \item{scales}{Optional, a character vector to describe if any of the axes should be free when faceting. Default is "free_y" for a free y-axis.}
 
@@ -215,6 +217,8 @@ NULL.}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
 
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
+
 \item{plot_title}{Optional, a character vector to use as the plot title}
 
 \item{leglab}{Optional, a character vector to use as the legend label}
@@ -228,6 +232,8 @@ NULL.}
 \item{color}{Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
+
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 

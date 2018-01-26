@@ -332,12 +332,12 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, plot_title=NULL, scales="free_y",
+plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL, scales="free_y",
                           x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.alphaRes(results_object, x_axis, color, shape, plot_title, scales, x_lab, y_lab, leglab, ...)
+  .plot.alphaRes(results_object, x_axis, color, shape, samplabel, plot_title, scales, x_lab, y_lab, leglab, ...)
 }
 
-.plot.alphaRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, plot_title=NULL, scales="free_y",
+.plot.alphaRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, samplabel=NULL, plot_title=NULL, scales="free_y",
                            x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -380,6 +380,16 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
     }
   }
 
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames"))){
+      stop("Sample labels must be designated by fdata_cname")
+    }
+    else if(!(samplabel %in% attr(results_object, "cnames")$fdata_cname)){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
+    }
+  }
+
   if(!is.null(plot_title)){
     if(!is.character(plot_title)){
       stop("plot_title must be a character vector")
@@ -413,7 +423,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
     plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
   }
 
-  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape, label=samplabel)
   p <- ggplot2::ggplot(plot.data, map) +
     ggplot2::geom_jitter(size=3, width=0.1, height=0) +
     ggplot2::facet_wrap(~Test, scales=scales) +
@@ -464,12 +474,12 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, plot_title=NULL, scales="free_y",
+plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL, scales="free_y",
                          x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.evenRes(results_object, x_axis, color, shape, plot_title, scales, x_lab, y_lab, leglab, ...)
+  .plot.evenRes(results_object, x_axis, color, shape, samplabel, plot_title, scales, x_lab, y_lab, leglab, ...)
 }
 
-.plot.evenRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, plot_title=NULL, scales="free_y",
+.plot.evenRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, samplabel=NULL, plot_title=NULL, scales="free_y",
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -512,6 +522,16 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
     }
   }
 
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames"))){
+      stop("Sample labels must be designated by fdata_cname")
+    }
+    else if(!(samplabel %in% attr(results_object, "cnames")$fdata_cname)){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
+    }
+  }
+
   if(!is.null(plot_title)){
     if(!is.character(plot_title)){
       stop("plot_title must be a character vector")
@@ -545,7 +565,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
     plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
   }
 
-  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape, label=samplabel)
   p <- ggplot2::ggplot(plot.data, map) +
     ggplot2::geom_jitter(size=3, width=0.1, height=0) +
     ggplot2::facet_wrap(~Test, scales=scales) +
@@ -596,12 +616,12 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL,
                             x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
   .plot.jaccardRes(results_object, variable, x_axis, color, shape, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+.plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL,
                              x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -625,6 +645,15 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   if(!is.null(shape)){
     if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
+    }
+  }
+
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames")$fdata_cname)){
+      stop("Sample labels must be designated by fdata_cname")
+    } else if(samplabel != attr(results_object, "cnames")$fdata_cname){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -669,7 +698,7 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
   plot.data <- merge(results_object[,-which(colnames(results_object)=="Group")], attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
 
   if(variable == "Average"){
-    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape)
+    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(plot.data, map) +
       ggplot2::geom_point(size=3) +
       ggplot2::geom_errorbar(aes(ymin=Average-StdDev,ymax=Average+StdDev))+
@@ -681,7 +710,7 @@ plot.jaccardRes <- function(results_object, variable="Median", x_axis="Group", c
                      panel.grid.minor = ggplot2::element_blank(),
                      panel.border = ggplot2::element_blank())
   }else{
-    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape)
+    map <- ggplot2::aes_string(x=x_axis, y=variable, colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(plot.data, map) +
       ggplot2::geom_jitter(size=3, width=0.1, height=0) +
       ggplot2::theme_bw() +
@@ -1266,16 +1295,17 @@ plot.seqData <- function(results_object, x_axis="Group", class="Phylum", grp_fn=
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param scales Optional, a character vector specifying if any/both of the axes be free. Default is "free_y", for a free y-axis.
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group", scales="free_y", shape=NULL, plot_title=NULL,
+plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group", scales="free_y", shape=NULL, samplabel=NULL, plot_title=NULL,
                          x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.richRes(results_object, abun, x_axis, color, scales, shape, plot_title, x_lab, y_lab, leglab, ...)
+  .plot.richRes(results_object, abun, x_axis, color, scales, shape, samplabel, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group", scales="free_y", shape=NULL, plot_title=NULL,
+.plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group", scales="free_y", shape=NULL, samplabel=NULL, plot_title=NULL,
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -1309,6 +1339,16 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
   if(!is.null(shape)){
     if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
+    }
+  }
+
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames"))){
+      stop("Sample labels must be designated by fdata_cname")
+    }
+    else if(!(samplabel %in% attr(results_object, "cnames")$fdata_cname)){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -1352,7 +1392,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
       plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }
 
-    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(plot.data, map) +
       ggplot2::geom_jitter(size=3, width=0.1, height=0) +
       ggplot2::facet_wrap(~Test, scales=scales) +
@@ -1397,7 +1437,7 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
       data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }
 
-    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
+    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(data, map) +
       ggplot2::geom_jitter(size=3, width=0.1, height=0) +
       ggplot2::theme_bw() +
@@ -1443,16 +1483,17 @@ plot.richRes <- function(results_object, abun=NULL, x_axis="Group", color="Group
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL,
                          x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.abunRes(results_object, rich, x_axis, color, shape, plot_title, x_lab, y_lab, leglab, ...)
+  .plot.abunRes(results_object, rich, x_axis, color, shape, samplabel, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color=NULL, shape=NULL, plot_title=NULL,
+.plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color=NULL, shape=NULL, samplabel=NULL, plot_title=NULL,
                           x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -1495,6 +1536,16 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
     }
   }
 
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames")$fdata_cname)){
+      stop("Sample labels must be designated by fdata_cname")
+    }
+    else if(!(samplabel %in% attr(results_object, "cnames")$fdata_cname)){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
+    }
+  }
+
   if(!is.null(x_lab)){
     if(!is.character(x_lab)){
       stop("x_lab must be a character vector")
@@ -1524,7 +1575,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
       plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }
 
-    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+    map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(plot.data, map) +
       ggplot2::geom_jitter(size=3, width=0.1, height=0) +
       ggplot2::theme_bw() +
@@ -1567,7 +1618,7 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
       data <- merge(data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
     }
 
-    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape)
+    map <- ggplot2::aes_string(x="Richness", y="Abundance", colour=color, shape=shape, label=samplabel)
     p <- ggplot2::ggplot(data, map) +
       ggplot2::geom_jitter(size=3, width=0.1, height=0) +
       ggplot2::theme_bw() +
@@ -1612,16 +1663,17 @@ plot.abunRes <- function(results_object, rich=NULL, x_axis="Group", color="Group
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label
 #'@param y_lab Optional, a character vector to use as the y-axis label
-plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, plot_title=NULL,
+plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=NULL, samplabel=NULL, plot_title=NULL,
                           x_lab=NULL, y_lab=NULL, leglab=NULL, ...) {
-  .plot.effspRes(results_object, x_axis, color, shape, plot_title, x_lab, y_lab, leglab, ...)
+  .plot.effspRes(results_object, x_axis, color, shape, samplabel, plot_title, x_lab, y_lab, leglab, ...)
 }
 
-.plot.effspRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, plot_title=NULL,
+.plot.effspRes <- function(results_object, x_axis="Group", color=NULL, shape=NULL, samplabel=NULL, plot_title=NULL,
                            x_lab=NULL, y_lab=NULL, leglab=NULL) {
 
   library(ggplot2)
@@ -1655,6 +1707,16 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
   if(!is.null(shape)){
     if(!(shape %in% c("Group","Groups","group","groups",names(attr(results_object, "group_DF"))))){
       stop("shape must be one of the columns in group_DF")
+    }
+  }
+
+  if(!is.null(samplabel)){
+    if(is.null(attr(results_object, "cnames")$fdata_cname)){
+      stop("Sample labels must be designated by fdata_cname")
+    }
+    else if(!(samplabel %in% attr(results_object, "cnames")$fdata_cname)){
+      warning("sample label must be fdata_cname, setting to that value")
+      samplabel <-  attr(results_object, "cnames")$fdata_cname
     }
   }
 
@@ -1692,7 +1754,7 @@ plot.effspRes <- function(results_object, x_axis="Group", color="Group", shape=N
     plot.data <- merge(plot.data, attr(results_object, "group_DF"), by=attr(results_object, "cnames")$fdata_cname)
   }
 
-  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape)
+  map <- ggplot2::aes_string(x=x_axis, y="value", colour=color, shape=shape, label=samplabel)
   p <- ggplot2::ggplot(plot.data, map) +
     ggplot2::geom_jitter(size=3, width=0.1, height=0) +
     ggplot2::theme_bw() +

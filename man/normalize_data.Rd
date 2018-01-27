@@ -39,6 +39,10 @@ The choices for normalization currently available, \code{norm_fn}, are:
  \tab \cr
  \code{"tmm"}  \tab Normalize the data using the trimmed mean of M values\cr
  \tab \cr
+ \code{"log"} \tab Normalize data using a log2 transformation\cr
+ \tab \cr
+ \code{"clr"} \tab Normalize data using centered-log ratio\cr
+ \tab \cr
  \code{"none"} \tab No normalization is performed\cr
  \tab \cr
  }

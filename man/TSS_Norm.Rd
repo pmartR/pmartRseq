@@ -23,7 +23,7 @@ Count data is normalized by the total count, dividing by the total count of each
 \examples{
 library(mintJansson)
 data(cDNA_hiseq_data)
-cDNA_TSS <- Quant_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+cDNA_TSS <- TSS_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
 norm_factors <- attr(cDNA_TSS,"data_info")$scale_param
 
 }

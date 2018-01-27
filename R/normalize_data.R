@@ -19,6 +19,10 @@
 #'  \tab \cr
 #'  \code{"tmm"}  \tab Normalize the data using the trimmed mean of M values\cr
 #'  \tab \cr
+#'  \code{"log"} \tab Normalize data using a log2 transformation\cr
+#'  \tab \cr
+#'  \code{"clr"} \tab Normalize data using centered-log ratio\cr
+#'  \tab \cr
 #'  \code{"none"} \tab No normalization is performed\cr
 #'  \tab \cr
 #'  }
@@ -85,12 +89,12 @@ normalize_data <- function(omicsData, norm_fn, normalize=FALSE, ...){
   #omicsData_groupDF <- attr(omicsData, "group_DF")
 
 
-  norm_fn <- try(match.arg(tolower(norm_fn),c("percentile","tss","rarefy","poisson","deseq","tmm","css","none")),silent=TRUE)
+  norm_fn <- try(match.arg(tolower(norm_fn),c("percentile","tss","rarefy","poisson","deseq","tmm","css","log","clr","none")),silent=TRUE)
 
   # apply normalization scheme
 
-  if(norm_fn%in%c("percentile","tss","poisson","deseq","tmm","css")){
-    fn_to_use <- switch(norm_fn,percentile=Quant_Norm,tss=TSS_Norm,poisson=poisson_norm,deseq=med_scounts_norm,tmm=TMM_Norm,css=CSS_Norm)
+  if(norm_fn%in%c("percentile","tss","poisson","deseq","tmm","css","clr","log")){
+    fn_to_use <- switch(norm_fn,percentile=Quant_Norm,tss=TSS_Norm,poisson=poisson_norm,deseq=med_scounts_norm,tmm=TMM_Norm,css=CSS_Norm,clr=CLR_Norm,log=Log_Norm)
     temp <- fn_to_use(e_data = edata, edata_id=edata_id, ...)
     norm_results <- list(norm_data=temp$normed_data, location_param=temp$location_param, scale_param=temp$scale_param)
 

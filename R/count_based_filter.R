@@ -158,7 +158,7 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
 
       }else if(fn == "nonmiss"){
         # Presence/absence of each OTU
-        nonmiss_OTUs <- !is.na(ndata[, -which(colnames(ndata) == edata_cname)])
+        nonmiss_OTUs <- !is.na(ndata[, -which(colnames(ndata) == edata_cname)]) & ndata[, -which(colnames(ndata) == edata_cname)] == 0
         infrequent_OTUs <- data.frame(ndata[, edata_cname], rowSums(nonmiss_OTUs))
         colnames(infrequent_OTUs) <- c(edata_cname, "nonmissOTUs")
 

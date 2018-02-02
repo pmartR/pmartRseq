@@ -103,6 +103,8 @@ plot_indsp <- function(indsp, omicsData, x_axis = "Group", group = "Phylum"){
   alldata[,attr(omicsData,"cnames")$edata_cname] <- factor(alldata[,attr(omicsData,"cnames")$edata_cname],
                                                            levels=unique(alldata[order(alldata[,group]),attr(omicsData,"cnames")$edata_cname]))
 
+  alldata <- alldata %>% dplyr::group_by_(attr(omicsData, "cnames")$edata_cname, x_axis, group) %>% dplyr::summarise(indsp=mean(indsp, na.rm=TRUE), MeanNorm=mean(MeanNorm, na.rm=TRUE))
+
   # make better colors
   TaxonBarPallette <- c("#FF00BB","#CC00FF","#F2BFFF","#7A0099","#0022FF","#8091FF","#001499","#00F2FF","#CCFCFF","#009199","#00D90E","#BFFFC4","#007308","#FFFF00","#DDFF00","#B3B300","#FF9100","#FFC880","#995700","#FF0000","#FFABAB","#990000","#BFBFBF","#636363","#000000")
 

@@ -255,18 +255,31 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
     #levels     <- levels( conditions )
     #conditions <- apply(conds, 2, as.factor)
     conditions <- omicsData$f_data[,mainEffects]
+    if(length(mainEffects) == 1){
+      conditions <- as.factor(conditions)
+    }else{
+      conditions <- apply(conditions, 2, as.factor)
+    }
     #names(conditions) <- colnames(conds)
     #conditions <- apply(conditions, 2, as.factor)
     # site <- as.factor(site)
     # crop <- as.factor(crop)
     # agg <- as.factor(agg)
 
-    levels <- apply(conditions, 2, levels)
+    if(length(mainEffects) == 1){
+      levels <- levels(conditions)
+    }else{
+      levels <- apply(conditions, 2, levels)
+    }
     # levels.site <- levels(site)
     # levels.crop <- levels(crop)
     # levels.agg <- levels(agg)
 
-    invisible(apply(conditions, 2, function(x) if(length(x) != ALDEx2::numConditions(clr)) stop("mismatch between conds and names(clr)")))
+    if(length(mainEffects) == 1){
+      if(length(conditions) != ALDEx2::numConditions(clr)) stop("mismatch between conds and names(clr)")
+    }else{
+      invisible(apply(conditions, 2, function(x) if(length(x) != ALDEx2::numConditions(clr)) stop("mismatch between conds and names(clr)")))
+    }
 
     # if ( length( site ) !=  numConditions(clr) )  stop("mismatch btw 'length(site)' and 'length(names(clr))'")
     # if ( length( crop ) !=  numConditions(clr) )  stop("mismatch btw 'length(crop)' and 'length(names(clr))'")

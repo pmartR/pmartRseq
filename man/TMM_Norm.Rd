@@ -29,7 +29,7 @@ Count data is normalized by the trimmed mean of m values.
 \examples{
 library(mintJansson)
 data(cDNA_hiseq_data)
-cDNA_TMM <- Quant_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+cDNA_TMM <- TMM_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
 norm_factors <- attr(cDNA_TMM,"data_info")$scale_param
 
 }

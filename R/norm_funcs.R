@@ -305,7 +305,7 @@ Rarefy <- function(e_data, edata_id, size=NULL){
 #' @examples
 #' library(mintJansson)
 #' data(cDNA_hiseq_data)
-#' cDNA_TMM <- Quant_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+#' cDNA_TMM <- TMM_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
 #' norm_factors <- attr(cDNA_TMM,"data_info")$scale_param
 #'
 #' @author Allison Thompson, Lisa Bramer
@@ -431,7 +431,7 @@ TMM_Norm <- function(e_data,edata_id, reference=NULL,qm=0.30,qa=0.05){
 #' @examples
 #' library(mintJansson)
 #' data(cDNA_hiseq_data)
-#' cDNA_TSS <- Quant_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+#' cDNA_TSS <- TSS_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
 #' norm_factors <- attr(cDNA_TSS,"data_info")$scale_param
 #'
 #' @author Allison Thompson, Lisa Bramer
@@ -443,6 +443,95 @@ TSS_Norm <- function(e_data, edata_id){
   # normalize by the total sum in each sample
   scale_param <- colSums(e_data_norm, na.rm=T)
   e_data_norm <- apply(e_data_norm, 2, function(x) x / sum(x, na.rm = TRUE))
+
+  # put data back together
+  e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
+  colnames(e_data)[1] <- edata_id
+
+  return(list(normed_data=e_data, location_param=NULL, scale_param=scale_param))
+}
+
+
+#' Log transformation of count data
+#'
+#' The method normalizes count data by log2 transforming all of the counts
+#'
+#' @param e_data a \eqn{p \times n} data.frame of count data, where \eqn{p} is the number of features and \eqn{n} is the number of samples. Each row corresponds to data for a feature, with the first column giving the feature name.
+#'@param edata_id character string indicating the name of the feature identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
+#'
+#' @details Count data is normalized by a log2 transformation
+#'
+#' @return List containing 3 elements: norm_data is a data.frame with same structure as e_data that contains the Log2-normalized data, location_param is NULL, scale_param is a numeric vector of 1's, for later use.
+#'
+#' @examples
+#' library(mintJansson)
+#' data(cDNA_hiseq_data)
+#' cDNA_log <- Log_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+#'
+#' @author Allison Thompson
+#'
+
+Log_Norm <- function(e_data, edata_id){
+  e_data_norm <- e_data[,-which(colnames(e_data)==edata_id)]
+
+  # change 0 to NA #
+  e_data_norm[e_data_norm == 0] <- NA
+
+  # normalize by log transforming the data
+  e_data_norm <- log2(e_data_norm)
+
+  # put data back together
+  e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)
+  colnames(e_data)[1] <- edata_id
+
+  # add fake scale param for later use
+  scale_param <- rep(1, ncol(e_data[,-which(colnames(e_data) == edata_id)]))
+  names(scale_param) <- colnames(e_data)[-which(colnames(e_data) == edata_id)]
+
+
+  return(list(normed_data=e_data, location_param=NULL, scale_param=scale_param))
+}
+
+
+#' Centered-log Ratio Normalization of count data
+#'
+#' The method normalizes count data by a centered-log ratio
+#'
+#' @param e_data a \eqn{p \times n} data.frame of count data, where \eqn{p} is the number of features and \eqn{n} is the number of samples. Each row corresponds to data for a feature, with the first column giving the feature name.
+#'@param edata_id character string indicating the name of the feature identifier. Usually obtained by calling \code{attr(omicsData, "cnames")$edata_cname}.
+#'
+#' @details Count data is normalized by centered-log ratios
+#'
+#' @return List containing 3 elements: norm_data is a data.frame with same structure as e_data that contains the Log2-normalized data, location_param is NULL, scale_param is a numeric vector of 1's, for later use.
+#'
+#' @examples
+#' library(mintJansson)
+#' data(cDNA_hiseq_data)
+#' cDNA_log <- Log_Norm(e_data = cDNA_hiseq_data$e_data, edata_id = attr(cDNA_hiseq_data, "cnames")$edata_cname)
+#'
+#' @author Allison Thompson
+#'
+
+CLR_Norm <- function(e_data, edata_id, prior){
+  if((!is.numeric(prior) & !is.null(prior)) | length(prior) > 1){
+    stop("prior must either be NULL or a numeric number")
+  }
+
+  e_data_norm <- e_data[,-which(colnames(e_data)==edata_id)]
+
+  # Add prior, if given
+  if(!is.null(prior)){
+    e_data_norm <- e_data_norm + prior
+  }
+
+  # change 0 to NA #
+  e_data_norm[e_data_norm == 0] <- NA
+
+  # add fake scale param for later use
+  scale_param <- apply(e_data_norm, 2, function(x) mean(log2(x), na.rm=TRUE))
+
+  # normalize by log transforming the data
+  e_data_norm <- apply(log2(e_data_norm), 2, function(x) x - mean(x, na.rm=TRUE))
 
   # put data back together
   e_data <- data.frame(e_data[,which(colnames(e_data)==edata_id)],e_data_norm)

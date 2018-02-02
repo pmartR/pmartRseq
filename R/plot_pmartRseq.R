@@ -327,6 +327,7 @@ plot.countSTAT_results <- function(results_object, type="pvals", test=NULL, x_la
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param scales Optional, a character vector to describe if any of the axes should be free when faceting. Default is "free_y" for a free y-axis.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
@@ -469,6 +470,7 @@ plot.alphaRes <- function(results_object, x_axis="Group", color="Group", shape=N
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param scales Optional, a character vector to describe if any of the axes should be free when faceting. Default is "free_y" for a free y-axis.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
@@ -612,6 +614,7 @@ plot.evenRes <- function(results_object, x_axis="Group", color="Group", shape=NU
 #'@param x_axis Required, a character vector specifying which variable to put on the x-axis, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param color Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".
 #'@param shape Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.
+#'@param samplabel Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.
 #'@param plot_title Optional, a character vector to use as the plot title
 #'@param leglab Optional, a character vector to use as the legend label
 #'@param x_lab Optional, a character vector to use as the x-axis label

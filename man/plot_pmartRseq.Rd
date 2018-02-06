@@ -137,6 +137,8 @@
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
 
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
+
 \item{scales}{Optional, a character vector to describe if any of the axes should be free when faceting. Default is "free_y" for a free y-axis.}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
@@ -152,6 +154,8 @@
 \item{color}{Optional, a character vector specifying which variable to map to colors, must be one of the column names in attr(results_object, "group_DF"). Default is "Group".}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
+
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 
@@ -202,6 +206,8 @@ NULL.}
 \item{scales}{Optional, a character vector specifying if any/both of the axes be free. Default is "free_y", for a free y-axis.}
 
 \item{shape}{Optional, a character vector specifying which variable to map to shape, must be one of the column names in attr(results_object, "group_DF"). Default is NULL.}
+
+\item{samplabel}{Optional, a character vector specifying which variable to map to label, must be equal to fdata cname. Default is NULL.}
 
 \item{plot_title}{Optional, a character vector to use as the plot title}
 

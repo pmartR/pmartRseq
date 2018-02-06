@@ -44,7 +44,7 @@ network_plot <- function(netGraph, omicsData=NULL, modData=NULL, colour="Phylum"
     stop("netGraph must be an object of class 'networkGraph'.")
   }
 
-  if(!(colour %in% c(colnames(omicsData$e_meta), "Module"))){
+  if(!(colour %in% c(colnames(omicsData$e_meta), "Module")) & !is.null(colour)){
     stop("colour must be either a column name in omicsData$e_meta or 'Module' if coloring by module.")
   }
 

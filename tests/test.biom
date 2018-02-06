@@ -1,0 +1,1 @@
+{"id": "None","format": "Biological Observation Matrix 1.0.0","format_url": "http://biom-format.org","matrix_type": "sparse","generated_by": "BIOM-Format 2.1.5","date": "2016-06-23T16:19:28.233390","type": "OTU table","matrix_element_type": "float","shape": [9407, 41],"data":None}

@@ -33,7 +33,6 @@
 #' @export
 countSTAT <- function(omicsData, norm_factors=NULL, comparisons, control = NULL, test, pval_adjust = "BH", pval_thresh = 0.05 ){
 
-  library(reshape2)
 
   if(!(class(omicsData) %in% c("seqData"))){
     stop("Data must be of class 'seqData'")

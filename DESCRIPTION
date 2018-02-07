@@ -8,11 +8,34 @@ Encoding: UTF-8
 LazyData: true
 Depends:
     R (>= 3.3.2),
+Imports:
     data.table,
     plyr,
     dplyr,
     e1071,
-    reshape2
+	ALDEx2,
+	DESeq2,
+	Hmisc,
+	RColorBrewer,
+	biomformat,
+	breakaway,
+	broom,
+	car,
+	edgeR,
+	fdrtool,
+	ggplot2,
+	gplots,
+	gtools,
+	igraph,
+	indicspecies,
+	lme4,
+	methods,
+	pcaMethods,
+	psych,
+	reshape2,
+	scales,
+	stringr,
+	vegan
 RoxygenNote: 6.0.1.9000
 Suggests: 
     testthat

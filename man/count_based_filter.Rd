@@ -4,16 +4,24 @@
 \alias{count_based_filter}
 \title{Count filter object}
 \usage{
-count_based_filter(omicsData, fn = "sum")
+count_based_filter(omicsData, fn = "sum", group = FALSE, group_var = NULL)
 }
 \arguments{
-\item{omicsData}{An object of one of the classes "cDNAdata", "rRNAdata", or
-"gDNAdata"}
+\item{omicsData}{An object of one of the classes "seqData"}
 
 \item{fn}{Specify "mean" to use the mean count of each OTU, "percent" to use
 mean counts lower than a certain percent, "max" to use the max count across
-all samples, "sum" to use the total count of each OTU, or "nonmiss" to use
-presence/absence counts.}
+all samples, "sum" to use the total count of each OTU, "nonmiss" to use
+presence/absence counts, or "ka" to use k over a filtering (need at least
+k counts of OTUs seen in at least a samples).}
+
+\item{group}{Logical, should filtering function be performed separately for
+specified groups. Default is FALSE.}
+
+\item{group_var}{Character, if filtering should be performed separately for
+specified groups, then specify which grouping variable to use. If group =
+TRUE and group_var = NULL, will use 'Group' from attr(omicsData, "group_DF").
+Default is NULL.}
 }
 \value{
 An object of class countFilter (also a data.frame) that contains the
@@ -26,7 +34,7 @@ calculations needed to filter the data based off a specified function and
 limit
 }
 \examples{
-
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 omicsData <- rRNA_data
@@ -61,6 +69,12 @@ head(nonmiss_lim)
 summary(nonmiss_lim)
 plot(nonmiss_lim)
 
+#Find order of samples for k/a filtering
+ka_lim <- count_based_filter(omicsData, fn="ka")
+head(ka_lim)
+summary(ka_lim)
+plot(ka_lim)
+}
 
 }
 \references{

@@ -4,26 +4,51 @@
 \alias{applyFilt}
 \alias{applyFilt}
 \alias{applyFilt.countFilter}
-\title{Apply a filter to a mintR S3 object}
+\alias{applyFilt}
+\alias{applyFilt.sampleFilter}
+\alias{applyFilt}
+\alias{applyFilt.metaFilter}
+\title{Apply a filter to an omicsData object}
 \usage{
 applyFilt(filter_object, omicsData, ...)
 
-\method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2)
+\method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2,
+  num_samps = NULL)
+
+\method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2,
+  samps_to_remove = NULL)
+
+\method{applyFilt}{metaFilter}(filter_object, omicsData, keep_taxa)
 }
 \arguments{
-\item{filter_object}{an object of the class "countFilter", created by \code{count_based_filter}.}
+\item{filter_object}{an object of the class "countFilter" or "sampleFilter", created by \code{count_based_filter} \code{sample_based_filter}.}
 
-\item{omicsData}{an object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata} usually created by \code{\link{as.cDNAdata}}, \code{\link{as.gDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class \code{seqData} created by \code{\link{as.seqData}}.}
 
-\item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed.}
+\item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.}
+
+\item{num_samps}{for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features}
+
+\item{samps_to_remove}{Sample names selected to remove based on sample metadata criteria}
+
+\item{keep_taxa}{Character vector specifying which values to keep}
+
+\item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
-An object of the class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}, with specified cname_ids, edata_cnames, and emeta_cnames filtered out of the appropriate datasets.
+An object of the class \code{seqData}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
 }
 \description{
-This function takes a filter object of class "countFilter", and applies the filter to a dataset of class \code{cDNAdata}, \code{gDNAdata}, or \code{rRNAdata}.
+This function takes a filter object of class "countFilter" or "sampleFilter", and applies the filter to a dataset of class 'seqData'.
+
+function for countFilter
+
+function for countFilter
+
+function for metaFilter
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 
@@ -34,10 +59,10 @@ print(str(attributes(rRNAdata2)$filters))
 to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
 rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
 print(str(attributes(rRNAdata3)$filters))
-
+}
 }
 \seealso{
-\code{\link{count_based_filter}}
+\code{\link{count_based_filter}} \code{\link{sample_based_filter}}
 }
 \author{
 Allison Thompson

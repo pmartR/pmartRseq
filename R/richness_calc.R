@@ -2,7 +2,7 @@
 #'
 #' This function calculates the unique number of features seen in each sample.
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param index a character vector stating which of the calculations to perform - "observed" for the observed richness, "chao1" the bias-corrected chao1 richness estimator, and/or "ace" for the abundance-based coverage richness estimator. Default is to perform all 3 calculations.
 #'
 #' @details Calculates richness of count data
@@ -11,12 +11,14 @@
 #' @references Chao, Anne. Species Richness Estimation.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_richness <- richness_calc(omicsData = rRNA_data)
 #' rRNA_richness
 #' summary(rRNA_richness)
 #' plot(rRNA_richness)
+#' }
 #'
 #' @author Allison Thompson
 #'
@@ -27,7 +29,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if(!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if(!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
   if(attr(omicsData, "data_info")$data_scale!='count'){
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
@@ -44,7 +46,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   ## end initial checks ##
 
   # change 0 to NA, makes for easier calculation
-  omicsData$e_data[omicsData$e_data == 0] <- NA #mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+  omicsData$e_data[omicsData$e_data == 0] <- NA
 
   edata_cname <- attr(omicsData, "cnames")$edata_cname
 
@@ -91,7 +93,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
   if("ace" %in% tolower(index)){
     # Change NA to 0 and extract e_data - change edata_cname column to rownames and remove from data
     temp <- omicsData$e_data
-    temp[temp == 0] <- NA #mintR:::helper_edata_replace(omicsData=omicsData, x=0 , y=NA)
+    temp[temp == 0] <- NA
     e_data <- temp[,-which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
     rownames(e_data) <- omicsData$e_data[,which(colnames(omicsData$e_data) == attr(omicsData, "cnames")$edata_cname)]
 
@@ -139,7 +141,7 @@ richness_calc <- function(omicsData, index=c("observed","chao1","ace","break")){
     e_data <- omicsData$e_data[,-1]
 
     # Run breakaway function and only pull out the estimated richness value
-    chats <- apply(e_data, 2, function(x) breakaway(as.data.frame(table(x)), print=FALSE, plot=FALSE, answers=TRUE, force=FALSE)$est)
+    chats <- apply(e_data, 2, function(x) breakaway::breakaway(as.data.frame(table(x)), print=FALSE, plot=FALSE, answers=TRUE, force=FALSE)$est)
     res[["break"]] <- chats
   }
 

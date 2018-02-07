@@ -7,7 +7,7 @@
 alphaDiv_calc(omicsData, index = c("shannon", "simpson", "invsimpson"))
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{index}{a character vector stating which of the calculations to perform - "shannon" for Shannon's diversity index, "simpson" for Simpson's diversity index, and/or "invsimpson" for the inverse Simpson's diversity index. Default is to perform all 3 calculations.}
 }
@@ -25,12 +25,14 @@ Shannon or Shannon–Weaver (or Shannon–Wiener) index is defined as H = -sum(p
 Both variants of Simpson's index are based on D = sum(p_i^2). Choice simpson returns 1-D and invsimpson returns 1/D.
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_diversity <- alphaDiv_calc(omicsData = rRNA_data)
 rRNA_diversity
 summary(rRNA_diversity)
 plot(rRNA_diversity)
+}
 
 }
 \author{

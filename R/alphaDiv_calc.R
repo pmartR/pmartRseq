@@ -2,7 +2,7 @@
 #'
 #' This function calculates Shannon's, Simpson's, and/or Inverse Simpson's alpha diversity indices.
 #'
-#' @param omicsData an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}}, or \code{\link{as.rRNAdata}}, respectively.
+#' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param index a character vector stating which of the calculations to perform - "shannon" for Shannon's diversity index, "simpson" for Simpson's diversity index, and/or "invsimpson" for the inverse Simpson's diversity index. Default is to perform all 3 calculations.
 #'
 #' @details Alpha diversity is calculated for each sample in the data, using Shannon's diversity index (Shannon's H), Simpson's diversity index (Simpson's D), and/or inverse Simpson's diversity index.
@@ -14,12 +14,14 @@
 #' @return An object of class alphaRes (also a data.frame) containing the diversity value(s) for every sample in the data object.
 #'
 #' @examples
+#' \dontrun{
 #' library(mintJansson)
 #' data(rRNA_data)
 #' rRNA_diversity <- alphaDiv_calc(omicsData = rRNA_data)
 #' rRNA_diversity
 #' summary(rRNA_diversity)
 #' plot(rRNA_diversity)
+#'}
 #'
 #' @author Allison Thompson
 #'
@@ -29,7 +31,7 @@ alphaDiv_calc <- function(omicsData, index=c("shannon","simpson","invsimpson")){
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if(!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if(!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
   if(attr(omicsData, "data_info")$data_scale!='count'){
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")

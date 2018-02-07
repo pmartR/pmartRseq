@@ -4,10 +4,10 @@
 #' calculations needed to filter the data based off a specified function and
 #' limit
 #'
-#' @param omicsData An object of one of the classes "cDNAdata", "rRNAdata", or
-#'   "gDNAdata"
+#' @param omicsData An object of the classes "seqData"
 #'
-#' @param fn Specify "sum" to use the total OTU count of each sample
+#' @param fn Specify "sum" to use the total OTU count of each sample and "criteria"
+#' to use sample names
 #'
 #' @return An object of class sampleFilter (also a data.frame) that contains the
 #'   sample identifier and the sum count across all OTUs.
@@ -22,7 +22,7 @@ sample_based_filter <- function(omicsData, fn="sum") {
   ## some initial checks ##
 
   # check that omicsData is of appropriate class #
-  if (!class(omicsData) %in% c("rRNAdata", "gDNAdata", "cDNAdata")) stop("omicsData must be of class 'rRNAdata', 'gDNAdata', or 'cDNAdata'")
+  if (!class(omicsData) %in% c("seqData")) stop("omicsData must be of class 'seqData'")
 
   if (attr(omicsData, "data_info")$data_scale!='count') {
     warning("This function is meant for count data like 'rRNA', 'gDNA' or 'cDNA' data.")
@@ -44,13 +44,13 @@ sample_based_filter <- function(omicsData, fn="sum") {
     colnames(infrequent_OTUs) <- c("Sample", "sumSamps")
 
  }
-  
+
   if (fn == "criteria") {
     # Total number of  OTUs per sample
     sum_Samps <- colSums(edata[, -which(colnames(edata) == edata_cname)], na.rm=TRUE)
     infrequent_OTUs <- data.frame(names(omicsData$e_data)[-which(names(omicsData$e_data) == edata_cname)], FALSE)
     colnames(infrequent_OTUs) <- c("Sample", "criteriaSamps")
-    
+
   }
 
   class(infrequent_OTUs) <- c("sampleFilter",class(infrequent_OTUs))

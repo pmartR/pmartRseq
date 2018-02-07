@@ -7,7 +7,7 @@
 richness_calc(omicsData, index = c("observed", "chao1", "ace", "break"))
 }
 \arguments{
-\item{omicsData}{an object of the class 'gDNAdata', 'cDNAdata', or 'rRNAdata' usually created by \code{\link{as.gDNAdata}}, \code{\link{as.cDNAdata}},or \code{\link{as.rRNAdata}}, respectively.}
+\item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
 
 \item{index}{a character vector stating which of the calculations to perform - "observed" for the observed richness, "chao1" the bias-corrected chao1 richness estimator, and/or "ace" for the abundance-based coverage richness estimator. Default is to perform all 3 calculations.}
 }
@@ -21,12 +21,14 @@ This function calculates the unique number of features seen in each sample.
 Calculates richness of count data
 }
 \examples{
+\dontrun{
 library(mintJansson)
 data(rRNA_data)
 rRNA_richness <- richness_calc(omicsData = rRNA_data)
 rRNA_richness
 summary(rRNA_richness)
 plot(rRNA_richness)
+}
 
 }
 \references{

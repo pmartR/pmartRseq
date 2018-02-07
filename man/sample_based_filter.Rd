@@ -7,10 +7,10 @@
 sample_based_filter(omicsData, fn = "sum")
 }
 \arguments{
-\item{omicsData}{An object of one of the classes "cDNAdata", "rRNAdata", or
-"gDNAdata"}
+\item{omicsData}{An object of the classes "seqData"}
 
-\item{fn}{Specify "sum" to use the total OTU count of each sample}
+\item{fn}{Specify "sum" to use the total OTU count of each sample and "criteria"
+to use sample names}
 }
 \value{
 An object of class sampleFilter (also a data.frame) that contains the

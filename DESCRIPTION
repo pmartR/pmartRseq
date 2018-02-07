@@ -1,17 +1,41 @@
 Package: pmartRseq
-Title: What the Package Does (one line, title case)
+Title: Analysis and Visualization of 16S Data
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.3.2)
-License: What license is it under?
+Authors@R: person("Allison", "Thompson", email = "allison.thompson@pnnl.gov", role = c("aut", "cre"))
+Description: Provides analysis pipeline tools for processing 16S data. Integrates many different packages to easily support functionality including: normalization, filtering, indicator species, outlier selection, beta diversity, differential abundance, network analysis, and community metrics. Acts as the back end support for a Meatagenomics Exploratory Analysis Dashboard (mead).
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
+    R (>= 3.3.2),
+Imports:
     data.table,
     plyr,
     dplyr,
-    rrcov,
     e1071,
-    reshape2
+	ALDEx2,
+	DESeq2,
+	Hmisc,
+	RColorBrewer,
+	biomformat,
+	breakaway,
+	broom,
+	car,
+	edgeR,
+	fdrtool,
+	ggplot2,
+	gplots,
+	gtools,
+	igraph,
+	indicspecies,
+	lme4,
+	methods,
+	pcaMethods,
+	psych,
+	reshape2,
+	scales,
+	stringr,
+	vegan
 RoxygenNote: 6.0.1.9000
+Suggests: 
+    testthat

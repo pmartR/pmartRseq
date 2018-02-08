@@ -11,5 +11,5 @@ test_that("converting import works", {
                                taxa_cname = imported_data$guessed_taxa_cname,
                                data_type = "rRNA")
   expect_output(str(structured_data), "List")
-  expect_is(structred_data, "seqData")
+  expect_is(structured_data, "seqData")
 })

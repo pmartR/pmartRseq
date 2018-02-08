@@ -25,8 +25,8 @@ import_seqData <- function(e_data_filepath, f_data_filepath, e_meta_filepath = N
   if (!(grepl(pattern = "\\.biom$", x = e_data_filepath) | grepl(pattern = "\\.txt$", x = e_data_filepath) | grepl(pattern = "\\.csv$", x = e_data_filepath))){
     stop("Unsupported biom format. Must end in .biom, .csv, or .txt")
   }
-  if (!(grepl(pattern = "\\.txt$", x = f_data_filepath) | grepl(pattern = "\\.csv$", x = f_data_filepath))){
-    stop("Unsupported sample information format. Must end in .csv or .txt")
+  if (!(grepl(pattern = "\\.txt$", x = f_data_filepath) | grepl(pattern = "\\.csv$", x = f_data_filepath) | grepl(pattern = "\\.fasta$", x = f_data_filepath))){
+    stop("Unsupported sample information format. Must end in .fasta, .csv, or .txt")
   }
   # check class structures for paths and attempt read #
   if (inherits(e_data_filepath, "character")) {

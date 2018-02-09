@@ -4,7 +4,7 @@ test_that("import file checks work", {
   expect_error(import_seqData(e_data_filepath = "doesn't matter", f_data_filepath = "doesn't matter"),
                "Unsupported biom format. Must end in .biom, .csv, or .txt")
   expect_error(import_seqData(f_data_filepath = "doesn't matter", e_data_filepath = "something.biom"),
-               "Unsupported sample information format. Must end in .csv or .txt")
+               "Unsupported sample information format. Must end in .fasta, .csv, or .txt")
 })
 
 test_that("import works", {

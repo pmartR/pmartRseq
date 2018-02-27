@@ -41,7 +41,8 @@
 
 \method{summary}{effspRes}(pmartRseq_results)
 
-\method{summary}{countFilter}(pmartRseq_results, min_num = NULL)
+\method{summary}{countFilter}(pmartRseq_results, min_num = NULL,
+  min_samp = NULL)
 
 \method{summary}{indspRes}(pmartRseq_results)
 

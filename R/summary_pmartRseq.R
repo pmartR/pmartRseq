@@ -211,13 +211,22 @@ summary.effspRes <- function(pmartRseq_results){
 #' @rdname summary-pmartRseq
 #' @name summary-pmartRseq
 #' @param min_num An integer value specifying the minimum number of fn counts a feature must have to be kept for statistical analysis. If fn="percent", give the decimal number, not the percentage.
-summary.countFilter <- function(pmartRseq_results, min_num=NULL){
+summary.countFilter <- function(pmartRseq_results, min_num=NULL, min_samp=NULL){
 
   if(!is.null(min_num)){
     # check that min_num is not a vector #
     if(length(min_num) > 1){ stop("min_num must be of length 1")}
     # check that min_num is numeric >= 0 #
     if(!is.numeric(min_num) | min_num < 0){ stop("min_num must be an integer >= 0")}
+  }
+
+  if(attr(pmartRseq_results, "function") == "ka"){
+    if(is.null(min_samp)){
+      stop("min_samp must be specified")
+    }
+    if(length(min_samp) > 1 | min_samp < 0 | !is.numeric(min_num)){
+      stop("min_samp must be a single integer >= 0")
+    }
   }
 
   if(!is.null(attr(pmartRseq_results, "group_var"))){
@@ -229,10 +238,17 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
         # subset data to specified group
         temp <- pmartRseq_results[which(pmartRseq_results$Group == x),]
 
-        # get number molecules tested
-        num_not_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] <= min_num))
-        # get number molecules not tested
-        num_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] > min_num))
+        if(filt_fn == "ka"){
+          # get number molecules tested
+          num_not_tested <- length(which(temp[,paste("NumSamples_",min_samp,sep="")] <= min_num))
+          # get number molecules not tested
+          num_tested <- length(which(temp[,paste("NumSamples_",min_samp,sep="")] > min_num))
+        }else{
+          # get number molecules tested
+          num_not_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] <= min_num))
+          # get number molecules not tested
+          num_tested <- length(which(temp[,paste(filt_fn,"OTUs",sep="")] > min_num))
+        }
 
         # format return
         data.frame(Group=x, Num.Not.Filtered=num_tested, Num.Filtered=num_not_tested)
@@ -261,11 +277,17 @@ summary.countFilter <- function(pmartRseq_results, min_num=NULL){
     filt_fn <- attr(pmartRseq_results, "function")
 
     if(!is.null(min_num)){
-      # get number molecules tested
-      num_not_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] <= min_num))
-
-      # get number molecules not tested
-      num_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] > min_num))
+      if(filt_fn == "ka"){
+        # get number molecules tested
+        num_not_tested <- length(which(pmartRseq_results[,paste("NumSamples_",min_samp,sep="")] <= min_num))
+        # get number molecules not tested
+        num_tested <- length(which(pmartRseq_results[,paste("NumSamples_",min_samp,sep="")] > min_num))
+      }else{
+        # get number molecules tested
+        num_not_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] <= min_num))
+        # get number molecules not tested
+        num_tested <- length(which(pmartRseq_results[,paste(filt_fn,"OTUs",sep="")] > min_num))
+      }
 
     }else{
       # if no min_num given, no need to calculate results

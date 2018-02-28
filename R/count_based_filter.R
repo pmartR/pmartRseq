@@ -7,8 +7,9 @@
 #' @param omicsData An object of one of the classes "seqData"
 #'
 #' @param fn Specify "mean" to use the mean count of each OTU, "percent" to use
-#'   mean counts lower than a certain percent, "max" to use the max count across
-#'   all samples, "sum" to use the total count of each OTU, "nonmiss" to use
+#'   mean counts lower than a certain percent, "percsamps" to use the percentage
+#'   of samples an OTU is observed in, "max" to use the max count across all
+#'   samples, "sum" to use the total count of each OTU, "nonmiss" to use
 #'   presence/absence counts, or "ka" to use k over a filtering (need at least
 #'   k counts of OTUs seen in at least a samples).
 #'
@@ -88,8 +89,8 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
   }
 
   # check that function makes sense #
-  if(!(tolower(fn) %in% c("mean","percent","max","sum","nonmiss", "ka"))){
-    stop("fn must only be 'mean', 'percent', 'max', 'sum', 'nonmiss', or 'ka'.")
+  if(!(tolower(fn) %in% c("mean","percent","max","sum","nonmiss", "ka", "percsamp"))){
+    stop("fn must only be 'mean', 'percent', 'percsamp','max', 'sum', 'nonmiss', or 'ka'.")
   }
 
   ## end initial checks ##
@@ -143,6 +144,13 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
         perc_OTUs <- rowSums(ndata[,-which(colnames(ndata) == edata_cname)],na.rm=TRUE)/sum(ndata[,-which(colnames(ndata) == edata_cname)],na.rm=TRUE)
         infrequent_OTUs <- data.frame(ndata[,edata_cname], perc_OTUs)
         colnames(infrequent_OTUs) <- c(edata_cname, "percentOTUs")
+
+      }else if(fn == "percsamp"){
+        # Percentage of samples each OTU is seen in
+        nsamp <- ncol(ndata) - 1
+        samp_OTUs <- !is.na(ndata[, -which(colnames(ndata) == edata_cname)]) & ndata[, -which(colnames(ndata) == edata_cname)] != 0
+        infrequent_OTUs <- data.frame(ndata[, edata_cname], rowSums(samp_OTUs) / nsamp)
+        colnames(infrequent_OTUs) <- c(edata_cname, "percsampOTUs")
 
       }else if(fn == "max"){
         # Max count of each OTU
@@ -207,6 +215,13 @@ count_based_filter <- function(omicsData, fn="sum", group=FALSE, group_var=NULL)
       perc_OTUs <- rowSums(edata[,-which(names(omicsData$e_data) == edata_cname)],na.rm=TRUE)/sum(edata[,-which(names(omicsData$e_data) == edata_cname)],na.rm=TRUE)
       infrequent_OTUs <- data.frame(omicsData$e_data[,edata_cname], perc_OTUs)
       colnames(infrequent_OTUs) <- c(edata_cname, "percentOTUs")
+
+    }else if(fn == "percsamp"){
+      # Percentage of samples each OTU is seen in
+      nsamp <- ncol(omicsData$e_data) - 1
+      samp_OTUs <- !is.na(omicsData$e_data[, -which(colnames(omicsData$e_data) == edata_cname)]) & edata[, -which(colnames(omicsData$e_data) == edata_cname)] != 0
+      infrequent_OTUs <- data.frame(omicsData$e_data[, edata_cname], rowSums(samp_OTUs) / nsamp)
+      colnames(infrequent_OTUs) <- c(edata_cname, "percsampOTUs")
 
     }else if(fn == "max"){
       # Max count of each OTU

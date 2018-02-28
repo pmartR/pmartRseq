@@ -10,8 +10,9 @@ count_based_filter(omicsData, fn = "sum", group = FALSE, group_var = NULL)
 \item{omicsData}{An object of one of the classes "seqData"}
 
 \item{fn}{Specify "mean" to use the mean count of each OTU, "percent" to use
-mean counts lower than a certain percent, "max" to use the max count across
-all samples, "sum" to use the total count of each OTU, "nonmiss" to use
+mean counts lower than a certain percent, "percsamps" to use the percentage
+of samples an OTU is observed in, "max" to use the max count across all
+samples, "sum" to use the total count of each OTU, "nonmiss" to use
 presence/absence counts, or "ka" to use k over a filtering (need at least
 k counts of OTUs seen in at least a samples).}
 

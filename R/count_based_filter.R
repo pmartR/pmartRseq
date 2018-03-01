@@ -7,7 +7,7 @@
 #' @param omicsData An object of one of the classes "seqData"
 #'
 #' @param fn Specify "mean" to use the mean count of each OTU, "percent" to use
-#'   mean counts lower than a certain percent, "percsamps" to use the percentage
+#'   mean counts lower than a certain percent, "percsamp" to use the percentage
 #'   of samples an OTU is observed in, "max" to use the max count across all
 #'   samples, "sum" to use the total count of each OTU, "nonmiss" to use
 #'   presence/absence counts, or "ka" to use k over a filtering (need at least

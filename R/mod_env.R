@@ -78,7 +78,7 @@ mod_env <- function(omicsData, modData, envVars, pca.method="svd", cor.method="s
       # Obtain samples in specified group
       if(attr(modData, "group_var") %in% colnames(attr(omicsData, "group_DF"))){
         samps <- attr(omicsData, "group_DF")[which(attr(omicsData, "group_DF")[,attr(modData, "group_var")] == x), attr(modData, "cnames")$fdata_cname]
-      }else if(attr(netGraph, "group_var") %in% colnames(omicsData$f_data)){
+      }else if(attr(modData, "group_var") %in% colnames(omicsData$f_data)){
         samps <- omicsData$f_data[which(omicsData$f_data[,attr(modData, "group_var")] == x), attr(modData, "cnames")$fdata_cname]
       }else{
         stop("Something went wrong, please double check group var in module data, group_DF in omics data, and f_data in omics data.")

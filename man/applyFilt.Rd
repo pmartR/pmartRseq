@@ -12,10 +12,10 @@
 \usage{
 applyFilt(filter_object, omicsData, ...)
 
-\method{applyFilt}{countFilter}(filter_object, omicsData, upper_lim = 2,
+\method{applyFilt}{countFilter}(filter_object, omicsData, min_num = 2,
   num_samps = NULL)
 
-\method{applyFilt}{sampleFilter}(filter_object, omicsData, upper_lim = 2,
+\method{applyFilt}{sampleFilter}(filter_object, omicsData, min_num = 2,
   samps_to_remove = NULL)
 
 \method{applyFilt}{metaFilter}(filter_object, omicsData, keep_taxa)
@@ -25,15 +25,15 @@ applyFilt(filter_object, omicsData, ...)
 
 \item{omicsData}{an object of the class \code{seqData} created by \code{\link{as.seqData}}.}
 
-\item{upper_lim}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.}
+\item{min_num}{OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.}
 
-\item{num_samps}{for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features}
+\item{num_samps}{for k over a filtering, the minimum number of samples that need to have at least \code{min_num} features}
 
 \item{samps_to_remove}{Sample names selected to remove based on sample metadata criteria}
 
 \item{keep_taxa}{Character vector specifying which values to keep}
 
-\item{upper_lim}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
+\item{min_num}{Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.}
 }
 \value{
 An object of the class \code{seqData}, with specified cname_ids, edata_cnames, taxa_cnames, ec_cnames, and gene_cnames filtered out of the appropriate datasets.
@@ -53,11 +53,11 @@ library(mintJansson)
 data(rRNA_data)
 
 to_filter <- count_based_filter(omicsData = rRNA_data, fn="mean")
-rRNAdata2 <- applyFilt(filter_object = to_filter, omicsData = rRNA_data, upper_lim = 2)
+rRNAdata2 <- applyFilt(filter_object = to_filter, omicsData = rRNA_data, min_num = 2)
 print(str(attributes(rRNAdata2)$filters))
 
 to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
-rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
+rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, min_num = 2)
 print(str(attributes(rRNAdata3)$filters))
 }
 }

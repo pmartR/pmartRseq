@@ -13,11 +13,11 @@
 #' data(rRNA_data)
 #'
 #' to_filter <- count_based_filter(omicsData = rRNA_data, fn="mean")
-#' rRNAdata2 <- applyFilt(filter_object = to_filter, omicsData = rRNA_data, upper_lim = 2)
+#' rRNAdata2 <- applyFilt(filter_object = to_filter, omicsData = rRNA_data, min_num = 2)
 #' print(str(attributes(rRNAdata2)$filters))
 #'
 #' to_filter2 <- count_based_filter(omicsData = rRNAdata, fn="max")
-#' rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, upper_lim = 2)
+#' rRNAdata3 <- applyFilt(filter_object = to_filter2, omicsData = rRNAdata, min_num = 2)
 #' print(str(attributes(rRNAdata3)$filters))
 #' }
 #' @seealso \code{\link{count_based_filter}} \code{\link{sample_based_filter}}
@@ -61,9 +61,9 @@ applyFilt <- function(filter_object, omicsData, ...) {
 #' @export
 #' @name applyFilt
 #' @rdname applyFilt
-#' @param num_samps for k over a filtering, the minimum number of samples that need to have at least \code{upper_lim} features
-#' @param  upper_lim OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.
-applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_samps=NULL) {
+#' @param num_samps for k over a filtering, the minimum number of samples that need to have at least \code{min_num} features
+#' @param  min_num OTUs must have a max/mean/percent/nonmiss/sum number of counts above this threshold. OTUs with a count less than or equal to this number will be removed. If percent, give the decimal number, not the percentage.
+applyFilt.countFilter <- function(filter_object, omicsData, min_num=2, num_samps=NULL) {
 
   # Check if k/a fn
   if (attr(filter_object, "function") == "ka") {
@@ -81,16 +81,16 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
     }
   }
 
-  # check that upper_lim is numeric and >=1 #
-  if (!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
-  # check that upper_lim is of length 1 #
-  if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
+  # check that min_num is numeric and >=1 #
+  if (!(class(min_num) %in% c("numeric","integer")) | min_num < 0) stop("min_num must be an integer greater than or equal to 0")
+  # check that min_num is of length 1 #
+  if (length(min_num) != 1) stop("min_num must be of length 1")
 
   edata_cname <- attributes(omicsData)$cnames$edata_cname
   fn <- attr(filter_object, "function")
 
   # if (fn == "percent") {
-  #   upper_lim = upper_lim / 100
+  #   min_num = min_num / 100
   # }
 
   if (fn == "ka") {
@@ -100,7 +100,7 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
   }
 
   # get indices for which ones don't meet the min requirement #
-  inds <- which(num_obs <= upper_lim)
+  inds <- which(num_obs <= min_num)
 
   if (length(inds) < 1) {
     filter.edata <- NULL
@@ -186,8 +186,8 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 
   # set attributes for which filters were run
   attr(results, "filters")$countFilter <- list(report_text = "", threshold = c(), filtered = c())
-  attr(results, "filters")$countFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing molecules that have a ", fn," count less than ", upper_lim, ". A total of ", length(filter.edata)," molecules were filtered out of the dataset by this filter.", sep="")
-  attr(results, "filters")$countFilter$threshold <- upper_lim
+  attr(results, "filters")$countFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing molecules that have a ", fn," count less than ", min_num, ". A total of ", length(filter.edata)," molecules were filtered out of the dataset by this filter.", sep="")
+  attr(results, "filters")$countFilter$threshold <- min_num
   attr(results, "filters")$countFilter$filtered <- filter.edata
 
   return(results)
@@ -199,13 +199,13 @@ applyFilt.countFilter <- function(filter_object, omicsData, upper_lim=2, num_sam
 #' @export
 #' @name applyFilt
 #' @rdname applyFilt
-#' @param  upper_lim Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.
+#' @param  min_num Samples must have a sum number of OTU reads above this threshold. Samples with a sum less than or equal to this number will be removed.
 #' @param samps_to_remove Sample names selected to remove based on sample metadata criteria
-applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_to_remove = NULL) {
-  # check that upper_lim is numeric and >=1 #
-  if (!(class(upper_lim) %in% c("numeric","integer")) | upper_lim < 0) stop("upper_lim must be an integer greater than or equal to 0")
-  # check that upper_lim is of length 1 #
-  if (length(upper_lim) != 1) stop("upper_lim must be of length 1")
+applyFilt.sampleFilter <- function(filter_object, omicsData, min_num=2, samps_to_remove = NULL) {
+  # check that min_num is numeric and >=1 #
+  if (!(class(min_num) %in% c("numeric","integer")) | min_num < 0) stop("min_num must be an integer greater than or equal to 0")
+  # check that min_num is of length 1 #
+  if (length(min_num) != 1) stop("min_num must be of length 1")
   if (is.null(samps_to_remove)) stop("samps_to_remove must contain at least one sample to remove")
   # if sample names are given, make sure they exist in the data
   if (!is.null(samps_to_remove) & !any(samps_to_remove %in% filter_object[,"Sample"])) stop("samps_to_remove must contain at least one sample name existing in data")
@@ -222,7 +222,7 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
     num_obs <- filter_object[,paste(fn,"Samps",sep="")]
 
     # get indices for which ones don't meet the min requirement #
-    inds <- filter_object[which(num_obs <= upper_lim), "Sample"]
+    inds <- filter_object[which(num_obs <= min_num), "Sample"]
   }
 
   if (length(inds) < 1) {
@@ -308,8 +308,8 @@ applyFilt.sampleFilter <- function(filter_object, omicsData, upper_lim=2, samps_
 
   # set attributes for which filters were run
   attr(results, "filters")$sampleFilter <- list(report_text = "", threshold = c(), filtered = c())
-  attr(results, "filters")$sampleFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing samples that have a ", fn," count less than ", upper_lim, ". A total of ", length(filter.samples)," samples were filtered out of the dataset by this filter.", sep="")
-  attr(results, "filters")$sampleFilter$threshold <- upper_lim
+  attr(results, "filters")$sampleFilter$report_text <- paste("A ", fn,"-based filter was applied to the data, removing samples that have a ", fn," count less than ", min_num, ". A total of ", length(filter.samples)," samples were filtered out of the dataset by this filter.", sep="")
+  attr(results, "filters")$sampleFilter$threshold <- min_num
   attr(results, "filters")$sampleFilter$filtered <- filter.samples
 
   return(results)

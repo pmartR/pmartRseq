@@ -5,6 +5,7 @@
 #' @param omicsData an object of the class 'seqData' created by \code{\link{as.seqData}}.
 #' @param within If desired, can run indicator species analysis between one effect and within another effect.
 #' @param pval_thresh P-value threshold for creating flags for significance. The default is 0.05.
+#' @param max_grp Integer indicating the maximum number of group combinations to be considered. If NULL, will use n-1 groups. Max is n-1 groups.
 #'
 #' @details This function uses the \code{multipatt} function in the package \code{indicspecies} to create combinations of input clusters and compare each combination with the species in \code{e_data}. Please refer to the \code{multipatt} function in the package \code{indicspecies} for more information.
 #'
@@ -27,7 +28,7 @@
 #' @author Allison Thompson
 #'
 #' @export
-indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
+indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05, max_grp=NULL){
   library(indicspecies)
 
     ## initial checks ##
@@ -45,6 +46,14 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
 
   if(is.null(attr(omicsData, "group_DF"))){
     stop("Need to run group_designation function first.")
+  }
+
+  if(!is.null(max_grp) & (!is.numeric(max_grp) | max_grp < 1)){
+    stop("max_grp needs to be either NULL or a numeric integer.")
+  }
+
+  if(!is.null(max_grp) & (max_grp > length(unique(attr(omicsData, "group_DF")$Group)) - 1)){
+    stop("max_grp must be no greater than n - 1, where n is the number of groups.")
   }
 
   ## end of initial checks ##
@@ -65,7 +74,7 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
 
   if(is.null(within)){
     # indicator species analysis from indicspecies
-    IS <- indicspecies::multipatt(indspec, group, func="IndVal.g", control=how(nperm=999))
+    IS <- indicspecies::multipatt(indspec, group, func="IndVal.g", control=how(nperm=999), max.order = max_grp)
 
     # format results
     results <- IS$sign
@@ -85,7 +94,7 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05){
       meta.data <- meta.data[match(rownames(indspec2),meta.data[,fdata_cname]),]
 
       # indicator species analysis
-      IS <- indicspecies::multipatt(indspec2, as.character(meta.data$Group), func="IndVal.g", control=how(nperm=999))
+      IS <- indicspecies::multipatt(indspec2, as.character(meta.data$Group), func="IndVal.g", control=how(nperm=999), max.order = max_grp)
       results <- IS$sign
       results$Flag <- ifelse(results$p.value <= pval_thresh, 1, 0)
 

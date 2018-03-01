@@ -4,7 +4,7 @@
 \alias{indsp_calc}
 \title{Computes Indicator Species Analysis for Count Data}
 \usage{
-indsp_calc(omicsData, within = NULL, pval_thresh = 0.05)
+indsp_calc(omicsData, within = NULL, pval_thresh = 0.05, max_grp = NULL)
 }
 \arguments{
 \item{omicsData}{an object of the class 'seqData' created by \code{\link{as.seqData}}.}
@@ -12,6 +12,8 @@ indsp_calc(omicsData, within = NULL, pval_thresh = 0.05)
 \item{within}{If desired, can run indicator species analysis between one effect and within another effect.}
 
 \item{pval_thresh}{P-value threshold for creating flags for significance. The default is 0.05.}
+
+\item{max_grp}{Integer indicating the maximum number of group combinations to be considered. If NULL, will use n-1 groups. Max is n-1 groups.}
 }
 \value{
 An object of class indspRes (also a data.frame) containing the indicator species analysis of the data.

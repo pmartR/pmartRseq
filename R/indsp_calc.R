@@ -47,13 +47,14 @@ indsp_calc <- function(omicsData, within=NULL, pval_thresh=0.05, max_grp=NULL){
   if(is.null(attr(omicsData, "group_DF"))){
     stop("Need to run group_designation function first.")
   }
-
-  if(!is.null(max_grp) & (!is.numeric(max_grp) | max_grp < 1)){
-    stop("max_grp needs to be either NULL or a numeric integer.")
-  }
-
-  if(!is.null(max_grp) & (max_grp > length(unique(attr(omicsData, "group_DF")$Group)) - 1)){
-    stop("max_grp must be no greater than n - 1, where n is the number of groups.")
+  
+  if(!is.null(max_grp)){
+    if(!is.numeric(max_grp) | max_grp < 1){
+      stop("max_grp needs to be either NULL or a numeric integer.")
+    }
+    if(max_grp > length(unique(attr(omicsData, "group_DF")$Group)) - 1){
+      stop("max_grp must be no greater than n - 1, where n is the number of groups.")
+    }
   }
 
   ## end of initial checks ##

@@ -497,6 +497,7 @@ pmartRseq_aldex2 <- function(omicsData, mainEffects=NULL, mc.samples=128, denom=
 
   # run glm
   aldexres <- pmartRseq.aldex.glm(clr=aldexclr, mainEffects=mainEffects, interactions=interactions, randomEffect=randomEffect)
+  aldexres <- subset(aldexres, term != "(Intercept)")
 
   # format results
   results <- list(clr=aldexclr, results=aldexres)
